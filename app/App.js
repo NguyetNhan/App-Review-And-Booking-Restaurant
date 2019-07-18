@@ -75,7 +75,7 @@ const App = () => {
 const styles = StyleSheet.create({
         scrollView: {
                 backgroundColor: Colors.lighter,
-        },
+        },  
         engine: {
                 position: 'absolute',
                 right: 0,
