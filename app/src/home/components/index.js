@@ -12,11 +12,7 @@ export default class Home extends Component {
                 return (
                         <View>
                                 <Text>Home</Text>
-                                <TouchableOpacity onPress={() => {
-                                        this.props.navigation.openDrawer();
-                                }}>
-                                        <Text>con cac</Text>
-                                </TouchableOpacity>
+
                         </View>
                 );
         }

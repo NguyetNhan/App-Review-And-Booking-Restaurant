@@ -6,52 +6,16 @@ import { AppRegistry } from 'react-native';
 import React, { Component } from 'react';
 import { name as appName } from './app.json';
 
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-
-import Home from './src/home/components';
-import Search from './src/search/components';
-import Map from './src/map/components';
-import Notification from './src/notification/components';
-import Follow from './src/follow/components';
+import AppNavigator from './src/navigators';
 
 import RootSaga from './src/root_saga';
 import RootReducer from './src/root_reducer';
 
-const RouteConfig = {
-        Home: {
-                screen: Home
-        },
-        Search: {
-                screen: Search
-        },
-        Map: {
-                screen: Map
-        },
-        Notification: {
-                screen: Notification
-        },
-        Follow: {
-                screen: Follow
-        }
-};
 
-const BottomTabNavigatorConfig = {
-        initialRouteName: 'Home',
-        defaultNavigationOptions: ({ navigation }) => ({
-
-        }),
-        order: ['Home', 'Search', 'Map', 'Notification', 'Follow'],
-        tabBarOptions: {
-                activeTintColor: 'black',
-                inactiveTintColor: 'gray',
-        },
-};
-
-
-const AppNavigator = createBottomTabNavigator(RouteConfig, BottomTabNavigatorConfig);
 
 const sagaMiddleware = createSagaMiddleware();
 

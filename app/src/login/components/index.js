@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 export default class Login extends Component {
         constructor (props) {
@@ -11,6 +11,16 @@ export default class Login extends Component {
                 return (
                         <View>
                                 <Text>Login</Text>
+                                <TouchableOpacity onPress={() => {
+                                        this.props.navigation.navigate('SignUp');
+                                }}>
+                                        <Text>register</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {
+                                        this.props.navigation.navigate('Home');
+                                }}>
+                                        <Text>home</Text>
+                                </TouchableOpacity>
                         </View>
                 );
         }

@@ -19,7 +19,7 @@
         "react"
     ],
     "rules": {
-         "indent": "off",
+        "indent": "off",
     "linebreak-style": "off",
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
