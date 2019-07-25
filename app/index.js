@@ -15,7 +15,9 @@ import AppNavigator from './src/navigators';
 import RootSaga from './src/root_saga';
 import RootReducer from './src/root_reducer';
 
+import socket from './socket';
 
+socket.connect();
 
 const sagaMiddleware = createSagaMiddleware();
 

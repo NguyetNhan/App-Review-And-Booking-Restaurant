@@ -1,4 +1,6 @@
-import { createBottomTabNavigator, createDrawerNavigator, createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+
 
 import Home from './home/components';
 import Search from './search/components';
@@ -8,6 +10,7 @@ import Follow from './follow/components';
 import AuthLoading from './auth_loading/components';
 import Login from './login/components';
 import SignUp from './sign_up/components';
+
 
 const RouteBottomTabConfig = {
         Home: {
@@ -27,7 +30,7 @@ const RouteBottomTabConfig = {
         }
 };
 
-const BottomTabNavigatorConfig = {
+/* const BottomTabNavigatorConfig = {
         initialRouteName: 'Home',
         defaultNavigationOptions: ({ navigation }) => ({
         }),
@@ -36,16 +39,32 @@ const BottomTabNavigatorConfig = {
                 activeTintColor: 'black',
                 inactiveTintColor: 'gray',
         },
+}; */
+
+const BottomTabNavigatorConfig = {
+        initialRouteName: 'Home',
+        activeColor: '#3faf28',
+        inactiveColor: '#3e2465',
+        barStyle: { backgroundColor: 'white' },
 };
 
-const BottomTabNavigator = createBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
+//const BottomTabNavigator = createBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
+const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
+
 
 const AuthStack = createStackNavigator({
         Login: {
-                screen: Login
+                screen: Login,
+                navigationOptions: {
+                        header: null,
+                },
+
         },
         SignUp: {
-                screen: SignUp
+                screen: SignUp,
+                navigationOptions: {
+                        header: null,
+                },
         }
 },
         {
@@ -65,7 +84,7 @@ export default AppNavigator = createSwitchNavigator(
                 }
         },
         {
-                initialRouteName: 'AuthLoading',
+                initialRouteName: 'Auth',
         }
 );
 
