@@ -1,29 +1,104 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import Validate from 'validate.js';
 
 export default class Login extends Component {
         constructor (props) {
                 super(props);
+                this.state = {
+                        email: 'phannhan@gmail.com',
+                        password: '123456',
+                        validateEmail: null,
+                };
+        }
 
+        onClickButtonLogin () {
+                alert(this.state.email);
+        }
+
+        onClickButtonSignup () {
+                this.props.navigation.navigate('SignUp');
+        }
+
+        validate () {
+                const constraints = {
+                        email: {
+                                presence: true,
+                                email: {
+                                        message: '^*không phải là email'
+                                }
+                        },
+                };
+                let result = Validate({ email: this.state.email }, constraints);
+                if (result === undefined) {
+                        this.setState({
+                                validateEmail: null
+                        });
+                } else {
+                        this.setState({
+                                validateEmail: result.email[0]
+                        });
+                }
         }
 
         render () {
                 return (
                         <View style={styles.container}>
+                                <StatusBar
+                                        barStyle='dark-content'
+                                        backgroundColor='white'
+                                />
                                 <View style={styles.containerTitle}>
                                         <Text style={styles.title}>Đăng Nhập</Text>
                                 </View>
                                 <View style={styles.containerForm}>
-                                        <Text>Email</Text>
-                                        <TextInput />
-                                        <Text>Mật khẩu</Text>
-                                        <TextInput />
-                                        <TouchableOpacity>
-                                                <Icon name="arrow-right" size={30} color="#900" />
+                                        <View style={styles.containerErrorValidate}>
+                                                <Text style={styles.textHint}>Email </Text>
+                                                <Text style={styles.textError}>{this.state.validateEmail}</Text>
+                                        </View>
+                                        <TextInput
+                                                style={styles.textInput}
+                                                keyboardType='email-address'
+                                                placeholder='phannhan@gmail.com'
+                                                onChangeText={(text) => {
+                                                        this.setState({
+                                                                email: text
+                                                        });
+                                                        this.validate();
+                                                }}
+                                                value={this.state.email}
+                                        />
+                                        <Text style={{
+                                                color: 'black',
+                                                width: 300,
+                                                fontFamily: 'UVN-Baisau-Regular',
+                                                marginTop: 20,
+                                        }}>Mật khẩu</Text>
+                                        <TextInput
+                                                style={styles.textInput}
+                                                secureTextEntry={true}
+                                                placeholder='123456'
+                                                onChangeText={(text) => {
+                                                        this.setState({
+                                                                password: text
+                                                        });
+                                                }}
+                                                value={this.state.password}
+                                        />
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.onClickButtonLogin();
+                                                }}
+                                                style={styles.buttonLogin}>
+                                                <Icon name="arrow-right" size={25} color="white" />
                                         </TouchableOpacity>
-                                        <TouchableOpacity>
-                                                <Text>Đăng kí</Text>
+                                        <TouchableOpacity style={styles.buttonSignUp}
+                                                onPress={() => {
+                                                        this.onClickButtonSignup();
+                                                }}
+                                        >
+                                                <Text style={styles.textSignUp}>Đăng kí</Text>
                                         </TouchableOpacity>
                                 </View>
                         </View>
@@ -37,14 +112,50 @@ const styles = StyleSheet.create({
         },
         containerTitle: {
                 flex: 1,
-                justifyContent: 'center'
+                justifyContent: 'center',
+                alignItems: 'center'
         },
         title: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 30
+                fontSize: 30,
+                width: 300,
+                color: '#22D499'
         },
         containerForm: {
-                flex: 4,
+                flex: 3,
                 alignItems: 'center'
-        }
+        },
+        textHint: {
+                color: 'black',
+                fontFamily: 'UVN-Baisau-Regular',
+        },
+        textInput: {
+                width: 300,
+                fontFamily: 'OpenSans-Regular',
+                borderBottomWidth: 1
+        },
+        buttonLogin: {
+                width: 50,
+                height: 50,
+                borderRadius: 25,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#22D499',
+                marginTop: 80
+        },
+        buttonSignUp: {
+                marginTop: 40
+        },
+        textSignUp: {
+                fontFamily: 'UVN-Baisau-Bold'
+        },
+        textError: {
+                color: 'red',
+                fontFamily: 'OpenSans-Regular'
+        },
+        containerErrorValidate: {
+                width: 300,
+                flexDirection: 'row',
+                marginTop: 20,
+        },
 });
