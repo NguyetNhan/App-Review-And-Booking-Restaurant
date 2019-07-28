@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Validate from 'validate.js';
 
@@ -10,11 +10,28 @@ export default class Login extends Component {
                         email: 'phannhan@gmail.com',
                         password: '123456',
                         validateEmail: null,
+                        isLoading: false,
                 };
         }
 
+        static getDerivedStateFromProps (props, state) {
+                if (props.loading !== state.isLoading) {
+                        return {
+                                isLoading: props.loading
+                        };
+                }
+                return null;
+        }
+
         onClickButtonLogin () {
-                alert(this.state.email);
+                this.setState({
+                        isLoading: true
+                });
+                const data = {
+                        email: this.state.email,
+                        password: this.state.password
+                };
+                this.props.onLogin(data);
         }
 
         onClickButtonSignup () {
@@ -101,6 +118,15 @@ export default class Login extends Component {
                                                 <Text style={styles.textSignUp}>Đăng kí</Text>
                                         </TouchableOpacity>
                                 </View>
+                                <Modal
+                                        animationType="fade"
+                                        transparent={true}
+                                        visible={this.state.isLoading}
+                                >
+                                        <View style={styles.containerLoading}>
+                                                <ActivityIndicator animating={true} size={80} color="#22D499" />
+                                        </View>
+                                </Modal>
                         </View>
                 );
         }
@@ -158,4 +184,10 @@ const styles = StyleSheet.create({
                 flexDirection: 'row',
                 marginTop: 20,
         },
+        containerLoading: {
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        }
 });

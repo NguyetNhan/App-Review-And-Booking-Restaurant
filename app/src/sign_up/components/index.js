@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, StyleSheet, TextInput, ToastAndroid } from 'react-native';
+import { View, Text, TouchableOpacity, StatusBar, StyleSheet, TextInput, Modal, ActivityIndicator, Alert } from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Validate from 'validate.js';
@@ -9,7 +9,7 @@ export default class SignUp extends Component {
                 super(props);
                 this.state = {
                         name: 'Phan Tử Nguyệt Nhân',
-                        email: 'PhanNhan@gmail.com',
+                        email: 'phannhan@gmail.com',
                         phone: '0924242584',
                         password: '123456',
                         confirmPass: '123456',
@@ -17,8 +17,19 @@ export default class SignUp extends Component {
                         validateName: null,
                         validatePhone: null,
                         validatePass: null,
-                        validateConfirmPass: null
+                        validateConfirmPass: null,
+                        validateError: false,
+                        isLoading: false,
                 };
+        }
+
+        static getDerivedStateFromProps (props, state) {
+                if (props.loading !== state.isLoading) {
+                        return {
+                                isLoading: props.loading
+                        };
+                }
+                return null;
         }
 
         validate (type) {
@@ -34,11 +45,13 @@ export default class SignUp extends Component {
                         let result = Validate({ email: this.state.email }, constraints);
                         if (result === undefined) {
                                 this.setState({
-                                        validateEmail: null
+                                        validateEmail: null,
+                                        validateError: false
                                 });
                         } else {
                                 this.setState({
-                                        validateEmail: result.email[0]
+                                        validateEmail: result.email[0],
+                                        validateError: true
                                 });
                         }
                 } else if (type === 'name') {
@@ -56,11 +69,13 @@ export default class SignUp extends Component {
                         let result = Validate({ name: (this.state.name).trim() }, constraints);
                         if (result === undefined) {
                                 this.setState({
-                                        validateName: null
+                                        validateName: null,
+                                        validateError: false
                                 });
                         } else {
                                 this.setState({
-                                        validateName: result.name[0]
+                                        validateName: result.name[0],
+                                        validateError: true
                                 });
                         }
                 } else if (type === 'phone') {
@@ -75,11 +90,13 @@ export default class SignUp extends Component {
                         let result = Validate({ phone: (this.state.phone).trim() }, constraints);
                         if (result === undefined) {
                                 this.setState({
-                                        validatePhone: null
+                                        validatePhone: null,
+                                        validateError: false
                                 });
                         } else {
                                 this.setState({
-                                        validatePhone: result.phone[0]
+                                        validatePhone: result.phone[0],
+                                        validateError: true
                                 });
                         }
                 } else if (type === 'pass') {
@@ -99,11 +116,13 @@ export default class SignUp extends Component {
                         let result = Validate({ pass: (this.state.password) }, constraints);
                         if (result === undefined) {
                                 this.setState({
-                                        validatePass: null
+                                        validatePass: null,
+                                        validateError: false
                                 });
                         } else {
                                 this.setState({
-                                        validatePass: result.pass[0]
+                                        validatePass: result.pass[0],
+                                        validateError: true
                                 });
                         }
                 } else {
@@ -123,11 +142,13 @@ export default class SignUp extends Component {
                         let result = Validate({ pass: (this.state.confirmPass) }, constraints);
                         if (result === undefined) {
                                 this.setState({
-                                        validateConfirmPass: null
+                                        validateConfirmPass: null,
+                                        validateError: false
                                 });
                         } else {
                                 this.setState({
-                                        validateConfirmPass: result.pass[0]
+                                        validateConfirmPass: result.pass[0],
+                                        validateError: true
                                 });
                         }
                 }
@@ -135,7 +156,17 @@ export default class SignUp extends Component {
         }
 
         onClickButtonSignup () {
-                alert(this.state.name);
+                if (this.state.validateError) {
+                        Alert.alert('Thông báo', 'Bạn đã nhập sai !');
+                } else {
+                        const data = {
+                                email: this.state.email,
+                                name: this.state.name,
+                                password: this.state.password,
+                                phone: this.state.phone
+                        };
+                        this.props.onSignup(data);
+                }
         }
 
         render () {
@@ -247,6 +278,15 @@ export default class SignUp extends Component {
                                                 <SimpleLineIcons name="arrow-right" size={25} color="white" />
                                         </TouchableOpacity>
                                 </View>
+                                <Modal
+                                        animationType="fade"
+                                        transparent={true}
+                                        visible={this.state.isLoading}
+                                >
+                                        <View style={styles.containerLoading}>
+                                                <ActivityIndicator animating={true} size={80} color="#22D499" />
+                                        </View>
+                                </Modal>
                         </View>
                 );
         }
@@ -307,5 +347,11 @@ const styles = StyleSheet.create({
         textError: {
                 color: 'red',
                 fontFamily: 'OpenSans-Regular'
+        },
+        containerLoading: {
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.7)'
         }
 });

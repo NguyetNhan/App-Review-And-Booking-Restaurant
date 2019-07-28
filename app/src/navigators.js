@@ -8,8 +8,8 @@ import Map from './map/components';
 import Notification from './notification/components';
 import Follow from './follow/components';
 import AuthLoading from './auth_loading/components';
-import Login from './login/components';
-import SignUp from './sign_up/components';
+import Login from './login/containers';
+import SignUp from './sign_up/containers';
 
 
 const RouteBottomTabConfig = {
