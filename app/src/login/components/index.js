@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Validate from 'validate.js';
 
@@ -11,14 +11,17 @@ export default class Login extends Component {
                         password: '123456',
                         validateEmail: null,
                         isLoading: false,
+                        user: null
                 };
         }
 
         static getDerivedStateFromProps (props, state) {
-                if (props.loading !== state.isLoading) {
-                        return {
-                                isLoading: props.loading
-                        };
+                if (props.loading !== state.isLoading && props.infoUser !== state.user) {
+                        // return {
+                        //         isLoading: props.loading,
+                        //         user:  props.infoUser
+                        // };
+                        props.navigation.navigate('App');
                 }
                 return null;
         }
@@ -61,73 +64,75 @@ export default class Login extends Component {
 
         render () {
                 return (
-                        <View style={styles.container}>
-                                <StatusBar
-                                        barStyle='dark-content'
-                                        backgroundColor='white'
-                                />
-                                <View style={styles.containerTitle}>
-                                        <Text style={styles.title}>Đăng Nhập</Text>
-                                </View>
-                                <View style={styles.containerForm}>
-                                        <View style={styles.containerErrorValidate}>
-                                                <Text style={styles.textHint}>Email </Text>
-                                                <Text style={styles.textError}>{this.state.validateEmail}</Text>
+                        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+                                <View style={styles.container}>
+                                        <StatusBar
+                                                barStyle='dark-content'
+                                                backgroundColor='white'
+                                        />
+                                        <View style={styles.containerTitle}>
+                                                <Text style={styles.title}>Đăng Nhập</Text>
                                         </View>
-                                        <TextInput
-                                                style={styles.textInput}
-                                                keyboardType='email-address'
-                                                placeholder='phannhan@gmail.com'
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                email: text
-                                                        });
-                                                        this.validate();
-                                                }}
-                                                value={this.state.email}
-                                        />
-                                        <Text style={{
-                                                color: 'black',
-                                                width: 300,
-                                                fontFamily: 'UVN-Baisau-Regular',
-                                                marginTop: 20,
-                                        }}>Mật khẩu</Text>
-                                        <TextInput
-                                                style={styles.textInput}
-                                                secureTextEntry={true}
-                                                placeholder='123456'
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                password: text
-                                                        });
-                                                }}
-                                                value={this.state.password}
-                                        />
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.onClickButtonLogin();
-                                                }}
-                                                style={styles.buttonLogin}>
-                                                <Icon name="arrow-right" size={25} color="white" />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.buttonSignUp}
-                                                onPress={() => {
-                                                        this.onClickButtonSignup();
-                                                }}
+                                        <View style={styles.containerForm}>
+                                                <View style={styles.containerErrorValidate}>
+                                                        <Text style={styles.textHint}>Email </Text>
+                                                        <Text style={styles.textError}>{this.state.validateEmail}</Text>
+                                                </View>
+                                                <TextInput
+                                                        style={styles.textInput}
+                                                        keyboardType='email-address'
+                                                        placeholder='phannhan@gmail.com'
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        email: text
+                                                                });
+                                                                this.validate();
+                                                        }}
+                                                        value={this.state.email}
+                                                />
+                                                <Text style={{
+                                                        color: 'black',
+                                                        width: 300,
+                                                        fontFamily: 'UVN-Baisau-Regular',
+                                                        marginTop: 20,
+                                                }}>Mật khẩu</Text>
+                                                <TextInput
+                                                        style={styles.textInput}
+                                                        secureTextEntry={true}
+                                                        placeholder='123456'
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        password: text
+                                                                });
+                                                        }}
+                                                        value={this.state.password}
+                                                />
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this.onClickButtonLogin();
+                                                        }}
+                                                        style={styles.buttonLogin}>
+                                                        <Icon name="arrow-right" size={25} color="white" />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.buttonSignUp}
+                                                        onPress={() => {
+                                                                this.onClickButtonSignup();
+                                                        }}
+                                                >
+                                                        <Text style={styles.textSignUp}>Đăng kí</Text>
+                                                </TouchableOpacity>
+                                        </View>
+                                        <Modal
+                                                animationType="fade"
+                                                transparent={true}
+                                                visible={this.state.isLoading}
                                         >
-                                                <Text style={styles.textSignUp}>Đăng kí</Text>
-                                        </TouchableOpacity>
+                                                <View style={styles.containerLoading}>
+                                                        <ActivityIndicator animating={true} size={80} color="#22D499" />
+                                                </View>
+                                        </Modal>
                                 </View>
-                                <Modal
-                                        animationType="fade"
-                                        transparent={true}
-                                        visible={this.state.isLoading}
-                                >
-                                        <View style={styles.containerLoading}>
-                                                <ActivityIndicator animating={true} size={80} color="#22D499" />
-                                        </View>
-                                </Modal>
-                        </View>
+                        </SafeAreaView>
                 );
         }
 }

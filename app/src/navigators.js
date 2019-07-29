@@ -1,7 +1,6 @@
 import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, createBottomTabNavigator } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 
-
 import Home from './home/components';
 import Search from './search/components';
 import Map from './map/components';
@@ -17,7 +16,7 @@ const RouteBottomTabConfig = {
                 screen: Home
         },
         Search: {
-                screen: Search
+                screen: Search,
         },
         Map: {
                 screen: Map
@@ -30,25 +29,14 @@ const RouteBottomTabConfig = {
         }
 };
 
-/* const BottomTabNavigatorConfig = {
-        initialRouteName: 'Home',
-        defaultNavigationOptions: ({ navigation }) => ({
-        }),
-        order: ['Home', 'Search', 'Map', 'Notification', 'Follow'],
-        tabBarOptions: {
-                activeTintColor: 'black',
-                inactiveTintColor: 'gray',
-        },
-}; */
 
 const BottomTabNavigatorConfig = {
         initialRouteName: 'Home',
         activeColor: '#3faf28',
-        inactiveColor: '#3e2465',
+        inactiveColor: 'gray',
         barStyle: { backgroundColor: 'white' },
 };
 
-//const BottomTabNavigator = createBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
 
 
