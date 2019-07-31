@@ -4,11 +4,10 @@ import Icon from 'react-native-vector-icons/Feather';
 
 export default class Follow extends Component {
         static navigationOptions = ({ navigation }) => {
-                const tabBarLabel = 'Theo dõi'
-                const tabBarIcon = ({ tintColor }) => (
-                        <Icon name='pocket' size={25} color={tintColor} />
-                );
-                return { tabBarLabel, tabBarIcon };
+                return {
+                        tabBarLabel: 'Theo dõi',
+                        tabBarIcon: ({ tintColor }) => (<Icon name='pocket' size={25} color={tintColor} />)
+                }
         }
         constructor (props) {
                 super(props);

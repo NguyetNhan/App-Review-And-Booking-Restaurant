@@ -4,11 +4,10 @@ import Icon from 'react-native-vector-icons/Feather';
 
 export default class Home extends Component {
         static navigationOptions = ({ navigation }) => {
-                const tabBarLabel = 'Trang chủ'
-                const tabBarIcon = ({ tintColor }) => (
-                        <Icon name='home' size={25} color={tintColor} />
-                );
-                return { tabBarLabel, tabBarIcon };
+             return{
+                     tabBarLabel: 'Trang chủ',
+                     tabBarIcon: ({ tintColor }) => (<Icon name='home' size={25} color={tintColor} />)
+             }
         }
 
         constructor (props) {

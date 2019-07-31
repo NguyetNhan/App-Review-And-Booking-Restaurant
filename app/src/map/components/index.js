@@ -4,11 +4,10 @@ import Icon from 'react-native-vector-icons/Feather';
 
 export default class Map extends Component {
         static navigationOptions = ({ navigation }) => {
-                const tabBarLabel = 'Bản đồ'
-                const tabBarIcon = ({ tintColor }) => (
-                        <Icon name='map-pin' size={25} color={tintColor} />
-                );
-                return { tabBarLabel, tabBarIcon };
+                return {
+                        tabBarLabel: 'Bản đồ',
+                        tabBarIcon: ({ tintColor }) => (<Icon name='map-pin' size={25} color={tintColor} />)
+                }
         }
 
         constructor (props) {

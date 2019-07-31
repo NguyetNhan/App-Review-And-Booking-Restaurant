@@ -1,7 +1,9 @@
 module.exports = {
-        project: {
-                ios: {},
-                android: {}, // grouped into "project"
+        dependency: {
+                platforms: {
+                        ios: {},
+                        android: {}, // projects are grouped into "platforms"
+                },
+                assets: ['./src/assets/fonts'],  // stays the same
         },
-        assets: ['./src/assets/fonts'], // stays the same
 };

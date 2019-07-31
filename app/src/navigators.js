@@ -1,5 +1,7 @@
-import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+
+import Icon from 'react-native-vector-icons/Feather';
 
 import Home from './home/components';
 import Search from './search/components';
@@ -11,21 +13,22 @@ import Login from './login/containers';
 import SignUp from './sign_up/containers';
 
 
+
 const RouteBottomTabConfig = {
         Home: {
-                screen: Home
+                screen: Home,
         },
         Search: {
                 screen: Search,
         },
         Map: {
-                screen: Map
+                screen: Map,
         },
         Notification: {
-                screen: Notification
+                screen: Notification,
         },
         Follow: {
-                screen: Follow
+                screen: Follow,
         }
 };
 
@@ -72,7 +75,7 @@ export default AppNavigator = createSwitchNavigator(
                 }
         },
         {
-                initialRouteName: 'Auth',
+                initialRouteName: 'App',
         }
 );
 

@@ -4,11 +4,10 @@ import Icon from 'react-native-vector-icons/Feather';
 
 export default class Search extends Component {
         static navigationOptions = ({ navigation }) => {
-                const tabBarLabel = 'Tìm kiếm'
-                const tabBarIcon = ({ tintColor }) => (
-                        <Icon name='search' size={25} color={tintColor} />
-                );
-                return { tabBarLabel, tabBarIcon };
+                return {
+                        tabBarLabel: 'Tìm kiếm',
+                        tabBarIcon: ({ tintColor }) => (<Icon name='search' size={25} color={tintColor} />)
+                }
         }
         render () {
                 return (
