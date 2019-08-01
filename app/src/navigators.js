@@ -1,7 +1,6 @@
 import { createDrawerNavigator, createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 
-import Icon from 'react-native-vector-icons/Feather';
 
 import Home from './home/components';
 import Search from './search/components';
@@ -49,7 +48,6 @@ const AuthStack = createStackNavigator({
                 navigationOptions: {
                         header: null,
                 },
-
         },
         SignUp: {
                 screen: SignUp,
