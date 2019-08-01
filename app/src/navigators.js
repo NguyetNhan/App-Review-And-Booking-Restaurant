@@ -1,6 +1,8 @@
-import { createDrawerNavigator, createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-
+import React, { Component } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/EvilIcons';
 
 import Home from './home/components';
 import Search from './search/components';
@@ -10,7 +12,7 @@ import Follow from './follow/components';
 import AuthLoading from './auth_loading/components';
 import Login from './login/containers';
 import SignUp from './sign_up/containers';
-
+import RegisterRestaurant from './admin_restaurant/register_restaurant/components';
 
 
 const RouteBottomTabConfig = {
@@ -32,6 +34,7 @@ const RouteBottomTabConfig = {
 };
 
 
+
 const BottomTabNavigatorConfig = {
         initialRouteName: 'Home',
         activeColor: '#3faf28',
@@ -41,6 +44,131 @@ const BottomTabNavigatorConfig = {
 
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
 
+class DrawerContentAdminRestaurant extends Component {
+        constructor (props) {
+                super(props);
+        }
+        render () {
+                return (
+                        <View style={styleDrawerAdminRestaurant.container}>
+                                <View style={styleDrawerAdminRestaurant.containerImage}>
+                                        <TouchableOpacity onPress={() => {
+                                                this.props.navigation.closeDrawer();
+                                        }}>
+                                                <Icon
+                                                        name='close'
+                                                        size={50}
+                                                        color='white'
+                                                        style={{
+                                                                marginTop: 20
+                                                        }} />
+                                        </TouchableOpacity>
+                                        <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
+                                                style={styleDrawerAdminRestaurant.image}
+                                        />
+                                </View>
+                                <View style={styleDrawerAdminRestaurant.containerName}>
+                                        <Text style={styleDrawerAdminRestaurant.textName}>Phan Nhan</Text>
+                                        <Text style={styleDrawerAdminRestaurant.textAddress}>Nam, Ho Chi Minh</Text>
+                                </View>
+                                <View style={styleDrawerAdminRestaurant.containerAction}>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity>
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Cửa hàng</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity>
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Giao dịch</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props.navigation.navigate('RegisterRestaurant');
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                </View>
+                        </View>
+                );
+        }
+}
+const styleDrawerAdminRestaurant = StyleSheet.create({
+        container: {
+                flex: 1,
+                elevation: 10,
+        },
+        containerImage: {
+                width: '100%',
+                height: 200,
+                alignItems: 'center',
+                backgroundColor: '#22D499',
+                borderBottomLeftRadius: 115,
+                borderBottomRightRadius: 115,
+                justifyContent: 'space-between',
+                paddingBottom: 10,
+                marginBottom: 10
+        },
+        image: {
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                borderWidth: 1,
+                borderColor: 'white'
+        },
+        containerName: {
+                width: '100%',
+                alignItems: 'center'
+        },
+        textName: {
+                fontSize: 20,
+                color: 'black',
+                fontFamily: 'UVN-Baisau-Bold'
+        },
+        textAddress: {
+                fontSize: 15,
+                color: 'gray',
+                fontFamily: 'OpenSans-Regulars'
+        },
+        containerAction: {
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+        },
+        textAction: {
+                fontSize: 20,
+                color: 'black',
+                fontFamily: 'UVN-Baisau-Bold',
+                margin: 15
+        },
+        line: {
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                height: 1,
+                width: 200
+        }
+});
+
+
+const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
+        {
+                RegisterRestaurant: {
+                        screen: RegisterRestaurant
+                },
+                App: BottomTabNavigator,
+        },
+        {
+                initialRouteName: 'App',
+                hideStatusBar: true,
+                drawerBackgroundColor: 'white',
+                overlayColor: 'rgba(255,255,255,.7)',
+                contentOptions: {
+                        activeTintColor: '#fff',
+                        activeBackgroundColor: '#6b52ae',
+                },
+                contentComponent: DrawerContentAdminRestaurant
+        }
+);
 
 const AuthStack = createStackNavigator({
         Login: {
@@ -65,15 +193,15 @@ export default AppNavigator = createSwitchNavigator(
                 AuthLoading: {
                         screen: AuthLoading
                 },
-                App: {
-                        screen: BottomTabNavigator
+                AppAdminRestaurant: {
+                        screen: DrawerNavigatorAdminRestaurant
                 },
                 Auth: {
                         screen: AuthStack
                 }
         },
         {
-                initialRouteName: 'App',
+                initialRouteName: 'AppAdminRestaurant',
         }
 );
 
