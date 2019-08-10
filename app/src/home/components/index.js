@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import Realm from 'realm';
 export default class Home extends Component {
         static navigationOptions = ({ navigation }) => {
                 return {
@@ -12,37 +11,50 @@ export default class Home extends Component {
 
         constructor (props) {
                 super(props);
-                this.state = { realm: null };
         }
 
         componentDidMount () {
-                Realm.open({
-                        schema: [{ name: 'Dog', properties: { name: 'string' } }]
-                }).then(realm => {
-                        realm.write(() => {
-                                realm.create('Dog', { name: 'Rex' });
-                        });
-                        this.setState({ realm });
-                });
+
         }
 
         render () {
-                const info = this.state.realm
-                        ? 'Number of dogs in this Realm: ' + this.state.realm.objects('Dog').length
-                        : 'Loading...';
+
                 return (
-                        <SafeAreaView style={{ flex: 1, }}>
-                                <View>
-                                        <Text>{info}</Text>
-                                        <Text onPress={() => {
-                                                this.props.navigation.navigate('Login');
-                                        }}>Login</Text>
+                        <View style={styles.container}>
+                                <StatusBar
+                                        backgroundColor='white'
+                                        barStyle='dark-content'
+                                />
+                                <View style={styles.containerHeader}>
                                         <TouchableOpacity onPress={this.props.navigation.openDrawer}>
-                                                <Text>Open Drawer</Text>
+                                                <Icon name='menu' size={25} color='black' />
+                                        </TouchableOpacity>
+                                        <Text style={styles.textHeader}>Restaurant App</Text>
+                                        <TouchableOpacity>
+                                                <Icon name='user' size={25} color='black' />
                                         </TouchableOpacity>
                                 </View>
-                        </SafeAreaView>
-
+                        </View>
                 );
         }
 }
+
+const styles = StyleSheet.create({
+        container: {
+                flex: 1,
+                alignItems: 'center'
+        },
+        containerHeader: {
+                width: '100%',
+                height: 50,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                backgroundColor: 'white',
+                alignItems: 'center',
+                paddingHorizontal: 5
+        },
+        textHeader: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 20
+        }
+})

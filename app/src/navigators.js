@@ -1,8 +1,23 @@
-import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
+
+import Realm from 'realm';
+
+const AccountSchema = {
+        name: 'Account',
+        primaryKey: 'id',
+        properties: {
+                authorities: 'string',
+                email: 'string',
+                name: 'string',
+                phone: 'int',
+                id: 'string'
+        }
+};
+
 
 import Home from './home/components';
 import Search from './search/components';
@@ -12,7 +27,8 @@ import Follow from './follow/components';
 import AuthLoading from './auth_loading/components';
 import Login from './login/containers';
 import SignUp from './sign_up/containers';
-import RegisterRestaurant from './admin_restaurant/register_restaurant/components';
+import RegisterRestaurant from './admin_restaurant/register_restaurant/containers';
+import ConfirmRestaurant from './admin/confirm_restaurant/components';
 
 
 const RouteBottomTabConfig = {
@@ -33,8 +49,6 @@ const RouteBottomTabConfig = {
         }
 };
 
-
-
 const BottomTabNavigatorConfig = {
         initialRouteName: 'Home',
         activeColor: '#3faf28',
@@ -47,6 +61,22 @@ const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig
 class DrawerContentAdminRestaurant extends Component {
         constructor (props) {
                 super(props);
+                this.state = {
+                        name: null
+                };
+        }
+        componentDidMount () {
+                this.getNameAccount();
+        }
+        async getNameAccount () {
+                var realm = await Realm.open({ schema: [AccountSchema] });
+                var account = realm.objects('Account');
+                for (let item of account) {
+                        this.setState({
+                                name: item.name
+                        });
+                }
+                realm.close();
         }
         render () {
                 return (
@@ -68,7 +98,7 @@ class DrawerContentAdminRestaurant extends Component {
                                         />
                                 </View>
                                 <View style={styleDrawerAdminRestaurant.containerName}>
-                                        <Text style={styleDrawerAdminRestaurant.textName}>Phan Nhan</Text>
+                                        <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
                                         <Text style={styleDrawerAdminRestaurant.textAddress}>Nam, Ho Chi Minh</Text>
                                 </View>
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
@@ -89,11 +119,30 @@ class DrawerContentAdminRestaurant extends Component {
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
                                         </TouchableOpacity>
                                         <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity
+                                                onPress={async () => {
+                                                        try {
+                                                                var realm = await Realm.open({ schema: [AccountSchema] });
+                                                                var account = realm.objects('Account');
+                                                                await realm.write(() => {
+                                                                        realm.delete(account);
+                                                                });
+                                                                realm.close();
+                                                                this.props.navigation.navigate('Auth');
+                                                        } catch (err) {
+                                                                console.log('err: ', err);
+                                                        }
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
                                 </View>
                         </View>
                 );
         }
 }
+
 const styleDrawerAdminRestaurant = StyleSheet.create({
         container: {
                 flex: 1,
@@ -170,23 +219,122 @@ const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
         }
 );
 
-const AuthStack = createStackNavigator({
-        Login: {
-                screen: Login,
-                navigationOptions: {
-                        header: null,
-                },
-        },
-        SignUp: {
-                screen: SignUp,
-                navigationOptions: {
-                        header: null,
-                },
+class DrawerContentAdmin extends Component {
+        constructor (props) {
+                super(props);
+                this.state = {
+                        name: null
+                };
         }
-},
+        componentDidMount () {
+                this.getNameAccount();
+        }
+        async getNameAccount () {
+                var realm = await Realm.open({ schema: [AccountSchema] });
+                var account = realm.objects('Account');
+                for (let item of account) {
+                        this.setState({
+                                name: item.name
+                        });
+                }
+                realm.close();
+        }
+        render () {
+                return (
+                        <View style={styleDrawerAdminRestaurant.container}>
+                                <View style={styleDrawerAdminRestaurant.containerImage}>
+                                        <TouchableOpacity onPress={() => {
+                                                this.props.navigation.closeDrawer();
+                                        }}>
+                                                <Icon
+                                                        name='close'
+                                                        size={50}
+                                                        color='white'
+                                                        style={{
+                                                                marginTop: 20
+                                                        }} />
+                                        </TouchableOpacity>
+                                        <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
+                                                style={styleDrawerAdminRestaurant.image}
+                                        />
+                                </View>
+                                <View style={styleDrawerAdminRestaurant.containerName}>
+                                        <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
+                                        <Text style={styleDrawerAdminRestaurant.textAddress}>Nam, Ho Chi Minh</Text>
+                                </View>
+                                <View style={styleDrawerAdminRestaurant.containerAction}>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props.navigation.navigate('ConfirmRestaurant');
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Xác nhận nhà hàng</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity
+                                                onPress={async () => {
+                                                        try {
+                                                                var realm = await Realm.open({ schema: [AccountSchema] });
+                                                                var account = realm.objects('Account');
+                                                                await realm.write(() => {
+                                                                        realm.delete(account);
+                                                                });
+                                                                realm.close();
+                                                                this.props.navigation.navigate('Auth');
+                                                        } catch (err) {
+                                                                console.log('err: ', err);
+                                                        }
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                </View>
+                        </View>
+                );
+        }
+}
+
+const DrawerNavigatorAdmin = createDrawerNavigator(
+        {
+                ConfirmRestaurant: {
+                        screen: ConfirmRestaurant
+                },
+                App: BottomTabNavigator,
+        },
+        {
+                initialRouteName: 'App',
+                hideStatusBar: true,
+                drawerBackgroundColor: 'white',
+                overlayColor: 'rgba(255,255,255,.7)',
+                contentOptions: {
+                        activeTintColor: '#fff',
+                        activeBackgroundColor: '#6b52ae',
+                },
+                contentComponent: DrawerContentAdmin
+        }
+);
+
+const AuthStack = createStackNavigator(
+        {
+                Login: {
+                        screen: Login,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                SignUp: {
+                        screen: SignUp,
+                        navigationOptions: {
+                                header: null,
+                        },
+                }
+        },
         {
                 initialRouteName: 'Login'
-        });
+        }
+);
 
 export default AppNavigator = createSwitchNavigator(
         {
@@ -196,12 +344,15 @@ export default AppNavigator = createSwitchNavigator(
                 AppAdminRestaurant: {
                         screen: DrawerNavigatorAdminRestaurant
                 },
+                AppAdmin: {
+                        screen: DrawerNavigatorAdmin
+                },
                 Auth: {
                         screen: AuthStack
                 }
         },
         {
-                initialRouteName: 'AppAdminRestaurant',
+                initialRouteName: 'AuthLoading',
         }
 );
 

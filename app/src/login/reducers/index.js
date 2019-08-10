@@ -1,4 +1,4 @@
-import { LOGIN_RESULTS } from '../actions/action_types';
+import { LOGIN_RESULTS, ADD_ACCOUNT_INTO_LOCAL_RESULTS } from '../actions/action_types';
 
 
 const LoginReducers = (state = [], action) => {
@@ -9,7 +9,12 @@ const LoginReducers = (state = [], action) => {
                                         data: action.data
                                 }
                         };
-
+                case ADD_ACCOUNT_INTO_LOCAL_RESULTS:
+                        return {
+                                AddAccount: {
+                                        data: action.data
+                                }
+                        };
                 default:
                         return state;
         }

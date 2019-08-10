@@ -1,10 +1,11 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onLogin } from '../actions';
+import { onLogin, onAddAccountIntoLocal } from '../actions';
 import { ToastAndroid } from 'react-native';
 
 const mapStateToProps = (state) => {
         const resultsLogin = state.LoginReducers.Login;
+        const resultsAddAccount = state.LoginReducers.AddAccount;
         if (resultsLogin !== undefined) {
                 if (resultsLogin.data.error) {
                         ToastAndroid.show(resultsLogin.data.message, ToastAndroid.LONG);
@@ -12,10 +13,21 @@ const mapStateToProps = (state) => {
                                 loading: false
                         };
                 } else {
-                        ToastAndroid.show(resultsLogin.data.message, ToastAndroid.LONG);
                         return {
                                 infoUser: resultsLogin.data.data,
+                                loading: true
+                        };
+                }
+        } else if (resultsAddAccount !== undefined) {
+                if (resultsAddAccount.data.error) {
+                        return {
                                 loading: false
+                        };
+                } else {
+                        ToastAndroid.show(resultsAddAccount.data.message, ToastAndroid.LONG);
+                        return {
+                                loading: false,
+                                authorities: resultsAddAccount.data.authorities
                         };
                 }
         } else {
@@ -28,6 +40,9 @@ const mapDispatchToProps = (dispatch) => {
         return {
                 onLogin: (data) => {
                         dispatch(onLogin(data));
+                },
+                onAddAccountIntoLocal: (data) => {
+                        dispatch(onAddAccountIntoLocal(data));
                 }
         };
 };

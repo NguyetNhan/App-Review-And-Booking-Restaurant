@@ -1,7 +1,8 @@
 import { API } from './API';
 import { put, takeLatest } from 'redux-saga/effects';
-import { LOGIN } from '../actions/action_types';
-import { onLoginResults } from '../actions';
+import { LOGIN, ADD_ACCOUNT_INTO_LOCAL } from '../actions/action_types';
+import { onLoginResults, onAddAccountIntoLocalResults } from '../actions';
+import { DatabaseLocal } from './database_local';
 
 function* LoginUser (action) {
         try {
@@ -14,4 +15,17 @@ function* LoginUser (action) {
 
 export function* WatchLogin () {
         yield takeLatest(LOGIN, LoginUser);
+}
+
+function* AddAccountIntoLocal (action) {
+        try {
+                const results = yield DatabaseLocal.AddAccountIntoLocal(action.data);
+                yield put(onAddAccountIntoLocalResults(results));
+        } catch (error) {
+                console.log('error: ', error);
+        }
+}
+
+export function* WatchAddAccount () {
+        yield takeLatest(ADD_ACCOUNT_INTO_LOCAL, AddAccountIntoLocal);
 }

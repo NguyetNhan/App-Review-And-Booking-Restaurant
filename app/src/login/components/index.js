@@ -16,14 +16,16 @@ export default class Login extends Component {
         }
 
         static getDerivedStateFromProps (props, state) {
-                if (props.loading !== state.isLoading && props.infoUser !== state.user) {
-                        // return {
-                        //         isLoading: props.loading,
-                        //         user:  props.infoUser
-                        // };
-                        props.navigation.navigate('App');
+                if (props.infoUser !== undefined) {
+                        props.onAddAccountIntoLocal(props.infoUser);
+                } else if (props.authorities !== undefined) {
+                        if (props.authorities === 'client') {
+                                props.navigation.navigate('AppAdminRestaurant');
+                        } else if (props.authorities === 'admin') {
+                                props.navigation.navigate('AppAdmin');
+                        }
                 }
-                return null;
+                return state.isLoading = props.loading;
         }
 
         onClickButtonLogin () {

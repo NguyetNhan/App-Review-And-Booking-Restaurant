@@ -1,4 +1,4 @@
-import { LOGIN, LOGIN_RESULTS } from './action_types';
+import { LOGIN, LOGIN_RESULTS, ADD_ACCOUNT_INTO_LOCAL, ADD_ACCOUNT_INTO_LOCAL_RESULTS } from './action_types';
 
 export const onLogin = (data) => {
         return {
@@ -14,3 +14,16 @@ export const onLoginResults = (data) => {
         };
 };
 
+export const onAddAccountIntoLocal = (data) => {
+        return {
+                type: ADD_ACCOUNT_INTO_LOCAL,
+                data
+        };
+};
+
+export const onAddAccountIntoLocalResults = (data) => {
+        return {
+                type: ADD_ACCOUNT_INTO_LOCAL_RESULTS,
+                data
+        };
+};

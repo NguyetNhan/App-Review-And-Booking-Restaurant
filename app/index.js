@@ -17,8 +17,6 @@ import RootReducer from './src/root_reducer';
 
 import socket from './src/socket';
 
-socket.connect();
-
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(RootReducer, applyMiddleware(sagaMiddleware));
@@ -29,6 +27,7 @@ sagaMiddleware.run(RootSaga);
 
 export default class App extends Component {
         render () {
+                socket.connect();
                 return (
                         <Provider store={store}>
                                 <Navigation />
