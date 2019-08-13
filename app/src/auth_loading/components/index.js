@@ -23,14 +23,16 @@ export default class AuthLoading extends Component {
         }
 
         componentDidMount () {
+                console.log('componentDidMount: ');
                 this.getAccount();
         }
 
         async getAccount () {
                 try {
                         var realm = await Realm.open({ schema: [AccountSchema] });
-                        var account = realm.objects('Account');
+                        var account = await realm.objects('Account');
                         if (account.length === 0) {
+                                realm.close();
                                 this.props.navigation.navigate('Auth');
                         } else {
                                 var data = {
@@ -56,7 +58,6 @@ export default class AuthLoading extends Component {
                 } catch (error) {
                         console.log('error: ', error);
                 }
-
         }
 
         render () {

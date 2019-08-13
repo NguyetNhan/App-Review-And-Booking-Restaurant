@@ -1,8 +1,19 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator, SafeAreaView, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Validate from 'validate.js';
 
+const AccountSchema = {
+        name: 'Account',
+        primaryKey: 'id',
+        properties: {
+                authorities: 'string',
+                email: 'string',
+                name: 'string',
+                phone: 'int',
+                id: 'string'
+        }
+};
 export default class Login extends Component {
         constructor (props) {
                 super(props);
@@ -11,21 +22,27 @@ export default class Login extends Component {
                         password: '123456',
                         validateEmail: null,
                         isLoading: false,
-                        user: null
+                        infoUser: null,
+                        authorities: null
                 };
         }
 
         static getDerivedStateFromProps (props, state) {
                 if (props.infoUser !== undefined) {
                         props.onAddAccountIntoLocal(props.infoUser);
-                } else if (props.authorities !== undefined) {
+                }
+                if (props.authorities !== undefined) {
+                        state.authorities = props.authorities;
                         if (props.authorities === 'client') {
                                 props.navigation.navigate('AppAdminRestaurant');
                         } else if (props.authorities === 'admin') {
                                 props.navigation.navigate('AppAdmin');
                         }
                 }
-                return state.isLoading = props.loading;
+                if (props.loading !== state.isLoading) {
+                        state.isLoading = props.loading;
+                }
+                return null;
         }
 
         onClickButtonLogin () {

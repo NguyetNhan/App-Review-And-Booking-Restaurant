@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import io from 'socket.io-client';
 
 export default class Notification extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -9,6 +10,19 @@ export default class Notification extends Component {
                         tabBarIcon: ({ tintColor }) => (<Icon name='bell' size={25} color={tintColor} />)
                 }
         }
+
+        constructor (props) {
+                super(props);
+                this.onConnectServer();
+        }
+
+        onConnectServer () {
+                var chat = io.connect('http://192.168.1.80:3000/chat');
+                chat.on('connect', function () {
+                        chat.emit('hi!');
+                });
+        }
+
         render () {
                 return (
                         <View style={styles.container}>

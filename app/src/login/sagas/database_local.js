@@ -16,9 +16,6 @@ AddAccountIntoLocal = async (data) => {
         try {
                 const realm = await Realm.open({ schema: [AccountSchema] });
                 var account = await realm.objects('Account');
-                /*  await realm.write(() => {
-                         realm.delete(account);
-                 }); */
                 var filter = account.filtered(`id like '${data._id}'`);
                 if (filter.length === 0) {
                         await realm.write(() => {

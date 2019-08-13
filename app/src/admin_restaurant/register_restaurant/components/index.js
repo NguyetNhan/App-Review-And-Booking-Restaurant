@@ -24,6 +24,7 @@ export default class RegisterRestaurant extends Component {
         }
 
         static getDerivedStateFromProps (props, state) {
+                console.log('props: ', props);
                 if (props.loading !== undefined) {
                         state.isLoading = props.loading;
                 }

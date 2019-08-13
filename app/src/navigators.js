@@ -70,7 +70,7 @@ class DrawerContentAdminRestaurant extends Component {
         }
         async getNameAccount () {
                 var realm = await Realm.open({ schema: [AccountSchema] });
-                var account = realm.objects('Account');
+                var account = await realm.objects('Account');
                 for (let item of account) {
                         this.setState({
                                 name: item.name
@@ -113,18 +113,18 @@ class DrawerContentAdminRestaurant extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={() => {
-                                                        this.props.navigation.navigate('RegisterRestaurant');
+                                                        this.props.navigation.navigate('Auth');
                                                 }}
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
                                         </TouchableOpacity>
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
-                                                onPress={async () => {
+                                                onPress={() => {
                                                         try {
-                                                                var realm = await Realm.open({ schema: [AccountSchema] });
+                                                                var realm = Realm.open({ schema: [AccountSchema] });
                                                                 var account = realm.objects('Account');
-                                                                await realm.write(() => {
+                                                                realm.write(() => {
                                                                         realm.delete(account);
                                                                 });
                                                                 realm.close();
@@ -231,7 +231,7 @@ class DrawerContentAdmin extends Component {
         }
         async getNameAccount () {
                 var realm = await Realm.open({ schema: [AccountSchema] });
-                var account = realm.objects('Account');
+                var account = await realm.objects('Account');
                 for (let item of account) {
                         this.setState({
                                 name: item.name
@@ -275,10 +275,10 @@ class DrawerContentAdmin extends Component {
                                         <TouchableOpacity
                                                 onPress={async () => {
                                                         try {
-                                                                var realm = await Realm.open({ schema: [AccountSchema] });
-                                                                var account = realm.objects('Account');
-                                                                await realm.write(() => {
-                                                                        realm.delete(account);
+                                                                const realm = await Realm.open({ schema: [AccountSchema] });
+                                                                const account = await realm.objects('Account');
+                                                                await realm.write(async () => {
+                                                                        await realm.delete(account);
                                                                 });
                                                                 realm.close();
                                                                 this.props.navigation.navigate('Auth');
