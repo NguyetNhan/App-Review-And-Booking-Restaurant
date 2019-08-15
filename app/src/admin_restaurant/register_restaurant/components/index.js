@@ -24,11 +24,7 @@ export default class RegisterRestaurant extends Component {
         }
 
         static getDerivedStateFromProps (props, state) {
-                console.log('props: ', props);
-                if (props.loading !== undefined) {
-                        state.isLoading = props.loading;
-                }
-                return null;
+                return state.isLoading = props.loading;
         }
 
 
@@ -87,6 +83,9 @@ export default class RegisterRestaurant extends Component {
         }
 
         onClickButtonRegister () {
+                this.setState({
+                        isLoading: true
+                });
                 const listImage = this.state.selectImage;
                 var image = [];
                 for (var item of listImage) {
@@ -109,221 +108,224 @@ export default class RegisterRestaurant extends Component {
 
         render () {
                 const { height, width } = Dimensions.get('window');
-                return (
-                        <View style={styles.container}>
-                                <StatusBar
-                                        backgroundColor='white'
-                                        barStyle='dark-content'
-                                />
-                                <View style={styles.containerHeader}>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.goBack();
-                                        }}>
-                                                <Icon name='arrowleft' size={25} color='black' />
-                                        </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Đăng kí cửa hàng</Text>
+                if (this.state.isLoading) {
+                        return (
+                                <View style={{
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                }}>
+                                        <ActivityIndicator animating={true} size={80} color="#22D499" />
                                 </View>
-                                <ScrollView
-                                        showsVerticalScrollIndicator={false}
-                                >
-                                        <View style={styles.containerForm}>
-                                                <Text style={styles.textHint}>Tên cửa hàng</Text>
-                                                <TextInput style={styles.textInput}
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        name: text
-                                                                });
-                                                        }}
-                                                        value={this.state.name}
-                                                />
-                                                <Text style={styles.textHint}>Giới thiệu</Text>
-                                                <TextInput style={styles.textInput}
-                                                        editable={true}
-                                                        multiline={true}
-                                                        numberOfLines={4}
-                                                        maxLength={40}
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        introduce: text
-                                                                });
-                                                        }}
-                                                        value={this.state.introduce}
-                                                />
-                                                <Text style={styles.textHint}>Số điện thoại</Text>
-                                                <TextInput style={styles.textInput}
-                                                        keyboardType='number-pad'
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        phone: text
-                                                                });
-                                                        }}
-                                                        value={this.state.phone}
-                                                />
-                                                <Text style={styles.textHint}>Địa chỉ</Text>
-                                                <View style={styles.containerTextInput}>
-                                                        <TextInput style={styles.textInputSeletion}
-                                                                placeholder='Thành phố, Tỉnh '
-                                                                onChangeText={(text) => {
-                                                                        this.setState({
-                                                                                textTinh: text
-                                                                        });
-                                                                }}
-                                                                value={this.state.textTinh}
-                                                        />
-                                                        <Icon name='down' size={25} color='black' />
-                                                </View>
-                                                <View style={styles.containerTextInput}>
-                                                        <TextInput style={styles.textInputSeletion}
-                                                                placeholder='Quận, Huyện'
-                                                                onChangeText={(text) => {
-                                                                        this.setState({
-                                                                                textQuan: text
-                                                                        });
-                                                                }}
-                                                                value={this.state.textQuan}
-                                                        />
-                                                        <Icon name='down' size={25} color='black' />
-                                                </View>
-                                                <TextInput style={styles.textInput} placeholder='Số nhà, Tên đường'
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        address: text
-                                                                });
-                                                        }}
-                                                        value={this.state.address}
-                                                />
-                                                <View style={{
-                                                        width: 300,
-                                                        height: 50,
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        marginTop: 10,
+                        );
+                } else {
+                        return (
+                                <View style={styles.container}>
+                                        <StatusBar
+                                                backgroundColor='white'
+                                                barStyle='dark-content'
+                                        />
+                                        <View style={styles.containerHeader}>
+                                                <TouchableOpacity onPress={() => {
+                                                        this.props.navigation.goBack();
                                                 }}>
-                                                        <Text style={{
-                                                                color: 'black',
-                                                                fontFamily: 'UVN-Baisau-Regular',
-                                                                marginTop: 10,
-                                                                flex: 1
-                                                        }}>Ảnh giới thiệu</Text>
-                                                        <TouchableOpacity onPress={() => {
-                                                                this.setState({
-                                                                        modalVisible: !this.state.modalVisible
-                                                                });
-                                                                this._handleButtonPress();
-                                                        }} >
-                                                                <Icon name='picture' size={25} color='black' />
-                                                        </TouchableOpacity>
-                                                </View>
-                                        </View>
-                                        {
-                                                this.state.selectImage === null ? null : <FlatList
-                                                        horizontal={true}
-                                                        data={this.state.selectImage}
-                                                        keyExtractor={(item, index) => index.toString()}
-                                                        extraData={this.state}
-                                                        renderItem={(item) => {
-                                                                return (
-                                                                        <Image
-                                                                                source={{ uri: item.item.node.image.uri }}
-                                                                                style={{
-                                                                                        height: 150,
-                                                                                        width: 150,
-                                                                                        margin: 2
-                                                                                }}
-                                                                        />
-                                                                );
-                                                        }}
-                                                />
-                                        }
-                                        <View>
-
-                                        </View>
-                                        <View style={styles.containerButtonRegister}>
-                                                <TouchableOpacity style={styles.buttonRegister}
-                                                        onPress={() => {
-                                                                this.setState({
-                                                                        isLoading: true
-                                                                });
-                                                                this.onClickButtonRegister();
-                                                        }}
-                                                >
-                                                        <Text style={styles.textRegister}>Đăng kí</Text>
+                                                        <Icon name='arrowleft' size={25} color='black' />
                                                 </TouchableOpacity>
+                                                <Text style={styles.textHeader}>Đăng kí cửa hàng</Text>
                                         </View>
-                                </ScrollView>
-                                <Modal
-                                        animationType="slide"
-                                        transparent={false}
-                                        visible={this.state.modalVisible} >
-                                        <View style={styles.containerModal}>
-                                                <View style={styles.headerModal}>
-                                                        <TouchableOpacity onPress={() => {
-                                                                this.setState({
-                                                                        modalVisible: !this.state.modalVisible
-                                                                });
-                                                        }} >
-                                                                <Icon name='down' size={30} color='#22D499' />
-                                                        </TouchableOpacity>
-                                                        <Text style={styles.titleHeader}>Image</Text>
-                                                        <TouchableOpacity
-                                                                onPress={() => {
+                                        <ScrollView
+                                                showsVerticalScrollIndicator={false}
+                                        >
+                                                <View style={styles.containerForm}>
+                                                        <Text style={styles.textHint}>Tên cửa hàng</Text>
+                                                        <TextInput style={styles.textInput}
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                name: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.name}
+                                                        />
+                                                        <Text style={styles.textHint}>Giới thiệu</Text>
+                                                        <TextInput style={styles.textInput}
+                                                                editable={true}
+                                                                multiline={true}
+                                                                numberOfLines={4}
+                                                                maxLength={40}
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                introduce: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.introduce}
+                                                        />
+                                                        <Text style={styles.textHint}>Số điện thoại</Text>
+                                                        <TextInput style={styles.textInput}
+                                                                keyboardType='number-pad'
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                phone: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.phone}
+                                                        />
+                                                        <Text style={styles.textHint}>Địa chỉ</Text>
+                                                        <View style={styles.containerTextInput}>
+                                                                <TextInput style={styles.textInputSeletion}
+                                                                        placeholder='Thành phố, Tỉnh '
+                                                                        onChangeText={(text) => {
+                                                                                this.setState({
+                                                                                        textTinh: text
+                                                                                });
+                                                                        }}
+                                                                        value={this.state.textTinh}
+                                                                />
+                                                                <Icon name='down' size={25} color='black' />
+                                                        </View>
+                                                        <View style={styles.containerTextInput}>
+                                                                <TextInput style={styles.textInputSeletion}
+                                                                        placeholder='Quận, Huyện'
+                                                                        onChangeText={(text) => {
+                                                                                this.setState({
+                                                                                        textQuan: text
+                                                                                });
+                                                                        }}
+                                                                        value={this.state.textQuan}
+                                                                />
+                                                                <Icon name='down' size={25} color='black' />
+                                                        </View>
+                                                        <TextInput style={styles.textInput} placeholder='Số nhà, Tên đường'
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                address: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.address}
+                                                        />
+                                                        <View style={{
+                                                                width: 300,
+                                                                height: 50,
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                marginTop: 10,
+                                                        }}>
+                                                                <Text style={{
+                                                                        color: 'black',
+                                                                        fontFamily: 'UVN-Baisau-Regular',
+                                                                        marginTop: 10,
+                                                                        flex: 1
+                                                                }}>Ảnh giới thiệu</Text>
+                                                                <TouchableOpacity onPress={() => {
                                                                         this.setState({
                                                                                 modalVisible: !this.state.modalVisible
                                                                         });
-                                                                        this.onClickCompleteSelectImage();
+                                                                        this._handleButtonPress();
                                                                 }} >
-                                                                <Icon name='check' size={30} color='#22D499' />
+                                                                        <Icon name='picture' size={25} color='black' />
+                                                                </TouchableOpacity>
+                                                        </View>
+                                                </View>
+                                                {
+                                                        this.state.selectImage === null ? null : <FlatList
+                                                                horizontal={true}
+                                                                data={this.state.selectImage}
+                                                                keyExtractor={(item, index) => index.toString()}
+                                                                extraData={this.state}
+                                                                renderItem={(item) => {
+                                                                        return (
+                                                                                <Image
+                                                                                        source={{ uri: item.item.node.image.uri }}
+                                                                                        style={{
+                                                                                                height: 150,
+                                                                                                width: 150,
+                                                                                                margin: 2
+                                                                                        }}
+                                                                                />
+                                                                        );
+                                                                }}
+                                                        />
+                                                }
+                                                <View>
+
+                                                </View>
+                                                <View style={styles.containerButtonRegister}>
+                                                        <TouchableOpacity style={styles.buttonRegister}
+                                                                onPress={() => {
+                                                                        this.setState({
+                                                                                isLoading: true
+                                                                        });
+                                                                        this.onClickButtonRegister();
+                                                                }}
+                                                        >
+                                                                <Text style={styles.textRegister}>Đăng kí</Text>
                                                         </TouchableOpacity>
                                                 </View>
-                                                <FlatList
-                                                        data={this.state.photos}
-                                                        extraData={this.state}
-                                                        keyExtractor={(item, index) => index.toString()}
-                                                        numColumns={3}
-                                                        horizontal={false}
-                                                        renderItem={(item) => {
-                                                                return (
-                                                                        <TouchableOpacity onPress={() => {
-                                                                                this.onSelectImage(item.index);
+                                        </ScrollView>
+                                        <Modal
+                                                animationType="slide"
+                                                transparent={false}
+                                                visible={this.state.modalVisible} >
+                                                <View style={styles.containerModal}>
+                                                        <View style={styles.headerModal}>
+                                                                <TouchableOpacity onPress={() => {
+                                                                        this.setState({
+                                                                                modalVisible: !this.state.modalVisible
+                                                                        });
+                                                                }} >
+                                                                        <Icon name='down' size={30} color='#22D499' />
+                                                                </TouchableOpacity>
+                                                                <Text style={styles.titleHeader}>Image</Text>
+                                                                <TouchableOpacity
+                                                                        onPress={() => {
+                                                                                this.setState({
+                                                                                        modalVisible: !this.state.modalVisible
+                                                                                });
+                                                                                this.onClickCompleteSelectImage();
                                                                         }} >
-                                                                                {
-                                                                                        item.item.node.image.selected ? <View>
-                                                                                                <Image source={{ uri: item.item.node.image.uri }}
+                                                                        <Icon name='check' size={30} color='#22D499' />
+                                                                </TouchableOpacity>
+                                                        </View>
+                                                        <FlatList
+                                                                data={this.state.photos}
+                                                                extraData={this.state}
+                                                                keyExtractor={(item, index) => index.toString()}
+                                                                numColumns={3}
+                                                                horizontal={false}
+                                                                renderItem={(item) => {
+                                                                        return (
+                                                                                <TouchableOpacity onPress={() => {
+                                                                                        this.onSelectImage(item.index);
+                                                                                }} >
+                                                                                        {
+                                                                                                item.item.node.image.selected ? <View>
+                                                                                                        <Image source={{ uri: item.item.node.image.uri }}
+                                                                                                                style={{
+                                                                                                                        height: width / 3,
+                                                                                                                        width: width / 3,
+                                                                                                                        borderWidth: 5,
+                                                                                                                        borderColor: 'white'
+                                                                                                                }} />
+                                                                                                        <Icon name='checkcircle' size={30} color='#22D499' style={{
+                                                                                                                position: 'absolute',
+                                                                                                                right: 0
+                                                                                                        }} />
+                                                                                                </View> : <Image source={{ uri: item.item.node.image.uri }}
                                                                                                         style={{
                                                                                                                 height: width / 3,
                                                                                                                 width: width / 3,
-                                                                                                                borderWidth: 5,
+                                                                                                                borderWidth: 1,
                                                                                                                 borderColor: 'white'
                                                                                                         }} />
-                                                                                                <Icon name='checkcircle' size={30} color='#22D499' style={{
-                                                                                                        position: 'absolute',
-                                                                                                        right: 0
-                                                                                                }} />
-                                                                                        </View> : <Image source={{ uri: item.item.node.image.uri }}
-                                                                                                style={{
-                                                                                                        height: width / 3,
-                                                                                                        width: width / 3,
-                                                                                                        borderWidth: 1,
-                                                                                                        borderColor: 'white'
-                                                                                                }} />
-                                                                                }
-                                                                        </TouchableOpacity>
-                                                                );
-                                                        }}
-                                                />
-                                        </View>
-                                </Modal>
-                                <Modal
-                                        animationType="fade"
-                                        transparent={true}
-                                        visible={this.state.isLoading}
-                                >
-                                        <View style={styles.containerLoading}>
-                                                <ActivityIndicator animating={true} size={80} color="#22D499" />
-                                        </View>
-                                </Modal>
-                        </View>
-                );
+                                                                                        }
+                                                                                </TouchableOpacity>
+                                                                        );
+                                                                }}
+                                                        />
+                                                </View>
+                                        </Modal>
+                                </View>
+                        );
+                }
         }
 }
 

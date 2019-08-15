@@ -1,14 +1,26 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar, FlatList, Image, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { colorMain } from '../../../config';
+import { colorMain, urlServer } from '../../../config';
 export default class ConfirmRestaurant extends Component {
 
         constructor (props) {
                 super(props);
                 this.state = {
-                        data: [1, 5, 5, 5, 5, 5, 5, 5, 5]
+                        listData: [],
+                        isLoading: false,
                 };
+        }
+
+        componentDidMount () {
+                this.props.onFetchListConfirmRestaurant();
+        }
+
+        static getDerivedStateFromProps (props, state) {
+                if (props.listData !== state.listData) {
+                        state.listData = props.listData;
+                }
+                return state.isLoading = props.isLoading;
         }
 
         render () {
@@ -30,27 +42,27 @@ export default class ConfirmRestaurant extends Component {
                                         style={{
                                                 flex: 1
                                         }}
-                                        data={this.state.data}
+                                        data={this.state.listData}
                                         keyExtractor={(item, index) => index.toString()}
                                         extraData={this.state}
-                                        renderItem={() => {
+                                        onRefresh={() => { this.props.onFetchListConfirmRestaurant(); }}
+                                        refreshing={this.state.isLoading}
+                                        renderItem={(item) => {
                                                 return (
                                                         <TouchableOpacity style={styles.buttonItem}>
                                                                 <Image
-                                                                        source={{ uri: 'https://i.pinimg.com/originals/f4/22/36/f422363e23bb12a9b5100b4c22c6b85a.jpg' }}
+                                                                        source={{ uri: `${urlServer}${item.item.imageRestaurant[0]}` }}
                                                                         style={{
                                                                                 height: 120,
                                                                                 width: 120
                                                                         }}
                                                                 />
                                                                 <View style={styles.containerText}>
-                                                                        <Text style={styles.textRestaurant}>Ten Nha Hang</Text>
-                                                                        <Text style={styles.textAddress}>Dia Chi</Text>
-                                                                        <Text style={styles.textStatus}>Trạng thái: Chưa xác nhận</Text>
+                                                                        <Text style={styles.textRestaurant}>{item.item.name}</Text>
+                                                                        <Text style={styles.textAddress}>{item.item.address}</Text>
+                                                                        <Text style={styles.textStatus}>Trạng thái: {item.item.status}</Text>
                                                                         <Text style={styles.textChiTiet}>Chi tiết >></Text>
                                                                 </View>
-
-
                                                         </TouchableOpacity>
                                                 );
                                         }}

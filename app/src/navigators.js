@@ -28,7 +28,7 @@ import AuthLoading from './auth_loading/components';
 import Login from './login/containers';
 import SignUp from './sign_up/containers';
 import RegisterRestaurant from './admin_restaurant/register_restaurant/containers';
-import ConfirmRestaurant from './admin/confirm_restaurant/components';
+import ConfirmRestaurant from './admin/confirm_restaurant/containers';
 
 
 const RouteBottomTabConfig = {
@@ -113,19 +113,19 @@ class DrawerContentAdminRestaurant extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={() => {
-                                                        this.props.navigation.navigate('Auth');
+                                                        this.props.navigation.navigate('RegisterRestaurant');
                                                 }}
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
                                         </TouchableOpacity>
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
-                                                onPress={() => {
+                                                onPress={async () => {
                                                         try {
-                                                                var realm = Realm.open({ schema: [AccountSchema] });
-                                                                var account = realm.objects('Account');
-                                                                realm.write(() => {
-                                                                        realm.delete(account);
+                                                                var realm = await Realm.open({ schema: [AccountSchema] });
+                                                                var account = await realm.objects('Account');
+                                                                await realm.write(async () => {
+                                                                        await realm.delete(account);
                                                                 });
                                                                 realm.close();
                                                                 this.props.navigation.navigate('Auth');
