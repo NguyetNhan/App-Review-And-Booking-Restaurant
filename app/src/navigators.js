@@ -27,7 +27,7 @@ import Follow from './follow/components';
 import AuthLoading from './auth_loading/components';
 import Login from './login/containers';
 import SignUp from './sign_up/containers';
-import RegisterRestaurant from './admin_restaurant/register_restaurant/containers';
+import RegisterRestaurant from './client/register_restaurant/containers';
 import ConfirmRestaurant from './admin/confirm_restaurant/containers';
 
 
@@ -57,6 +57,105 @@ const BottomTabNavigatorConfig = {
 };
 
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
+
+class DrawerContentClient extends Component {
+        constructor (props) {
+                super(props);
+                this.state = {
+                        name: null
+                };
+        }
+        componentDidMount () {
+                this.getNameAccount();
+        }
+        async getNameAccount () {
+                var realm = await Realm.open({ schema: [AccountSchema] });
+                var account = await realm.objects('Account');
+                for (let item of account) {
+                        this.setState({
+                                name: item.name
+                        });
+                }
+                realm.close();
+        }
+        render () {
+                return (
+                        <View style={styleDrawerAdminRestaurant.container}>
+                                <View style={styleDrawerAdminRestaurant.containerImage}>
+                                        <TouchableOpacity onPress={() => {
+                                                this.props.navigation.closeDrawer();
+                                        }}>
+                                                <Icon
+                                                        name='close'
+                                                        size={50}
+                                                        color='white'
+                                                        style={{
+                                                                marginTop: 20
+                                                        }} />
+                                        </TouchableOpacity>
+                                        <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
+                                                style={styleDrawerAdminRestaurant.image}
+                                        />
+                                </View>
+                                <View style={styleDrawerAdminRestaurant.containerName}>
+                                        <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
+                                        <Text style={styleDrawerAdminRestaurant.textAddress}>Nam, Ho Chi Minh</Text>
+                                </View>
+                                <View style={styleDrawerAdminRestaurant.containerAction}>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props.navigation.navigate('RegisterRestaurant');
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                        <TouchableOpacity
+                                                onPress={async () => {
+                                                        try {
+                                                                var realm = await Realm.open({ schema: [AccountSchema] });
+                                                                var account = await realm.objects('Account');
+                                                                await realm.write(async () => {
+                                                                        await realm.delete(account);
+                                                                });
+                                                                realm.close();
+                                                                this.props.navigation.navigate('Auth');
+                                                        } catch (err) {
+                                                                console.log('err: ', err);
+                                                        }
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
+                                        </TouchableOpacity>
+                                        <View style={styleDrawerAdminRestaurant.line} />
+                                </View>
+                        </View>
+                );
+        }
+}
+
+const DrawerNavigatorClient = createDrawerNavigator(
+        {
+                RegisterRestaurant: {
+                        screen: RegisterRestaurant
+                },
+                App: BottomTabNavigator,
+        },
+        {
+                initialRouteName: 'App',
+                hideStatusBar: true,
+                drawerBackgroundColor: 'white',
+                overlayColor: 'rgba(255,255,255,.7)',
+                contentOptions: {
+                        activeTintColor: '#fff',
+                        activeBackgroundColor: '#6b52ae',
+                },
+                contentComponent: DrawerContentClient
+        }
+);
+
+
 
 class DrawerContentAdminRestaurant extends Component {
         constructor (props) {
@@ -109,14 +208,6 @@ class DrawerContentAdminRestaurant extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity>
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Giao dịch</Text>
-                                        </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.props.navigation.navigate('RegisterRestaurant');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
                                         </TouchableOpacity>
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
@@ -201,9 +292,6 @@ const styleDrawerAdminRestaurant = StyleSheet.create({
 
 const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
         {
-                RegisterRestaurant: {
-                        screen: RegisterRestaurant
-                },
                 App: BottomTabNavigator,
         },
         {
@@ -349,6 +437,9 @@ export default AppNavigator = createSwitchNavigator(
                 },
                 Auth: {
                         screen: AuthStack
+                },
+                Client:{
+                        screen:DrawerNavigatorClient
                 }
         },
         {

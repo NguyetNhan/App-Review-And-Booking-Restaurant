@@ -34,9 +34,11 @@ export default class Login extends Component {
                 if (props.authorities !== undefined) {
                         state.authorities = props.authorities;
                         if (props.authorities === 'client') {
-                                props.navigation.navigate('AppAdminRestaurant');
+                                props.navigation.navigate('Client');
                         } else if (props.authorities === 'admin') {
                                 props.navigation.navigate('AppAdmin');
+                        }else if(props.authorities === 'admin-restaurant'){
+                                props.navigation.navigate('AppAdminRestaurant');
                         }
                 }
                 if (props.loading !== state.isLoading) {
