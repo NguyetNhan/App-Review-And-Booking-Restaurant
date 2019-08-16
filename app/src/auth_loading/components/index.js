@@ -49,10 +49,12 @@ export default class AuthLoading extends Component {
                                 });
                                 setTimeout(() => {
                                         if (this.state.account.authorities === 'client') {
-                                                this.props.navigation.navigate('AppAdminRestaurant');
-                                        } else {
+                                                this.props.navigation.navigate('Client');
+                                        } else if (this.state.account.authorities === 'admin') {
                                                 this.props.navigation.navigate('AppAdmin');
-                                        }
+                                        } else if (this.state.account.authorities === 'admin-restaurant') {
+                                                this.props.navigation.navigate('AppAdminRestaurant');
+                                        };
                                 }, 1000);
                         }
                 } catch (error) {
