@@ -2,7 +2,7 @@ import { all } from 'redux-saga/effects';
 import { WatchLogin, WatchAddAccount } from '../login/sagas';
 import { WatchSignup } from '../sign_up/sagas';
 import { WatchRegisterRestaurant } from '../client/register_restaurant/sagas';
-import { WatchFetchListConfirmRestaurantFromAPI } from '../admin/confirm_restaurant/sagas';
+import { WatchFetchListConfirmRestaurantFromAPI, WatchConfirmRestaurantAgreeFromAPI, WatchConfirmRestaurantCancelFromAPI } from '../admin/confirm_restaurant/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -10,6 +10,8 @@ export default function* RootSaga () {
                 WatchAddAccount(),
                 WatchSignup(),
                 WatchRegisterRestaurant(),
-                WatchFetchListConfirmRestaurantFromAPI()
+                WatchFetchListConfirmRestaurantFromAPI(),
+                WatchConfirmRestaurantAgreeFromAPI(),
+                WatchConfirmRestaurantCancelFromAPI()
         ]);
 }

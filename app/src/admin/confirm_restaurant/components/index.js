@@ -16,6 +16,7 @@ export default class ConfirmRestaurant extends Component {
                         addressSelect: '',
                         introduceSelect: '',
                         phoneSelect: '',
+                        refreshing: false
                 };
         }
 
@@ -26,20 +27,39 @@ export default class ConfirmRestaurant extends Component {
         static getDerivedStateFromProps (props, state) {
                 if (props.listData !== state.listData) {
                         state.listData = props.listData;
+                } else if (props.visibleFormConfirm !== state.visibleFormConfirm) {
+                        state.visibleFormConfirm = props.visibleFormConfirm;
                 }
                 return state.isLoading = props.isLoading;
         }
 
         onClickItem (index) {
                 const item = this.state.listData[index];
+                console.log('item: ', item);
                 this.setState({
                         visibleFormConfirm: true,
                         imageRestaurant: item.imageRestaurant,
                         nameSelect: item.name,
                         addressSelect: item.address,
                         introduceSelect: item.introduce,
-                        phoneSelect: item.phone
+                        phoneSelect: item.phone,
+                        itemSelect: item
                 });
+        }
+
+        onClickButtonAgree () {
+                const data = {
+                        idRestaurant: this.state.itemSelect._id,
+                        idAdmin: this.state.itemSelect.idAdmin
+                };
+                this.props.onConfirmAgree(data);
+        }
+
+        onClickButtonCancel () {
+                const data = {
+                        idRestaurant: this.state.itemSelect._id
+                };
+                this.props.onConfirmCancel(data);
         }
 
         render () {
@@ -65,7 +85,7 @@ export default class ConfirmRestaurant extends Component {
                                         keyExtractor={(item, index) => index.toString()}
                                         extraData={this.state}
                                         onRefresh={() => { this.props.onFetchListConfirmRestaurant(); }}
-                                        refreshing={this.state.isLoading}
+                                        refreshing={this.state.refreshing}
                                         renderItem={(item) => {
                                                 return (
                                                         <TouchableOpacity style={styles.buttonItem}
@@ -105,7 +125,8 @@ export default class ConfirmRestaurant extends Component {
                                                                 }} >
                                                                         <Icon name='chevron-down' size={40} color='black' />
                                                                 </TouchableOpacity>
-                                                                <Text style={styles.titleHeader}>Thông tin</Text>
+                                                                <Text style={styles.titleHeader}>{this.state.nameSelect}</Text>
+                                                                <View />
                                                         </View>
                                                         <FlatList
                                                                 data={this.state.imageRestaurant}
@@ -127,24 +148,30 @@ export default class ConfirmRestaurant extends Component {
                                                                 }}
                                                         />
                                                         <View style={styles.containerFormTextConfirm}>
-                                                                <Text style={styles.textRestaurantFormConfirm}>{this.state.nameSelect}</Text>
+                                                                {/*   <Text style={styles.textRestaurantFormConfirm}>{this.state.nameSelect}</Text> */}
                                                                 <Text style={styles.textTitleFormConfirm}>Giới Thiệu</Text>
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.introduceSelect}</Text>
                                                                 <Text style={styles.textTitleFormConfirm}>Địa Chỉ</Text>
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.addressSelect}</Text>
                                                                 <Text style={styles.textTitleFormConfirm}>Số Điện Thoại</Text>
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.phoneSelect}</Text>
-                                                                <TouchableOpacity style={styles.buttonAgree}>
+                                                                <TouchableOpacity style={styles.buttonAgree}
+                                                                        onPress={() => {
+                                                                                this.onClickButtonAgree();
+                                                                        }}
+                                                                >
                                                                         <Text style={styles.textButtonAgree}>Đồng ý</Text>
                                                                 </TouchableOpacity>
-                                                                <TouchableOpacity style={styles.buttonCancel}>
+                                                                <TouchableOpacity style={styles.buttonCancel}
+                                                                        onPress={() => {
+                                                                                this.onClickButtonCancel();
+                                                                        }}
+                                                                >
                                                                         <Text style={styles.textButtonCancel}>Hủy</Text>
                                                                 </TouchableOpacity>
                                                         </View>
-
                                                 </View>
                                         </ScrollView>
-
                                 </Modal>
                         </View>
                 );
@@ -203,13 +230,13 @@ const styles = StyleSheet.create({
                 height: 60,
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingHorizontal: 10
+                paddingHorizontal: 10,
+                justifyContent: 'space-between'
         },
         titleHeader: {
-                fontFamily: 'UVN-Baisau-Regular',
+                fontFamily: 'UVN-Baisau-Bold',
                 color: 'black',
                 fontSize: 30,
-                marginLeft: 10
         },
         containerFormTextConfirm: {
                 alignItems: 'center',
