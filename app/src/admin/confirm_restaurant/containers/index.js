@@ -35,6 +35,7 @@ const mapStateToProps = (state) => {
                 if (confirmRestaurantAgree.data.error) {
                         ToastAndroid.show(confirmRestaurantAgree.data.message, ToastAndroid.LONG);
                         return {
+                                visibleFormConfirm: false,
                         };
                 } else {
                         ToastAndroid.show(confirmRestaurantAgree.data.message, ToastAndroid.LONG);
@@ -46,10 +47,12 @@ const mapStateToProps = (state) => {
                 if (confirmRestaurantCancel.data.error) {
                         ToastAndroid.show(confirmRestaurantCancel.data.message, ToastAndroid.LONG);
                         return {
+                                visibleFormConfirm: false,
                         };
                 } else {
                         ToastAndroid.show(confirmRestaurantCancel.data.message, ToastAndroid.LONG);
                         return {
+                                visibleFormConfirm: false,
                         };
                 }
         }

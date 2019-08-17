@@ -27,7 +27,8 @@ export default class ConfirmRestaurant extends Component {
         static getDerivedStateFromProps (props, state) {
                 if (props.listData !== state.listData) {
                         state.listData = props.listData;
-                } else if (props.visibleFormConfirm !== state.visibleFormConfirm) {
+                }  
+                if (props.visibleFormConfirm !== state.visibleFormConfirm) {
                         state.visibleFormConfirm = props.visibleFormConfirm;
                 }
                 return state.isLoading = props.isLoading;
@@ -75,7 +76,7 @@ export default class ConfirmRestaurant extends Component {
                                         }}>
                                                 <Icon name='arrow-left' size={25} color='black' />
                                         </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Confirm</Text>
+                                        <Text style={styles.textHeader}>Xacs Thuwc</Text>
                                 </View>
                                 <FlatList
                                         style={{
