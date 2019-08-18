@@ -28,7 +28,7 @@ export default class ConfirmRestaurant extends Component {
                 if (props.listData !== state.listData) {
                         state.listData = props.listData;
                 }  
-                if (props.visibleFormConfirm !== state.visibleFormConfirm) {
+                if (props.visibleFormConfirm !== undefined) {
                         state.visibleFormConfirm = props.visibleFormConfirm;
                 }
                 return state.isLoading = props.isLoading;

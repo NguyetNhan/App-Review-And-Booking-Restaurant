@@ -4,18 +4,21 @@ const AccountSchema = {
         name: 'Account',
         primaryKey: 'id',
         properties: {
+                id: 'string',
                 authorities: 'string',
                 email: 'string',
+                password:'string',
                 name: 'string',
                 phone: 'int',
-                id: 'string'
         }
 };
 
 AddAccountIntoLocal = async (data) => {
+        console.log('data: ', data);
         try {
                 const realm = await Realm.open({ schema: [AccountSchema] });
                 var account = await realm.objects('Account');
+                console.log('account: ', account);
                 var filter = account.filtered(`id like '${data._id}'`);
                 if (filter.length === 0) {
                         await realm.write(() => {
@@ -24,7 +27,8 @@ AddAccountIntoLocal = async (data) => {
                                         email: data.email,
                                         name: data.name,
                                         phone: data.phone,
-                                        id: data._id
+                                        id: data._id,
+                                        password:data.password,
                                 });
                         });
                         realm.close();

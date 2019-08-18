@@ -3,17 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, 
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Validate from 'validate.js';
 
-const AccountSchema = {
-        name: 'Account',
-        primaryKey: 'id',
-        properties: {
-                authorities: 'string',
-                email: 'string',
-                name: 'string',
-                phone: 'int',
-                id: 'string'
-        }
-};
 export default class Login extends Component {
         constructor (props) {
                 super(props);

@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import Realm from 'realm';
-
+import urlServer from '../../config';
+const urlLogin = `${urlServer}/auth/login`;
 const AccountSchema = {
         name: 'Account',
         primaryKey: 'id',
         properties: {
+                id: 'string',
                 authorities: 'string',
                 email: 'string',
+                password:'string',
                 name: 'string',
                 phone: 'int',
-                id: 'string'
         }
 };
 export default class AuthLoading extends Component {
@@ -35,14 +37,21 @@ export default class AuthLoading extends Component {
                                 realm.close();
                                 this.props.navigation.navigate('Auth');
                         } else {
-                                var data = {
+                                let data = {
+                                        
                                         authorities: null,
                                         name: null,
+                                        email: null,
+                                        password: null,
                                 };
                                 for (let item of account) {
                                         data.name = item.name;
                                         data.authorities = item.authorities;
+                                        data.email = item.email;
+                                        data.password = item.password;
                                 }
+
+                                console.log('data: ', data);
                                 realm.close();
                                 this.setState({
                                         account: data
@@ -54,7 +63,7 @@ export default class AuthLoading extends Component {
                                                 this.props.navigation.navigate('AppAdmin');
                                         } else if (this.state.account.authorities === 'admin-restaurant') {
                                                 this.props.navigation.navigate('AppAdminRestaurant');
-                                        };
+                                        }
                                 }, 1000);
                         }
                 } catch (error) {
