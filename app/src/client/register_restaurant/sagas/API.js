@@ -13,6 +13,7 @@ RegisterRestaurant = async (data, idAccount) => {
                 formData.append('address', data.address);
                 formData.append('phone', data.phone);
                 formData.append('idAdmin', idAccount);
+                formData.append('type', data.type);
                 const response = await fetch(urlRegisterRestaurant, {
                         method: 'POST',
                         headers: {

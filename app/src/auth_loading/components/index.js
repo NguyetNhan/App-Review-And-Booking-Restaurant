@@ -1,20 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import Realm from 'realm';
+import { AccountModel } from '../../models/account';
 import urlServer from '../../config';
 const urlLogin = `${urlServer}/auth/login`;
-const AccountSchema = {
-        name: 'Account',
-        primaryKey: 'id',
-        properties: {
-                id: 'string',
-                authorities: 'string',
-                email: 'string',
-                password:'string',
-                name: 'string',
-                phone: 'int',
-        }
-};
+
 export default class AuthLoading extends Component {
 
         constructor (props) {
@@ -31,14 +21,13 @@ export default class AuthLoading extends Component {
 
         async getAccount () {
                 try {
-                        var realm = await Realm.open({ schema: [AccountSchema] });
-                        var account = await realm.objects('Account');
+                        var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                        var account = await realm.objects(AccountModel.Account);
                         if (account.length === 0) {
                                 realm.close();
                                 this.props.navigation.navigate('Auth');
                         } else {
                                 let data = {
-                                        
                                         authorities: null,
                                         name: null,
                                         email: null,
@@ -50,8 +39,6 @@ export default class AuthLoading extends Component {
                                         data.email = item.email;
                                         data.password = item.password;
                                 }
-
-                                console.log('data: ', data);
                                 realm.close();
                                 this.setState({
                                         account: data

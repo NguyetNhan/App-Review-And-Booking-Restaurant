@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, PermissionsAndroid, Image, Modal, FlatList, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
+import { Picker, View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, PermissionsAndroid, Image, Modal, FlatList, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { colorMain } from '../../../config';
@@ -18,6 +18,7 @@ export default class RegisterRestaurant extends Component {
                         textQuan: 'Thủ Đức',
                         address: '147/15 Lý Tế Xuyên',
                         introduce: 'Có nhiều gái đẹp',
+                        type: 'restaurant',
                         isLoading: false,
                 };
                 this.requestCameraPermission();
@@ -101,7 +102,8 @@ export default class RegisterRestaurant extends Component {
                         introduce: this.state.introduce,
                         address: `${this.state.address}, ${this.state.textQuan}, ${this.state.textTinh}`,
                         image: image,
-                        phone: this.state.phone
+                        phone: this.state.phone,
+                        type: this.state.type
                 };
                 this.props.onRegisterRestaurant(data);
         }
@@ -159,6 +161,21 @@ export default class RegisterRestaurant extends Component {
                                                                 }}
                                                                 value={this.state.introduce}
                                                         />
+                                                        <Text style={styles.textHint}>Loại nhà hàng</Text>
+                                                        <Picker
+                                                                selectedValue={this.state.type}
+                                                                style={{
+                                                                        height: 50,
+                                                                        fontFamily: 'OpenSans-Regular',
+                                                                        width: 300
+                                                                }}
+                                                                onValueChange={(itemValue, itemIndex) =>
+                                                                        this.setState({ type: itemValue })
+                                                                }>
+                                                                <Picker.Item label="Nhà hàng" value="restaurant" />
+                                                                <Picker.Item label="Coffee" value="coffee" />
+                                                                <Picker.Item label="Bar" value="bar" />
+                                                        </Picker>
                                                         <Text style={styles.textHint}>Số điện thoại</Text>
                                                         <TextInput style={styles.textInput}
                                                                 keyboardType='number-pad'
@@ -407,7 +424,7 @@ const styles = StyleSheet.create({
                 flexDirection: 'row',
                 backgroundColor: 'white',
                 alignItems: 'center',
-                paddingHorizontal: 5
+                paddingHorizontal: 10
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',

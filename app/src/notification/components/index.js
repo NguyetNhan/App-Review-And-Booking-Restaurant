@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
                 justifyContent: 'space-between',
                 backgroundColor: 'white',
                 alignItems: 'center',
-                paddingHorizontal: 5
+                paddingHorizontal: 10
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',

@@ -10,16 +10,17 @@ const AccountSchema = {
         name: 'Account',
         primaryKey: 'id',
         properties: {
+                id: 'string',
                 authorities: 'string',
                 email: 'string',
+                password: 'string',
                 name: 'string',
                 phone: 'int',
-                id: 'string'
         }
 };
 
 
-import Home from './home/components';
+import Home from './home/containers';
 import Search from './search/components';
 import Map from './map/components';
 import Notification from './notification/components';
@@ -277,7 +278,6 @@ const styleDrawerAdminRestaurant = StyleSheet.create({
                 alignItems: 'center'
         },
         textAction: {
-                fontSize: 20,
                 color: 'black',
                 fontFamily: 'UVN-Baisau-Bold',
                 margin: 15
@@ -438,8 +438,8 @@ export default AppNavigator = createSwitchNavigator(
                 Auth: {
                         screen: AuthStack
                 },
-                Client:{
-                        screen:DrawerNavigatorClient
+                Client: {
+                        screen: DrawerNavigatorClient
                 }
         },
         {

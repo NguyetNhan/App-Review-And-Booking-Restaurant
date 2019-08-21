@@ -12,7 +12,7 @@ const mapStateToProps = (state) => {
                                 loading: false
                         };
                 } else {
-                        ToastAndroid.show(resultsRegister.data.message, ToastAndroid.LONG);
+                        alert(resultsRegister.data.message);
                         return {
                                 loading: false
                         };

@@ -16,7 +16,8 @@ export default class ConfirmRestaurant extends Component {
                         addressSelect: '',
                         introduceSelect: '',
                         phoneSelect: '',
-                        refreshing: false
+                        refreshing: false,
+                        type: ''
                 };
         }
 
@@ -27,7 +28,7 @@ export default class ConfirmRestaurant extends Component {
         static getDerivedStateFromProps (props, state) {
                 if (props.listData !== state.listData) {
                         state.listData = props.listData;
-                }  
+                }
                 if (props.visibleFormConfirm !== undefined) {
                         state.visibleFormConfirm = props.visibleFormConfirm;
                 }
@@ -44,7 +45,8 @@ export default class ConfirmRestaurant extends Component {
                         addressSelect: item.address,
                         introduceSelect: item.introduce,
                         phoneSelect: item.phone,
-                        itemSelect: item
+                        itemSelect: item,
+                        type: item.type,
                 });
         }
 
@@ -76,7 +78,7 @@ export default class ConfirmRestaurant extends Component {
                                         }}>
                                                 <Icon name='arrow-left' size={25} color='black' />
                                         </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Xacs Thuwc</Text>
+                                        <Text style={styles.textHeader}>Xác Nhận</Text>
                                 </View>
                                 <FlatList
                                         style={{
@@ -150,12 +152,14 @@ export default class ConfirmRestaurant extends Component {
                                                         />
                                                         <View style={styles.containerFormTextConfirm}>
                                                                 {/*   <Text style={styles.textRestaurantFormConfirm}>{this.state.nameSelect}</Text> */}
-                                                                <Text style={styles.textTitleFormConfirm}>Giới Thiệu</Text>
+                                                                <Text style={styles.textTitleFormConfirm}>Mô tả</Text>
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.introduceSelect}</Text>
                                                                 <Text style={styles.textTitleFormConfirm}>Địa Chỉ</Text>
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.addressSelect}</Text>
                                                                 <Text style={styles.textTitleFormConfirm}>Số Điện Thoại</Text>
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.phoneSelect}</Text>
+                                                                <Text style={styles.textTitleFormConfirm}>Loại nhà hàng</Text>
+                                                                <Text style={styles.textInfoFormConfirm}>{this.state.type}</Text>
                                                                 <TouchableOpacity style={styles.buttonAgree}
                                                                         onPress={() => {
                                                                                 this.onClickButtonAgree();
