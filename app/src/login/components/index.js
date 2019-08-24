@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, 
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Validate from 'validate.js';
 
+//FIXME: chưa fix lỗi hủy màn hình login sau khi đăng nhập
 export default class Login extends Component {
         constructor (props) {
                 super(props);
@@ -26,7 +27,7 @@ export default class Login extends Component {
                                 props.navigation.navigate('Client');
                         } else if (props.authorities === 'admin') {
                                 props.navigation.navigate('AppAdmin');
-                        }else if(props.authorities === 'admin-restaurant'){
+                        } else if (props.authorities === 'admin-restaurant') {
                                 props.navigation.navigate('AppAdminRestaurant');
                         }
                 }

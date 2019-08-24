@@ -6,7 +6,11 @@ import { API } from './API';
 function* FetchListRestaurantFromAPI (action) {
         try {
                 const results = yield API.fetchListRestaurantFormAPI(action.data);
-                yield put(onFetchListRestaurantSucceeded(results));
+                if (results.error) {
+                        yield put(onFetchListRestaurantFailed(results.message));
+                } else {
+                        yield put(onFetchListRestaurantSucceeded(results));
+                }
         } catch (error) {
                 console.log('error: ', error);
                 yield put(onFetchListRestaurantFailed(error.message));

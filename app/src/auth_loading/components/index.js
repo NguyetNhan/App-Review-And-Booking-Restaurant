@@ -51,7 +51,7 @@ export default class AuthLoading extends Component {
                                         } else if (this.state.account.authorities === 'admin-restaurant') {
                                                 this.props.navigation.navigate('AppAdminRestaurant');
                                         }
-                                }, 1000);
+                                }, 500);
                         }
                 } catch (error) {
                         console.log('error: ', error);

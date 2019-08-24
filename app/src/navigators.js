@@ -1,24 +1,12 @@
-import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
+import { colorMain } from './config';
 
 import Realm from 'realm';
-
-const AccountSchema = {
-        name: 'Account',
-        primaryKey: 'id',
-        properties: {
-                id: 'string',
-                authorities: 'string',
-                email: 'string',
-                password: 'string',
-                name: 'string',
-                phone: 'int',
-        }
-};
-
+import { AccountModel } from './models/account';
 
 import Home from './home/containers';
 import Search from './search/components';
@@ -30,6 +18,9 @@ import Login from './login/containers';
 import SignUp from './sign_up/containers';
 import RegisterRestaurant from './client/register_restaurant/containers';
 import ConfirmRestaurant from './admin/confirm_restaurant/containers';
+import Overview from './detail_restaurant/overview/components';
+import Menu from './detail_restaurant/menu/components';
+import Review from './detail_restaurant/review/components';
 
 
 const RouteBottomTabConfig = {
@@ -52,12 +43,40 @@ const RouteBottomTabConfig = {
 
 const BottomTabNavigatorConfig = {
         initialRouteName: 'Home',
-        activeColor: '#3faf28',
+        activeColor: colorMain,
         inactiveColor: 'gray',
         barStyle: { backgroundColor: 'white' },
 };
 
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
+
+const DetailRestaurant = createMaterialTopTabNavigator(
+        {
+                Overview: {
+                        screen: Overview
+                },
+                Menu: {
+                        screen: Menu
+                },
+                Review: {
+                        screen: Review
+                }
+        }, {
+                initialRouteName: 'Overview',
+                tabBarOptions: {
+                        inactiveTintColor: 'gray',
+                        activeTintColor: colorMain,
+                        labelStyle: {
+                                fontFamily: 'OpenSans-Bold',
+                                textTransform: 'capitalize'
+                        },
+                        style: {
+                                backgroundColor: 'white'
+                        },
+                },
+                tabBarPosition: 'bottom',
+        }
+);
 
 class DrawerContentClient extends Component {
         constructor (props) {
@@ -70,8 +89,8 @@ class DrawerContentClient extends Component {
                 this.getNameAccount();
         }
         async getNameAccount () {
-                var realm = await Realm.open({ schema: [AccountSchema] });
-                var account = await realm.objects('Account');
+                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                var account = await realm.objects(AccountModel.Account);
                 for (let item of account) {
                         this.setState({
                                 name: item.name
@@ -115,8 +134,8 @@ class DrawerContentClient extends Component {
                                         <TouchableOpacity
                                                 onPress={async () => {
                                                         try {
-                                                                var realm = await Realm.open({ schema: [AccountSchema] });
-                                                                var account = await realm.objects('Account');
+                                                                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                                                                var account = await realm.objects(AccountModel.Account);
                                                                 await realm.write(async () => {
                                                                         await realm.delete(account);
                                                                 });
@@ -139,7 +158,7 @@ class DrawerContentClient extends Component {
 const DrawerNavigatorClient = createDrawerNavigator(
         {
                 RegisterRestaurant: {
-                        screen: RegisterRestaurant
+                        screen: RegisterRestaurant,
                 },
                 App: BottomTabNavigator,
         },
@@ -156,6 +175,24 @@ const DrawerNavigatorClient = createDrawerNavigator(
         }
 );
 
+const MainNavigatorClient = createStackNavigator(
+        {
+                DrawerNavigatorClient: {
+                        screen: DrawerNavigatorClient,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                DetailRestaurant: {
+                        screen: DetailRestaurant,
+                        navigationOptions: {
+                                header: null,
+                        },
+                }
+        }, {
+                initialRouteName: 'DrawerNavigatorClient'
+        }
+);
 
 
 class DrawerContentAdminRestaurant extends Component {
@@ -169,8 +206,8 @@ class DrawerContentAdminRestaurant extends Component {
                 this.getNameAccount();
         }
         async getNameAccount () {
-                var realm = await Realm.open({ schema: [AccountSchema] });
-                var account = await realm.objects('Account');
+                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                var account = await realm.objects(AccountModel.Account);
                 for (let item of account) {
                         this.setState({
                                 name: item.name
@@ -214,8 +251,8 @@ class DrawerContentAdminRestaurant extends Component {
                                         <TouchableOpacity
                                                 onPress={async () => {
                                                         try {
-                                                                var realm = await Realm.open({ schema: [AccountSchema] });
-                                                                var account = await realm.objects('Account');
+                                                                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                                                                var account = await realm.objects(AccountModel.Account);
                                                                 await realm.write(async () => {
                                                                         await realm.delete(account);
                                                                 });
@@ -235,61 +272,6 @@ class DrawerContentAdminRestaurant extends Component {
         }
 }
 
-const styleDrawerAdminRestaurant = StyleSheet.create({
-        container: {
-                flex: 1,
-                elevation: 10,
-        },
-        containerImage: {
-                width: '100%',
-                height: 200,
-                alignItems: 'center',
-                backgroundColor: '#22D499',
-                borderBottomLeftRadius: 115,
-                borderBottomRightRadius: 115,
-                justifyContent: 'space-between',
-                paddingBottom: 10,
-                marginBottom: 10
-        },
-        image: {
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                borderWidth: 1,
-                borderColor: 'white'
-        },
-        containerName: {
-                width: '100%',
-                alignItems: 'center'
-        },
-        textName: {
-                fontSize: 20,
-                color: 'black',
-                fontFamily: 'UVN-Baisau-Bold'
-        },
-        textAddress: {
-                fontSize: 15,
-                color: 'gray',
-                fontFamily: 'OpenSans-Regulars'
-        },
-        containerAction: {
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center'
-        },
-        textAction: {
-                color: 'black',
-                fontFamily: 'UVN-Baisau-Bold',
-                margin: 15
-        },
-        line: {
-                backgroundColor: 'rgba(0,0,0,0.3)',
-                height: 1,
-                width: 200
-        }
-});
-
-
 const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
         {
                 App: BottomTabNavigator,
@@ -304,6 +286,25 @@ const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
                         activeBackgroundColor: '#6b52ae',
                 },
                 contentComponent: DrawerContentAdminRestaurant
+        }
+);
+
+const MainNavigatorAdminRestaurant = createStackNavigator(
+        {
+                DrawerNavigatorAdminRestaurant: {
+                        screen: DrawerNavigatorAdminRestaurant,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                DetailRestaurant: {
+                        screen: DetailRestaurant,
+                        navigationOptions: {
+                                header: null,
+                        },
+                }
+        }, {
+                initialRouteName: 'DrawerNavigatorAdminRestaurant'
         }
 );
 
@@ -363,8 +364,8 @@ class DrawerContentAdmin extends Component {
                                         <TouchableOpacity
                                                 onPress={async () => {
                                                         try {
-                                                                const realm = await Realm.open({ schema: [AccountSchema] });
-                                                                const account = await realm.objects('Account');
+                                                                const realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                                                                const account = await realm.objects(AccountModel.Account);
                                                                 await realm.write(async () => {
                                                                         await realm.delete(account);
                                                                 });
@@ -404,6 +405,79 @@ const DrawerNavigatorAdmin = createDrawerNavigator(
         }
 );
 
+const MainNavigatorAdmin = createStackNavigator(
+        {
+                DrawerNavigatorAdmin: {
+                        screen: DrawerNavigatorAdmin,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                DetailRestaurant: {
+                        screen: DetailRestaurant,
+                        navigationOptions: {
+                                header: null,
+                        },
+                }
+        }, {
+                initialRouteName: 'DrawerNavigatorAdmin'
+        }
+);
+
+const styleDrawerAdminRestaurant = StyleSheet.create({
+        container: {
+                flex: 1,
+                elevation: 10,
+        },
+        containerImage: {
+                width: '100%',
+                height: 200,
+                alignItems: 'center',
+                backgroundColor: '#22D499',
+                borderBottomLeftRadius: 115,
+                borderBottomRightRadius: 115,
+                justifyContent: 'space-between',
+                paddingBottom: 10,
+                marginBottom: 10
+        },
+        image: {
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                borderWidth: 1,
+                borderColor: 'white'
+        },
+        containerName: {
+                width: '100%',
+                alignItems: 'center'
+        },
+        textName: {
+                fontSize: 20,
+                color: 'black',
+                fontFamily: 'UVN-Baisau-Bold'
+        },
+        textAddress: {
+                fontSize: 15,
+                color: 'gray',
+                fontFamily: 'OpenSans-Regulars'
+        },
+        containerAction: {
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+        },
+        textAction: {
+                color: 'black',
+                fontFamily: 'UVN-Baisau-Bold',
+                margin: 15
+        },
+        line: {
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                height: 1,
+                width: 200
+        }
+});
+
 const AuthStack = createStackNavigator(
         {
                 Login: {
@@ -430,16 +504,16 @@ export default AppNavigator = createSwitchNavigator(
                         screen: AuthLoading
                 },
                 AppAdminRestaurant: {
-                        screen: DrawerNavigatorAdminRestaurant
+                        screen: MainNavigatorAdminRestaurant
                 },
                 AppAdmin: {
-                        screen: DrawerNavigatorAdmin
+                        screen: MainNavigatorAdmin
                 },
                 Auth: {
                         screen: AuthStack
                 },
                 Client: {
-                        screen: DrawerNavigatorClient
+                        screen: MainNavigatorClient
                 }
         },
         {

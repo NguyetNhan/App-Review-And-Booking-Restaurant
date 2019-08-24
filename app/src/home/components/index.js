@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, ScrollView, FlatList, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer } from '../../config';
+
 export default class Home extends Component {
         static navigationOptions = ({ navigation }) => {
                 return {
@@ -13,16 +14,19 @@ export default class Home extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        listRestaurant: [0],
+                        listRestaurant: ["options restaurant"],
                         refreshing: false,
                         page: 1,
-                        total_page: null
+                        total_page: null,
+                        isUpdateState: true,
+                        typeRestaurant: null,
+                        isLoadMore: true
                 }
         }
 
         componentDidMount () {
                 const data = {
-                        type: null,
+                        type: this.state.typeRestaurant,
                         page: 1
                 }
                 this.props.onFetchListRestaurant(data);
@@ -30,12 +34,20 @@ export default class Home extends Component {
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.listRestaurant !== prevState.listRestaurant && nextProps.listRestaurant !== undefined) {
-                        const array = (prevState.listRestaurant).concat(nextProps.listRestaurant);
-                        prevState.listRestaurant = array;
-                        console.log('prevState.listRestaurant: ', prevState.listRestaurant);
+                        if (prevState.isUpdateState) {
+                                const array = (prevState.listRestaurant).concat(nextProps.listRestaurant);
+                                prevState.listRestaurant = array;
+                        } else {
+                                prevState.isUpdateState = true;
+                                prevState.isLoadMore = true;
+                        }
                 }
                 if (nextProps.page !== prevState.page) {
-                        prevState.page = nextProps.page
+                        if (prevState.isUpdateState) {
+                                prevState.page = nextProps.page
+                        } else {
+                                prevState.isUpdateState = true;
+                        }
                 }
                 if (nextProps.total_page !== prevState.total_page) {
                         prevState.total_page = nextProps.total_page
@@ -47,15 +59,54 @@ export default class Home extends Component {
         }
 
         _onRefresh () {
-                console.log('_onRefresh: ');
                 this.setState({
-                        listRestaurant: ["dgsdfd"]
+                        listRestaurant: ["options restaurant"],
+                        isUpdateState: false
                 })
                 const data = {
-                        type: null,
+                        type: this.state.typeRestaurant,
                         page: 1
                 }
                 this.props.onFetchListRestaurant(data);
+        }
+
+        _onLoadMoreRestaurant () {
+                const isLoadMore = this.state.isLoadMore;
+                if (isLoadMore) {
+                        var page = this.state.page;
+                        const total_page = this.state.total_page;
+                        const pageNew = page + 1;
+                        if (pageNew > total_page) {
+                                ToastAndroid.show('Không còn dữ liệu !', ToastAndroid.SHORT);
+                        } else {
+                                const data = {
+                                        type: this.state.typeRestaurant,
+                                        page: pageNew
+                                };
+                                this.props.onFetchListRestaurant(data);
+                        }
+                }
+        }
+
+        _onClickButtonIconTypeRestaurant (type) {
+                this.setState({
+                        typeRestaurant: type,
+                        listRestaurant: ["options restaurant"],
+                        isUpdateState: false,
+                        page: 1,
+                        isLoadMore: false
+                });
+                const data = {
+                        type: type,
+                        page: 1
+                }
+                this.props.onFetchListRestaurant(data);
+        }
+
+        _onClickItemFlatList (item) {
+                this.props.navigation.navigate('DetailRestaurant', {
+                        restaurant: item
+                });
         }
 
 
@@ -91,6 +142,11 @@ export default class Home extends Component {
                                                 onRefresh={() => {
                                                         this._onRefresh();
                                                 }}
+                                                // on load more
+                                                onEndReached={() => {
+                                                        this._onLoadMoreRestaurant();
+                                                }}
+                                                onEndReachedThreshold={1}
                                                 renderItem={(item) => {
                                                         if (item.index === 0) {
                                                                 return (
@@ -101,7 +157,11 @@ export default class Home extends Component {
                                                                                         height: (width - 60) / 3,
                                                                                         alignItems: 'center',
                                                                                         justifyContent: 'center'
-                                                                                }}>
+                                                                                }}
+                                                                                        onPress={() => {
+                                                                                                this._onClickButtonIconTypeRestaurant('restaurant');
+                                                                                        }}
+                                                                                >
                                                                                         <Image
                                                                                                 source={require('../../assets/images/icon_restaurant.png')}
                                                                                                 style={styles.imageIconSelectType}
@@ -115,7 +175,11 @@ export default class Home extends Component {
                                                                                         alignItems: 'center',
                                                                                         justifyContent: 'center',
                                                                                         marginHorizontal: 10
-                                                                                }}>
+                                                                                }}
+                                                                                        onPress={() => {
+                                                                                                this._onClickButtonIconTypeRestaurant('coffee');
+                                                                                        }}
+                                                                                >
                                                                                         <Image
                                                                                                 source={require('../../assets/images/icon_coffee.png')}
                                                                                                 style={styles.imageIconSelectType}
@@ -128,7 +192,11 @@ export default class Home extends Component {
                                                                                         height: (width - 60) / 3,
                                                                                         alignItems: 'center',
                                                                                         justifyContent: 'center'
-                                                                                }}>
+                                                                                }}
+                                                                                        onPress={() => {
+                                                                                                this._onClickButtonIconTypeRestaurant('bar');
+                                                                                        }}
+                                                                                >
                                                                                         <Image
                                                                                                 source={require('../../assets/images/icon_bar.png')}
                                                                                                 style={styles.imageIconSelectType}
@@ -139,55 +207,61 @@ export default class Home extends Component {
                                                                 );
                                                         } else {
                                                                 return (
-                                                                        <View style={{
-                                                                                width: '100%',
-                                                                                height: width - 40,
-                                                                                marginVertical: 15,
-                                                                                backgroundColor: 'white'
-                                                                        }}>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => {
+                                                                                        this._onClickItemFlatList(item.item);
+                                                                                }}
+                                                                        >
                                                                                 <View style={{
-                                                                                        flex: 2
-                                                                                }}>
-                                                                                        <Image
-                                                                                                source={{ uri: `${urlServer}${item.item.imageRestaurant[0]}` }}
-                                                                                                style={{
-                                                                                                        flex: 1
-                                                                                                }}
-                                                                                        />
-                                                                                        <View style={styles.containerTextDanhGia}>
-                                                                                                <Text style={{
-                                                                                                        color: 'white',
-                                                                                                        fontFamily: 'UVN-Baisau-Bold',
-                                                                                                        fontSize: 18
-                                                                                                }}>9,2</Text>
-                                                                                        </View>
-                                                                                </View>
-                                                                                <View style={styles.containerContentTitleItemList}>
-                                                                                        <View>
-                                                                                                <Text style={styles.textTitleRestaurantItemList}
-                                                                                                        numberOfLines={1}
-                                                                                                >{item.item.name}</Text>
-                                                                                                <Text style={styles.textTypeRestaurantItemList}>{item.item.type}</Text>
-                                                                                        </View>
+                                                                                        width: '100%',
+                                                                                        height: width - 40,
+                                                                                        marginVertical: 15,
+                                                                                        backgroundColor: 'white'
+                                                                                }}   >
                                                                                         <View style={{
-                                                                                                flexDirection: 'row',
-                                                                                                alignItems: 'center',
+                                                                                                flex: 2
                                                                                         }}>
-                                                                                                <Text style={styles.textStatusItemList}>đang mở cửa</Text>
+                                                                                                <Image
+                                                                                                        source={{ uri: `${urlServer}${item.item.imageRestaurant[0]}` }}
+                                                                                                        style={{
+                                                                                                                flex: 1
+                                                                                                        }}
+                                                                                                />
+                                                                                                <View style={styles.containerTextDanhGia}>
+                                                                                                        <Text style={{
+                                                                                                                color: 'white',
+                                                                                                                fontFamily: 'UVN-Baisau-Bold',
+                                                                                                                fontSize: 18
+                                                                                                        }}>9,2</Text>
+                                                                                                </View>
+                                                                                        </View>
+                                                                                        <View style={styles.containerContentTitleItemList}>
+                                                                                                <View>
+                                                                                                        <Text style={styles.textTitleRestaurantItemList}
+                                                                                                                numberOfLines={1}
+                                                                                                        >{item.item.name}</Text>
+                                                                                                        <Text style={styles.textTypeRestaurantItemList}>{item.item.type}</Text>
+                                                                                                </View>
                                                                                                 <View style={{
-                                                                                                        width: 4,
-                                                                                                        height: 4,
-                                                                                                        backgroundColor: 'black',
-                                                                                                        borderRadius: 2,
-                                                                                                        marginHorizontal: 10
-                                                                                                }} />
-                                                                                                <Text style={styles.textAddressItemList}
-                                                                                                        numberOfLines={1}
-                                                                                                        ellipsizeMode='tail'
-                                                                                                >{item.item.address}</Text>
+                                                                                                        flexDirection: 'row',
+                                                                                                        alignItems: 'center',
+                                                                                                }}>
+                                                                                                        <Text style={styles.textStatusItemList}>đang mở cửa</Text>
+                                                                                                        <View style={{
+                                                                                                                width: 4,
+                                                                                                                height: 4,
+                                                                                                                backgroundColor: 'black',
+                                                                                                                borderRadius: 2,
+                                                                                                                marginHorizontal: 10
+                                                                                                        }} />
+                                                                                                        <Text style={styles.textAddressItemList}
+                                                                                                                numberOfLines={1}
+                                                                                                                ellipsizeMode='tail'
+                                                                                                        >{item.item.address}</Text>
+                                                                                                </View>
                                                                                         </View>
                                                                                 </View>
-                                                                        </View>
+                                                                        </TouchableOpacity>
                                                                 );
                                                         }
 

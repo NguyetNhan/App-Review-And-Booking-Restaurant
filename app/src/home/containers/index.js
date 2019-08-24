@@ -14,7 +14,7 @@ const mapStateToProps = (state) => {
                         total_page: fetchListRestaurantSucceeded.data.total_page
                 };
         } else if (fetchListRestaurantFailed !== undefined) {
-                alert(fetchListRestaurantFailed.messages);
+                ToastAndroid.show(fetchListRestaurantFailed.messages, ToastAndroid.SHORT);
                 return {
                         isLoading: false
                 };

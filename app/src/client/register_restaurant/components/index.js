@@ -4,6 +4,8 @@ import CameraRoll from '@react-native-community/cameraroll';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { colorMain } from '../../../config';
 
+//FIXME: không hiện loading khi nhấn nút đăng kí
+
 export default class RegisterRestaurant extends Component {
 
         constructor (props) {
@@ -410,7 +412,7 @@ const styles = StyleSheet.create({
                 marginVertical: 10
         },
         containerForm: {
-                alignItems: 'center'
+                alignItems: 'center',
         },
         containerLoading: {
                 flex: 1,
@@ -424,7 +426,7 @@ const styles = StyleSheet.create({
                 flexDirection: 'row',
                 backgroundColor: 'white',
                 alignItems: 'center',
-                paddingHorizontal: 10
+                paddingHorizontal: 20
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
