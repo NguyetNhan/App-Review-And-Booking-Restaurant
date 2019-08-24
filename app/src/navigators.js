@@ -116,10 +116,7 @@ class DrawerContentClient extends Component {
                                         <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
                                                 style={styleDrawerAdminRestaurant.image}
                                         />
-                                </View>
-                                <View style={styleDrawerAdminRestaurant.containerName}>
                                         <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
-                                        <Text style={styleDrawerAdminRestaurant.textAddress}>Nam, Ho Chi Minh</Text>
                                 </View>
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
                                         <View style={styleDrawerAdminRestaurant.line} />
@@ -233,10 +230,7 @@ class DrawerContentAdminRestaurant extends Component {
                                         <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
                                                 style={styleDrawerAdminRestaurant.image}
                                         />
-                                </View>
-                                <View style={styleDrawerAdminRestaurant.containerName}>
                                         <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
-                                        <Text style={styleDrawerAdminRestaurant.textAddress}>Nam, Ho Chi Minh</Text>
                                 </View>
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
                                         <View style={styleDrawerAdminRestaurant.line} />
@@ -319,14 +313,19 @@ class DrawerContentAdmin extends Component {
                 this.getNameAccount();
         }
         async getNameAccount () {
-                var realm = await Realm.open({ schema: [AccountSchema] });
-                var account = await realm.objects('Account');
-                for (let item of account) {
-                        this.setState({
-                                name: item.name
-                        });
+                try {
+                        var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                        var account = await realm.objects(AccountModel.Account);
+                        console.log('account: ', account);
+                        for (let item of account) {
+                                this.setState({
+                                        name: item.name
+                                });
+                        }
+                        realm.close();
+                } catch (error) {
+                        console.log('error: ', error);
                 }
-                realm.close();
         }
         render () {
                 return (
@@ -346,11 +345,9 @@ class DrawerContentAdmin extends Component {
                                         <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
                                                 style={styleDrawerAdminRestaurant.image}
                                         />
-                                </View>
-                                <View style={styleDrawerAdminRestaurant.containerName}>
                                         <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
-                                        <Text style={styleDrawerAdminRestaurant.textAddress}>Nam, Ho Chi Minh</Text>
                                 </View>
+
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
@@ -431,19 +428,19 @@ const styleDrawerAdminRestaurant = StyleSheet.create({
         },
         containerImage: {
                 width: '100%',
-                height: 200,
+                height: 300,
                 alignItems: 'center',
                 backgroundColor: '#22D499',
-                borderBottomLeftRadius: 115,
-                borderBottomRightRadius: 115,
-                justifyContent: 'space-between',
+                borderBottomLeftRadius: 50,
+                borderBottomRightRadius: 50,
                 paddingBottom: 10,
-                marginBottom: 10
+                marginBottom: 10,
+                justifyContent: 'space-around'
         },
         image: {
-                width: 100,
-                height: 100,
-                borderRadius: 50,
+                width: 120,
+                height: 120,
+                borderRadius: 60,
                 borderWidth: 1,
                 borderColor: 'white'
         },

@@ -1,4 +1,5 @@
 {
   "urlServer": "http://192.168.1.80:3000",
-  "colorMain": "#22D499"
+  "colorMain": "#22D499",
+  "background": "#f6f6f6"
 }

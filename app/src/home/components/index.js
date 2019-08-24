@@ -321,6 +321,7 @@ const styles = StyleSheet.create({
         textAddressItemList: {
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
+                flex: 1,
         },
         containerTextDanhGia: {
                 width: 50,
