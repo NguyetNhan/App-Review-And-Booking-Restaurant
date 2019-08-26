@@ -4,6 +4,8 @@ import { WatchSignup } from '../sign_up/sagas';
 import { WatchRegisterRestaurant } from '../client/register_restaurant/sagas';
 import { WatchFetchListConfirmRestaurantFromAPI, WatchConfirmRestaurantAgreeFromAPI, WatchConfirmRestaurantCancelFromAPI } from '../admin/confirm_restaurant/sagas';
 import { WatchFetchListRestaurantFromAPI } from '../home/sagas';
+import { WatchSearchRestaurantFromAPI } from '../search/sagas';
+import { WatchFetchDetailRestaurantFormAPI } from '../detail_restaurant/overview/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -14,6 +16,8 @@ export default function* RootSaga () {
                 WatchFetchListConfirmRestaurantFromAPI(),
                 WatchConfirmRestaurantAgreeFromAPI(),
                 WatchConfirmRestaurantCancelFromAPI(),
-                WatchFetchListRestaurantFromAPI()
+                WatchFetchListRestaurantFromAPI(),
+                WatchSearchRestaurantFromAPI(),
+                WatchFetchDetailRestaurantFormAPI()
         ]);
 }

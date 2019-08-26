@@ -15,7 +15,6 @@ export default class AuthLoading extends Component {
         }
 
         componentDidMount () {
-                console.log('componentDidMount: ');
                 this.getAccount();
         }
 

@@ -103,9 +103,9 @@ export default class Home extends Component {
                 this.props.onFetchListRestaurant(data);
         }
 
-        _onClickItemFlatList (item) {
+        _onClickItemFlatList (id) {
                 this.props.navigation.navigate('DetailRestaurant', {
-                        restaurant: item
+                        idRestaurant: id
                 });
         }
 
@@ -209,7 +209,7 @@ export default class Home extends Component {
                                                                 return (
                                                                         <TouchableOpacity
                                                                                 onPress={() => {
-                                                                                        this._onClickItemFlatList(item.item);
+                                                                                        this._onClickItemFlatList(item.item._id);
                                                                                 }}
                                                                         >
                                                                                 <View style={{

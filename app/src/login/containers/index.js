@@ -4,7 +4,6 @@ import { onLogin, onAddAccountIntoLocal } from '../actions';
 import { ToastAndroid } from 'react-native';
 
 const mapStateToProps = (state) => {
-        console.log('state: ', state);
         const stateNew = state.LoginReducers;
         const resultsLogin = state.LoginReducers.Login;
         const resultsAddAccount = state.LoginReducers.AddAccount;

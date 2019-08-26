@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Modal } from 'react-native';
 import { urlServer, colorMain, background } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
+import { AccountModel } from '../../../models/account';
 
 export default class OverView extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -16,9 +17,44 @@ export default class OverView extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        restaurant: props.navigation.getParam('restaurant'),
-                        indexSliderImage: 0
+                        restaurant: null,
+                        indexSliderImage: 0,
+                        account: null,
+                        authorities: null,
+                        imageRestaurant: [],
+                        name: '',
+                        type: '',
+                        phone: '',
+                        address: '',
+                        introduce: ''
                 }
+                this._onGetInfoAccount();
+        }
+
+        async _onGetInfoAccount () {
+                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                this.setState({
+                        account: account,
+                        authorities: account.authorities
+                })
+        }
+
+        componentDidMount () {
+                const id = this.props.navigation.getParam('idRestaurant');
+                this.props.onFetchDetailRestaurant(id);
+        }
+
+        static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.restaurant !== prevState.restaurant && nextProps.restaurant !== undefined) {
+                        prevState.restaurant = nextProps.restaurant
+                        prevState.imageRestaurant = nextProps.restaurant.imageRestaurant
+                        prevState.name = nextProps.restaurant.name
+                        prevState.type = nextProps.restaurant.type
+                        prevState.phone = nextProps.restaurant.phone
+                        prevState.address = nextProps.restaurant.address
+                        prevState.introduce = nextProps.restaurant.introduce
+                }
+                return null;
         }
 
         render () {
@@ -35,11 +71,18 @@ export default class OverView extends Component {
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
+                                        {
+                                                this.state.authorities === 'admin-restaurant' ? <TouchableOpacity onPress={() => {
+                                                        this.props.navigation.navigate('Home');
+                                                }}>
+                                                        <Icon name='edit' size={25} color='black' />
+                                                </TouchableOpacity> : null
+                                        }
                                 </View>
                                 <View style={styles.containerSliderImage}>
                                         <Carousel
                                                 ref={(c) => { this._slider1Ref = c; }}
-                                                data={this.state.restaurant.imageRestaurant}
+                                                data={this.state.imageRestaurant}
                                                 renderItem={(item) => {
                                                         return (
                                                                 <View style={{
@@ -82,13 +125,13 @@ export default class OverView extends Component {
                                 <View style={styles.content}>
                                         <Text style={styles.textTitleRestaurant}
                                                 numberOfLines={1}
-                                        >{this.state.restaurant.name}</Text>
+                                        >{this.state.name}</Text>
                                         <View style={{
                                                 flexDirection: 'row',
                                                 alignItems: 'center',
                                                 justifyContent: 'space-between'
                                         }}>
-                                                <Text style={styles.textTypeRestaurant}>{this.state.restaurant.type}</Text>
+                                                <Text style={styles.textTypeRestaurant}>{this.state.type}</Text>
 
                                                 <View style={{
                                                         flexDirection: 'row',
@@ -99,7 +142,7 @@ export default class OverView extends Component {
                                                                 fontFamily: 'UVN-Baisau-Regular',
                                                                 marginVertical: 10,
                                                                 marginLeft: 10
-                                                        }}>{this.state.restaurant.phone}</Text>
+                                                        }}>{this.state.phone}</Text>
                                                 </View>
                                         </View>
 
@@ -116,9 +159,9 @@ export default class OverView extends Component {
                                                         marginHorizontal: 10
                                                 }} />
                                                 <Text style={styles.textAddress}
-                                                >{this.state.restaurant.address}</Text>
+                                                >{this.state.address}</Text>
                                         </View>
-                                        <Text style={styles.textIntroduce}>{this.state.restaurant.introduce}</Text>
+                                        <Text style={styles.textIntroduce}>{this.state.introduce}</Text>
                                 </View>
                                 <View style={styles.containerButton}>
                                         <TouchableOpacity style={styles.button}>
@@ -157,8 +200,10 @@ const styles = StyleSheet.create({
         },
         header: {
                 height: 50,
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 paddingHorizontal: 20,
+                flexDirection: 'row',
+                alignItems: 'center'
         },
         flatList: {
                 marginBottom: 20

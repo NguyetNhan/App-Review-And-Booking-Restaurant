@@ -5,11 +5,10 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { colorMain } from './config';
 
-import Realm from 'realm';
 import { AccountModel } from './models/account';
 
 import Home from './home/containers';
-import Search from './search/components';
+import Search from './search/containers';
 import Map from './map/components';
 import Notification from './notification/components';
 import Follow from './follow/components';
@@ -18,7 +17,7 @@ import Login from './login/containers';
 import SignUp from './sign_up/containers';
 import RegisterRestaurant from './client/register_restaurant/containers';
 import ConfirmRestaurant from './admin/confirm_restaurant/containers';
-import Overview from './detail_restaurant/overview/components';
+import Overview from './detail_restaurant/overview/containers';
 import Menu from './detail_restaurant/menu/components';
 import Review from './detail_restaurant/review/components';
 
@@ -89,14 +88,10 @@ class DrawerContentClient extends Component {
                 this.getNameAccount();
         }
         async getNameAccount () {
-                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                var account = await realm.objects(AccountModel.Account);
-                for (let item of account) {
-                        this.setState({
-                                name: item.name
-                        });
-                }
-                realm.close();
+                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                this.setState({
+                        name: account.name
+                });
         }
         render () {
                 return (
@@ -130,17 +125,8 @@ class DrawerContentClient extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
-                                                        try {
-                                                                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                                                                var account = await realm.objects(AccountModel.Account);
-                                                                await realm.write(async () => {
-                                                                        await realm.delete(account);
-                                                                });
-                                                                realm.close();
-                                                                this.props.navigation.navigate('Auth');
-                                                        } catch (err) {
-                                                                console.log('err: ', err);
-                                                        }
+                                                        AccountModel.DeleteAccountInfoFromDatabaseLocal();
+                                                        this.props.navigation.navigate('Auth');
                                                 }}
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
@@ -203,14 +189,10 @@ class DrawerContentAdminRestaurant extends Component {
                 this.getNameAccount();
         }
         async getNameAccount () {
-                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                var account = await realm.objects(AccountModel.Account);
-                for (let item of account) {
-                        this.setState({
-                                name: item.name
-                        });
-                }
-                realm.close();
+                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                this.setState({
+                        name: account.name
+                });
         }
         render () {
                 return (
@@ -244,17 +226,8 @@ class DrawerContentAdminRestaurant extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
-                                                        try {
-                                                                var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                                                                var account = await realm.objects(AccountModel.Account);
-                                                                await realm.write(async () => {
-                                                                        await realm.delete(account);
-                                                                });
-                                                                realm.close();
-                                                                this.props.navigation.navigate('Auth');
-                                                        } catch (err) {
-                                                                console.log('err: ', err);
-                                                        }
+                                                        AccountModel.DeleteAccountInfoFromDatabaseLocal();
+                                                        this.props.navigation.navigate('Auth');
                                                 }}
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
@@ -313,19 +286,10 @@ class DrawerContentAdmin extends Component {
                 this.getNameAccount();
         }
         async getNameAccount () {
-                try {
-                        var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                        var account = await realm.objects(AccountModel.Account);
-                        console.log('account: ', account);
-                        for (let item of account) {
-                                this.setState({
-                                        name: item.name
-                                });
-                        }
-                        realm.close();
-                } catch (error) {
-                        console.log('error: ', error);
-                }
+                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                this.setState({
+                        name: account.name
+                });
         }
         render () {
                 return (
@@ -360,17 +324,8 @@ class DrawerContentAdmin extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
-                                                        try {
-                                                                const realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                                                                const account = await realm.objects(AccountModel.Account);
-                                                                await realm.write(async () => {
-                                                                        await realm.delete(account);
-                                                                });
-                                                                realm.close();
-                                                                this.props.navigation.navigate('Auth');
-                                                        } catch (err) {
-                                                                console.log('err: ', err);
-                                                        }
+                                                        AccountModel.DeleteAccountInfoFromDatabaseLocal();
+                                                        this.props.navigation.navigate('Auth');
                                                 }}
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
@@ -450,7 +405,7 @@ const styleDrawerAdminRestaurant = StyleSheet.create({
         },
         textName: {
                 fontSize: 20,
-                color: 'black',
+                color: 'white',
                 fontFamily: 'UVN-Baisau-Bold'
         },
         textAddress: {

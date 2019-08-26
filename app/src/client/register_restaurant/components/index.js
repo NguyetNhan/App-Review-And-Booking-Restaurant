@@ -178,6 +178,11 @@ export default class RegisterRestaurant extends Component {
                                                                 <Picker.Item label="Coffee" value="coffee" />
                                                                 <Picker.Item label="Bar" value="bar" />
                                                         </Picker>
+                                                        <View style={{
+                                                                height: 1,
+                                                                width: 300,
+                                                                backgroundColor: 'gray'
+                                                        }} />
                                                         <Text style={styles.textHint}>Số điện thoại</Text>
                                                         <TextInput style={styles.textInput}
                                                                 keyboardType='number-pad'
@@ -189,7 +194,26 @@ export default class RegisterRestaurant extends Component {
                                                                 value={this.state.phone}
                                                         />
                                                         <Text style={styles.textHint}>Địa chỉ</Text>
-                                                        <View style={styles.containerTextInput}>
+                                                        <Picker
+                                                                selectedValue={this.state.textTinh}
+                                                                style={{
+                                                                        height: 50,
+                                                                        fontFamily: 'OpenSans-Regular',
+                                                                        width: 300,
+                                                                }}
+                                                                onValueChange={(itemValue, itemIndex) =>
+                                                                        this.setState({ textTinh: itemValue })
+                                                                }>
+                                                                <Picker.Item label="Hồ Chí Minh" value="Hồ Chí Minh" />
+                                                                <Picker.Item label="Hà Nội" value="Hà Nội" />
+                                                                <Picker.Item label="Đà Nẵng" value="Đà Nẵng" />
+                                                        </Picker>
+                                                        <View style={{
+                                                                height: 1,
+                                                                width: 300,
+                                                                backgroundColor: 'gray'
+                                                        }} />
+                                                        {/* <View style={styles.containerTextInput}>
                                                                 <TextInput style={styles.textInputSeletion}
                                                                         placeholder='Thành phố, Tỉnh '
                                                                         onChangeText={(text) => {
@@ -200,19 +224,16 @@ export default class RegisterRestaurant extends Component {
                                                                         value={this.state.textTinh}
                                                                 />
                                                                 <Icon name='down' size={25} color='black' />
-                                                        </View>
-                                                        <View style={styles.containerTextInput}>
-                                                                <TextInput style={styles.textInputSeletion}
-                                                                        placeholder='Quận, Huyện'
-                                                                        onChangeText={(text) => {
-                                                                                this.setState({
-                                                                                        textQuan: text
-                                                                                });
-                                                                        }}
-                                                                        value={this.state.textQuan}
-                                                                />
-                                                                <Icon name='down' size={25} color='black' />
-                                                        </View>
+                                                        </View> */}
+                                                        <TextInput style={styles.textInput}
+                                                                placeholder='Quận, Huyện'
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                textQuan: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.textQuan}
+                                                        />
                                                         <TextInput style={styles.textInput} placeholder='Số nhà, Tên đường'
                                                                 onChangeText={(text) => {
                                                                         this.setState({
