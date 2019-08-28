@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
-import Realm from 'realm';
 import { AccountModel } from '../../models/account';
-import urlServer from '../../config';
+import { urlServer } from '../../config';
 const urlLogin = `${urlServer}/auth/login`;
 
 export default class AuthLoading extends Component {
@@ -20,38 +19,89 @@ export default class AuthLoading extends Component {
 
         async getAccount () {
                 try {
-                        var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                        var account = await realm.objects(AccountModel.Account);
-                        if (account.length === 0) {
-                                realm.close();
+                        const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                        if (account === null) {
                                 this.props.navigation.navigate('Auth');
                         } else {
-                                let data = {
-                                        authorities: null,
-                                        name: null,
-                                        email: null,
-                                        password: null,
+                                const response = await fetch(urlLogin, {
+                                        method: 'POST',
+                                        headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                                email: account.email,
+                                                password: account.password,
+                                        })
+                                }).then(convertJson => convertJson.json());
+                                var accountNew = {
+                                        id: response.data._id,
+                                        authorities: response.data.authorities,
+                                        email: response.data.email,
+                                        password: response.data.password,
+                                        name: response.data.name,
+                                        phone: response.data.phone
                                 };
-                                for (let item of account) {
-                                        data.name = item.name;
-                                        data.authorities = item.authorities;
-                                        data.email = item.email;
-                                        data.password = item.password;
-                                }
-                                realm.close();
+                                AccountModel.AddInfoAccountFromDatabaseLocal(accountNew);
                                 this.setState({
-                                        account: data
+                                        account: account
                                 });
                                 setTimeout(() => {
-                                        if (this.state.account.authorities === 'client') {
+                                        if (account.authorities === 'client') {
                                                 this.props.navigation.navigate('Client');
-                                        } else if (this.state.account.authorities === 'admin') {
+                                        } else if (account.authorities === 'admin') {
                                                 this.props.navigation.navigate('AppAdmin');
-                                        } else if (this.state.account.authorities === 'admin-restaurant') {
+                                        } else if (account.authorities === 'admin-restaurant') {
                                                 this.props.navigation.navigate('AppAdminRestaurant');
                                         }
                                 }, 500);
                         }
+                        // var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
+                        // var account = await realm.objects(AccountModel.Account);
+
+                        // if (account.length === 0) {
+                        //         realm.close();
+                        //         this.props.navigation.navigate('Auth');
+                        // } else {
+                        //         let data = {
+                        //                 authorities: null,
+                        //                 name: null,
+                        //                 email: null,
+                        //                 password: null,
+                        //         };
+                        //         for (let item of account) {
+                        //                 data.name = item.name;
+                        //                 data.authorities = item.authorities;
+                        //                 data.email = item.email;
+                        //                 data.password = item.password;
+                        //         }
+                        //         realm.close();
+                        //         console.log('data: ', data);
+                        //         const response = await fetch(urlLogin, {
+                        //                 method: 'POST',
+                        //                 headers: {
+                        //                         Accept: 'application/json',
+                        //                         'Content-Type': 'application/json',
+                        //                 },
+                        //                 body: JSON.stringify({
+                        //                         email: data.email,
+                        //                         password: data.password,
+                        //                 })
+                        //         }).then(convertJson => convertJson.json());
+                        //         console.log('response: ', response);
+                        //         this.setState({
+                        //                 account: data
+                        //         });
+                        //         setTimeout(() => {
+                        //                 if (this.state.account.authorities === 'client') {
+                        //                         this.props.navigation.navigate('Client');
+                        //                 } else if (this.state.account.authorities === 'admin') {
+                        //                         this.props.navigation.navigate('AppAdmin');
+                        //                 } else if (this.state.account.authorities === 'admin-restaurant') {
+                        //                         this.props.navigation.navigate('AppAdminRestaurant');
+                        //                 }
+                        //         }, 500);
+                        // }
                 } catch (error) {
                         console.log('error: ', error);
                 }

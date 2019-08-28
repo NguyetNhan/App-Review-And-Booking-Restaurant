@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar, FlatList, Image, ActivityIndicator, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar, FlatList, Image, ActivityIndicator, Modal, ScrollView, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer } from '../../../config';
 export default class ConfirmRestaurant extends Component {
@@ -17,7 +17,8 @@ export default class ConfirmRestaurant extends Component {
                         introduceSelect: '',
                         phoneSelect: '',
                         refreshing: false,
-                        type: ''
+                        type: '',
+                        messages: ''
                 };
         }
 
@@ -26,18 +27,25 @@ export default class ConfirmRestaurant extends Component {
         }
 
         static getDerivedStateFromProps (props, state) {
-                if (props.listData !== state.listData) {
+                if (props.listData !== state.listData && props.listData !== undefined) {
                         state.listData = props.listData;
                 }
-                if (props.visibleFormConfirm !== undefined) {
+                if (props.visibleFormConfirm !== state.visibleFormConfirm && props.visibleFormConfirm !== undefined) {
                         state.visibleFormConfirm = props.visibleFormConfirm;
                 }
-                return state.isLoading = props.isLoading;
+                if (props.isLoading !== state.isLoading && props.isLoading !== undefined) {
+                        state.listData = props.listData;
+                }
+                if (props.messages !== state.messages && props.messages !== undefined) {
+                        state.messages = props.messages;
+                        ToastAndroid.show(props.messages, ToastAndroid.LONG);
+                }
+
+                return null;
         }
 
         onClickItem (index) {
                 const item = this.state.listData[index];
-                console.log('item: ', item);
                 this.setState({
                         visibleFormConfirm: true,
                         imageRestaurant: item.imageRestaurant,

@@ -6,6 +6,7 @@ import AdminConfirmRestaurantReducers from '../admin/confirm_restaurant/reducers
 import HomeReducers from '../home/reducers';
 import SearchReducers from '../search/reducers';
 import OverviewReducers from '../detail_restaurant/overview/reducers';
+import MenuReducers from '../detail_restaurant/menu/reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -14,7 +15,8 @@ const RootReducer = combineReducers({
         AdminConfirmRestaurantReducers,
         HomeReducers,
         SearchReducers,
-        OverviewReducers
+        OverviewReducers,
+        MenuReducers
 });
 
 export default RootReducer;

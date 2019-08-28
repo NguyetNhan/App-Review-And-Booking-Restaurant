@@ -1,0 +1,7 @@
+export const ADD_MENU = 'ADD_MENU';
+export const ADD_MENU_SUCCEEDED = 'ADD_MENU_SUCCEEDED';
+export const ADD_MENU_FAILED = 'ADD_MENU_FAILED';
+
+export const FETCH_MENU = 'FETCH_MENU';
+export const FETCH_MENU_SUCCEEDED = 'FETCH_MENU_SUCCEEDED';
+export const FETCH_MENU_FAILED = 'FETCH_MENU_FAILED';

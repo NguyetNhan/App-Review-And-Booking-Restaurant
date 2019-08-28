@@ -13,7 +13,8 @@ export default class Login extends Component {
                         validateEmail: null,
                         isLoading: false,
                         infoUser: null,
-                        authorities: null
+                        authorities: null,
+                        messages: ''
                 };
         }
 
@@ -31,10 +32,18 @@ export default class Login extends Component {
                                 props.navigation.navigate('AppAdminRestaurant');
                         }
                 }
-                if (props.loading !== state.isLoading) {
+                if (props.loading !== state.isLoading && props.isLoading !== undefined) {
                         state.isLoading = props.loading;
                 }
+                if (props.messages !== state.messages && props.messages !== undefined) {
+                        state.messages = props.messages;
+                        ToastAndroid.show(props.messages, ToastAndroid.LONG);
+                }
                 return null;
+        }
+
+        componentWillUnmount () {
+
         }
 
         onClickButtonLogin () {

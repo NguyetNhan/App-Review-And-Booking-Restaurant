@@ -1,6 +1,5 @@
 import Realm from 'realm';
 
-
 const Account = 'Account';
 const AccountSchema = {
         name: 'Account',
@@ -15,18 +14,38 @@ const AccountSchema = {
         }
 };
 
+AddInfoAccountFromDatabaseLocal = async (data) => {
+        try {
+                const realm = await Realm.open({ schema: [AccountSchema] });
+                const account = await realm.objects(Account);
+                await realm.write(() => {
+                        realm.delete(account);
+                        realm.create(Account, {
+                                authorities: data.authorities,
+                                email: data.email,
+                                name: data.name,
+                                phone: data.phone,
+                                id: data.id,
+                                password: data.password,
+                        });
+                });
+                realm.close();
+        } catch (error) {
+                console.log('AddInfoAccountFromDatabaseLocal error: ', error);
+        }
+};
 
 FetchInfoAccountFromDatabaseLocal = async () => {
         try {
                 const realm = await Realm.open({ schema: [AccountSchema] });
                 const account = await realm.objects(Account);
                 var result = {
-                        id: '',
-                        authorities: '',
-                        email: '',
-                        password: '',
-                        name: '',
-                        phone: '',
+                        id: null,
+                        authorities: null,
+                        email: null,
+                        password: null,
+                        name: null,
+                        phone: null,
                 };
                 if (account.length == 1) {
                         for (item of account) {
@@ -38,7 +57,7 @@ FetchInfoAccountFromDatabaseLocal = async () => {
                                 result.phone = item.phone;
                         }
                 } else {
-                        console.log('có nhiều tài khoản ');
+                        result = null;
                 }
                 realm.close();
                 return result;
@@ -65,5 +84,6 @@ export const AccountModel = {
         Account,
         AccountSchema,
         FetchInfoAccountFromDatabaseLocal,
-        DeleteAccountInfoFromDatabaseLocal
+        DeleteAccountInfoFromDatabaseLocal,
+        AddInfoAccountFromDatabaseLocal
 };

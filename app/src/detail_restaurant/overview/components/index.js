@@ -6,6 +6,7 @@ import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
 import { AccountModel } from '../../../models/account';
+import EditRestaurant from './edit_restaurant';
 
 export default class OverView extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -13,7 +14,6 @@ export default class OverView extends Component {
                         title: 'giới thiệu',
                 }
         }
-
         constructor (props) {
                 super(props);
                 this.state = {
@@ -26,9 +26,12 @@ export default class OverView extends Component {
                         type: '',
                         phone: '',
                         address: '',
-                        introduce: ''
+                        introduce: '',
+                        visibleModalEditRestaurant: false,
+                        messages: ''
                 }
                 this._onGetInfoAccount();
+                this._onClickCloseModalEdit = this._onClickCloseModalEdit.bind(this);
         }
 
         async _onGetInfoAccount () {
@@ -54,7 +57,17 @@ export default class OverView extends Component {
                         prevState.address = nextProps.restaurant.address
                         prevState.introduce = nextProps.restaurant.introduce
                 }
+                if (nextProps.messages !== prevState.messages && nextProps.messages !== undefined) {
+                        prevState.messages = nextProps.messages
+                        alert(nextProps.messages)
+                }
                 return null;
+        }
+
+        _onClickCloseModalEdit () {
+                this.setState({
+                        visibleModalEditRestaurant: !this.state.visibleModalEditRestaurant
+                });
         }
 
         render () {
@@ -73,7 +86,9 @@ export default class OverView extends Component {
                                         </TouchableOpacity>
                                         {
                                                 this.state.authorities === 'admin-restaurant' ? <TouchableOpacity onPress={() => {
-                                                        this.props.navigation.navigate('Home');
+                                                        this.setState({
+                                                                visibleModalEditRestaurant: true
+                                                        })
                                                 }}>
                                                         <Icon name='edit' size={25} color='black' />
                                                 </TouchableOpacity> : null
@@ -179,6 +194,17 @@ export default class OverView extends Component {
                                                 }}>Theo dõi</Text>
                                         </TouchableOpacity>
                                 </View>
+                                <Modal
+                                        visible={this.state.visibleModalEditRestaurant}
+                                        animationType='slide'
+                                        transparent={false}
+                                        style={{
+                                                flex: 1
+                                        }}  >
+                                        <EditRestaurant
+                                                _onClickCloseModalEdit={this._onClickCloseModalEdit}
+                                        />
+                                </Modal>
                         </View>
                 );
         }
@@ -254,5 +280,5 @@ const styles = StyleSheet.create({
                 width: 85,
                 height: 85,
                 marginHorizontal: 20
-        }
+        },
 });

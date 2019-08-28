@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, ScrollView, FlatList, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, FlatList, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer } from '../../config';
 
@@ -20,7 +20,8 @@ export default class Home extends Component {
                         total_page: null,
                         isUpdateState: true,
                         typeRestaurant: null,
-                        isLoadMore: true
+                        isLoadMore: true,
+                        messages: ''
                 }
         }
 
@@ -42,18 +43,18 @@ export default class Home extends Component {
                                 prevState.isLoadMore = true;
                         }
                 }
-                if (nextProps.page !== prevState.page) {
+                if (nextProps.page !== prevState.page && nextProps.page !== undefined) {
                         if (prevState.isUpdateState) {
                                 prevState.page = nextProps.page
                         } else {
                                 prevState.isUpdateState = true;
                         }
                 }
-                if (nextProps.total_page !== prevState.total_page) {
+                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined) {
                         prevState.total_page = nextProps.total_page
                 }
-                if (nextProps.isLoading !== prevState.refreshing) {
-                        prevState.refreshing = nextProps.isLoading
+                if (nextProps.messages !== prevState.messages && nextProps.messages !== undefined) {
+                        ToastAndroid.show(fetchListRestaurantFailed.messages, ToastAndroid.SHORT);
                 }
                 return null;
         }
@@ -146,7 +147,7 @@ export default class Home extends Component {
                                                 onEndReached={() => {
                                                         this._onLoadMoreRestaurant();
                                                 }}
-                                                onEndReachedThreshold={1}
+                                                //  onEndReachedThreshold={1}
                                                 renderItem={(item) => {
                                                         if (item.index === 0) {
                                                                 return (

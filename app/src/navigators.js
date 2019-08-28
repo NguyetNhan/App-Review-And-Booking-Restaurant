@@ -3,7 +3,7 @@ import { createMaterialBottomTabNavigator } from 'react-navigation-material-bott
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
-import { colorMain } from './config';
+import { colorMain, urlServer } from './config';
 
 import { AccountModel } from './models/account';
 
@@ -18,7 +18,7 @@ import SignUp from './sign_up/containers';
 import RegisterRestaurant from './client/register_restaurant/containers';
 import ConfirmRestaurant from './admin/confirm_restaurant/containers';
 import Overview from './detail_restaurant/overview/containers';
-import Menu from './detail_restaurant/menu/components';
+import Menu from './detail_restaurant/menu/containers';
 import Review from './detail_restaurant/review/components';
 
 
@@ -45,6 +45,7 @@ const BottomTabNavigatorConfig = {
         activeColor: colorMain,
         inactiveColor: 'gray',
         barStyle: { backgroundColor: 'white' },
+        order: ['Home', 'Map', 'Search', 'Notification', 'Follow']
 };
 
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
@@ -182,7 +183,8 @@ class DrawerContentAdminRestaurant extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        name: null
+                        name: null,
+                        account: null
                 };
         }
         componentDidMount () {
@@ -191,7 +193,8 @@ class DrawerContentAdminRestaurant extends Component {
         async getNameAccount () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
                 this.setState({
-                        name: account.name
+                        name: account.name,
+                        account: account
                 });
         }
         render () {
@@ -216,12 +219,24 @@ class DrawerContentAdminRestaurant extends Component {
                                 </View>
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
                                         <View style={styleDrawerAdminRestaurant.line} />
-                                        <TouchableOpacity>
+                                        <TouchableOpacity onPress={async () => {
+                                                const idAccount = this.state.account.id;
+                                                try {
+                                                        const result = await fetch(`${urlServer}/restaurant/idAdminRestaurant/${idAccount}`, {
+                                                                method: 'GET',
+                                                                headers: {
+                                                                        Accept: 'application/json',
+                                                                        'Content-Type': 'application/json',
+                                                                },
+                                                        }).then(data => data.json());
+                                                        this.props.navigation.navigate('DetailRestaurant', {
+                                                                idRestaurant: result.data._id
+                                                        });
+                                                } catch (err) {
+                                                        console.log('err: ', err);
+                                                }
+                                        }}>
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Cửa hàng</Text>
-                                        </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
-                                        <TouchableOpacity>
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Giao dịch</Text>
                                         </TouchableOpacity>
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity

@@ -14,6 +14,7 @@ RegisterRestaurant = async (data, idAccount) => {
                 formData.append('phone', data.phone);
                 formData.append('idAdmin', idAccount);
                 formData.append('type', data.type);
+                formData.append('time', data.time);
                 const response = await fetch(urlRegisterRestaurant, {
                         method: 'POST',
                         headers: {

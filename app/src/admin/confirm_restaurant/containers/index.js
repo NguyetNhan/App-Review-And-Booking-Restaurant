@@ -4,55 +4,55 @@ import { onFetchListConfirmRestaurant, onConfirmAgree, onConfirmCancel } from '.
 import { ToastAndroid } from 'react-native';
 
 const mapStateToProps = (state) => {
-        console.log('state: ', state);
         const listRestaurant = state.AdminConfirmRestaurantReducers.FetchRestaurant;
         const confirmRestaurantAgree = state.AdminConfirmRestaurantReducers.ConfirmAgree;
         const confirmRestaurantCancel = state.AdminConfirmRestaurantReducers.ConfirmCancel;
         if (listRestaurant !== undefined) {
                 if (listRestaurant.data.error) {
-                        ToastAndroid.show(listRestaurant.data.message, ToastAndroid.LONG);
                         return {
-                                isLoading: false
+                                isLoading: false,
+                                messages: listRestaurant.data.message
                         };
                 } else {
                         if (listRestaurant.data.data !== null) {
-                                ToastAndroid.show(listRestaurant.data.message, ToastAndroid.LONG);
                                 return {
                                         listData: listRestaurant.data.data,
                                         isLoading: false,
-                                        data: true
+                                        data: true,
+                                        messages: listRestaurant.data.message
                                 };
                         } else {
-                                ToastAndroid.show(listRestaurant.data.message, ToastAndroid.LONG);
                                 return {
                                         isLoading: false,
                                         listData: [],
-                                        data: false
+                                        data: false,
+                                        messages: listRestaurant.data.message
                                 };
                         }
                 }
         } else if (confirmRestaurantAgree !== undefined) {
                 if (confirmRestaurantAgree.data.error) {
-                        ToastAndroid.show(confirmRestaurantAgree.data.message, ToastAndroid.LONG);
                         return {
                                 visibleFormConfirm: false,
+                                messages: confirmRestaurantAgree.data.message
                         };
                 } else {
-                        ToastAndroid.show(confirmRestaurantAgree.data.message, ToastAndroid.LONG);
                         return {
                                 visibleFormConfirm: false,
+                                messages: confirmRestaurantAgree.data.message
                         };
                 }
         } else if (confirmRestaurantCancel !== undefined) {
                 if (confirmRestaurantCancel.data.error) {
-                        ToastAndroid.show(confirmRestaurantCancel.data.message, ToastAndroid.LONG);
                         return {
                                 visibleFormConfirm: false,
+                                messages: confirmRestaurantCancel.data.message
                         };
                 } else {
-                        ToastAndroid.show(confirmRestaurantCancel.data.message, ToastAndroid.LONG);
+
                         return {
                                 visibleFormConfirm: false,
+                                messages: confirmRestaurantCancel.data.message
                         };
                 }
         }

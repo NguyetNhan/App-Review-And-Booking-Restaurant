@@ -10,9 +10,8 @@ const mapStateToProps = (state) => {
                         restaurant: fetchSucceeded.data
                 };
         } else if (fetchFailed !== undefined) {
-                alert(fetchFailed.message);
                 return {
-
+                        messages: fetchFailed.message
                 };
         } else {
                 return {

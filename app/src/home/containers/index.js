@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import Component from '../components';
 import { onFetchListRestaurant } from '../actions';
-import { ToastAndroid } from 'react-native';
 
 const mapStateToProps = (state) => {
         const fetchListRestaurantSucceeded = state.HomeReducers.FetchListRestaurantSucceeded;
@@ -14,9 +13,9 @@ const mapStateToProps = (state) => {
                         total_page: fetchListRestaurantSucceeded.data.total_page
                 };
         } else if (fetchListRestaurantFailed !== undefined) {
-                ToastAndroid.show(fetchListRestaurantFailed.messages, ToastAndroid.SHORT);
                 return {
-                        isLoading: false
+                        isLoading: false,
+                        messages: fetchListRestaurantFailed.messages
                 };
         } else {
                 return {
