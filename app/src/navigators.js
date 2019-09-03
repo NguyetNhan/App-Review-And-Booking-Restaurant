@@ -9,8 +9,8 @@ import { AccountModel } from './models/account';
 
 import Home from './home/containers';
 import Search from './search/containers';
-import Map from './map/components';
-import Notification from './notification/components';
+import Deal from './deal/components';
+import Notification from './notification/containers';
 import Follow from './follow/components';
 import AuthLoading from './auth_loading/components';
 import Login from './login/containers';
@@ -20,17 +20,18 @@ import ConfirmRestaurant from './admin/confirm_restaurant/containers';
 import Overview from './detail_restaurant/overview/containers';
 import Menu from './detail_restaurant/menu/containers';
 import Review from './detail_restaurant/review/components';
+import Chat from './chat/components';
 
 
 const RouteBottomTabConfig = {
         Home: {
                 screen: Home,
         },
-        Search: {
-                screen: Search,
+        Chat: {
+                screen: Chat,
         },
-        Map: {
-                screen: Map,
+        Deal: {
+                screen: Deal,
         },
         Notification: {
                 screen: Notification,
@@ -45,7 +46,7 @@ const BottomTabNavigatorConfig = {
         activeColor: colorMain,
         inactiveColor: 'gray',
         barStyle: { backgroundColor: 'white' },
-        order: ['Home', 'Map', 'Search', 'Notification', 'Follow']
+        order: ['Deal', 'Chat', 'Home', 'Notification', 'Follow']
 };
 
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
@@ -118,6 +119,7 @@ class DrawerContentClient extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={() => {
+                                                        this.props.navigation.closeDrawer();
                                                         this.props.navigation.navigate('RegisterRestaurant');
                                                 }}
                                         >
@@ -126,7 +128,7 @@ class DrawerContentClient extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
-                                                        AccountModel.DeleteAccountInfoFromDatabaseLocal();
+                                                        await AccountModel.DeleteAccountInfoFromDatabaseLocal();
                                                         this.props.navigation.navigate('Auth');
                                                 }}
                                         >
@@ -172,6 +174,9 @@ const MainNavigatorClient = createStackNavigator(
                         navigationOptions: {
                                 header: null,
                         },
+                },
+                Search: {
+                        screen: Search,
                 }
         }, {
                 initialRouteName: 'DrawerNavigatorClient'
@@ -220,6 +225,7 @@ class DrawerContentAdminRestaurant extends Component {
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity onPress={async () => {
+                                                this.props.navigation.closeDrawer();
                                                 const idAccount = this.state.account.id;
                                                 try {
                                                         const result = await fetch(`${urlServer}/restaurant/idAdminRestaurant/${idAccount}`, {
@@ -229,8 +235,12 @@ class DrawerContentAdminRestaurant extends Component {
                                                                         'Content-Type': 'application/json',
                                                                 },
                                                         }).then(data => data.json());
+                                                        var id = {
+                                                                idRestaurant: result.data._id,
+                                                                idAdmin: this.state.account.id
+                                                        };
                                                         this.props.navigation.navigate('DetailRestaurant', {
-                                                                idRestaurant: result.data._id
+                                                                idRestaurant: id
                                                         });
                                                 } catch (err) {
                                                         console.log('err: ', err);
@@ -241,7 +251,7 @@ class DrawerContentAdminRestaurant extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
-                                                        AccountModel.DeleteAccountInfoFromDatabaseLocal();
+                                                        await AccountModel.DeleteAccountInfoFromDatabaseLocal();
                                                         this.props.navigation.navigate('Auth');
                                                 }}
                                         >
@@ -284,6 +294,9 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                         navigationOptions: {
                                 header: null,
                         },
+                },
+                Search: {
+                        screen: Search,
                 }
         }, {
                 initialRouteName: 'DrawerNavigatorAdminRestaurant'
@@ -331,6 +344,7 @@ class DrawerContentAdmin extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={() => {
+                                                        this.props.navigation.closeDrawer();
                                                         this.props.navigation.navigate('ConfirmRestaurant');
                                                 }}
                                         >
@@ -339,7 +353,7 @@ class DrawerContentAdmin extends Component {
                                         <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
-                                                        AccountModel.DeleteAccountInfoFromDatabaseLocal();
+                                                        await AccountModel.DeleteAccountInfoFromDatabaseLocal();
                                                         this.props.navigation.navigate('Auth');
                                                 }}
                                         >
@@ -385,6 +399,9 @@ const MainNavigatorAdmin = createStackNavigator(
                         navigationOptions: {
                                 header: null,
                         },
+                },
+                Search: {
+                        screen: Search,
                 }
         }, {
                 initialRouteName: 'DrawerNavigatorAdmin'

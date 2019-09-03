@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onLogin, onAddAccountIntoLocal } from '../actions';
+import { onLogin, onAddAccountIntoLocal, } from '../actions';
 
 const mapStateToProps = (state) => {
         const stateNew = state.LoginReducers;
@@ -25,10 +25,9 @@ const mapStateToProps = (state) => {
                                         loading: false
                                 };
                         } else {
-
                                 return {
                                         loading: false,
-                                        authorities: resultsAddAccount.data.authorities,
+                                        account: resultsAddAccount.data.data,
                                         messages: resultsAddAccount.data.message
                                 };
                         }
@@ -50,7 +49,7 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onAddAccountIntoLocal: (data) => {
                         dispatch(onAddAccountIntoLocal(data));
-                }
+                },
         };
 };
 

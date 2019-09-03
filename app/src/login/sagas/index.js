@@ -20,7 +20,6 @@ export function* WatchLogin () {
 function* AddAccountIntoLocal (action) {
         try {
                 const results = yield DatabaseLocal.AddAccountIntoLocal(action.data);
-                console.log('results: ', results);
                 yield put(onAddAccountIntoLocalResults(results));
         } catch (error) {
                 console.log('error: ', error);

@@ -7,6 +7,7 @@ import HomeReducers from '../home/reducers';
 import SearchReducers from '../search/reducers';
 import OverviewReducers from '../detail_restaurant/overview/reducers';
 import MenuReducers from '../detail_restaurant/menu/reducers';
+import NotificationReducers from '../notification/reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -16,7 +17,8 @@ const RootReducer = combineReducers({
         HomeReducers,
         SearchReducers,
         OverviewReducers,
-        MenuReducers
+        MenuReducers,
+        NotificationReducers
 });
 
 export default RootReducer;

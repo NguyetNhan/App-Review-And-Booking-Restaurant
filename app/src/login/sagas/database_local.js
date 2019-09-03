@@ -20,7 +20,7 @@ AddAccountIntoLocal = async (data) => {
                         return {
                                 error: false,
                                 message: 'Đăng nhập thành công !',
-                                authorities: data.authorities
+                                data: data
                         };
                 } else {
                         realm.close();

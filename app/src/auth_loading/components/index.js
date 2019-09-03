@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import { AccountModel } from '../../models/account';
 import { urlServer } from '../../config';
+import { socket } from '../../socket';
 const urlLogin = `${urlServer}/auth/login`;
 
 export default class AuthLoading extends Component {
@@ -44,14 +45,15 @@ export default class AuthLoading extends Component {
                                 };
                                 AccountModel.AddInfoAccountFromDatabaseLocal(accountNew);
                                 this.setState({
-                                        account: account
+                                        account: accountNew
                                 });
+                                socket.emit('idAccount', accountNew.id);
                                 setTimeout(() => {
-                                        if (account.authorities === 'client') {
+                                        if (accountNew.authorities === 'client') {
                                                 this.props.navigation.navigate('Client');
-                                        } else if (account.authorities === 'admin') {
+                                        } else if (accountNew.authorities === 'admin') {
                                                 this.props.navigation.navigate('AppAdmin');
-                                        } else if (account.authorities === 'admin-restaurant') {
+                                        } else if (accountNew.authorities === 'admin-restaurant') {
                                                 this.props.navigation.navigate('AppAdminRestaurant');
                                         }
                                 }, 500);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar, FlatList, Image, ActivityIndicator, Modal, ScrollView, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { colorMain, urlServer } from '../../../config';
+import { colorMain, urlServer, background } from '../../../config';
 export default class ConfirmRestaurant extends Component {
 
         constructor (props) {
@@ -88,39 +88,41 @@ export default class ConfirmRestaurant extends Component {
                                         </TouchableOpacity>
                                         <Text style={styles.textHeader}>Xác Nhận</Text>
                                 </View>
-                                <FlatList
-                                        style={{
-                                                flex: 1
-                                        }}
-                                        data={this.state.listData}
-                                        keyExtractor={(item, index) => index.toString()}
-                                        extraData={this.state}
-                                        onRefresh={() => { this.props.onFetchListConfirmRestaurant(); }}
-                                        refreshing={this.state.refreshing}
-                                        renderItem={(item) => {
-                                                return (
-                                                        <TouchableOpacity style={styles.buttonItem}
-                                                                onPress={() => {
-                                                                        this.onClickItem(item.index);
-                                                                }}
-                                                        >
-                                                                <Image
-                                                                        source={{ uri: `${urlServer}${item.item.imageRestaurant[0]}` }}
-                                                                        style={{
-                                                                                height: 120,
-                                                                                width: 120,
+                                <View style={{
+                                        flex: 1
+                                }}>
+                                        <FlatList
+                                                data={this.state.listData}
+                                                keyExtractor={(item, index) => index.toString()}
+                                                extraData={this.state}
+                                                onRefresh={() => { this.props.onFetchListConfirmRestaurant(); }}
+                                                refreshing={this.state.refreshing}
+                                                renderItem={(item) => {
+                                                        return (
+                                                                <TouchableOpacity style={styles.buttonItem}
+                                                                        onPress={() => {
+                                                                                this.onClickItem(item.index);
                                                                         }}
-                                                                />
-                                                                <View style={styles.containerText}>
-                                                                        <Text style={styles.textRestaurant}>{item.item.name}</Text>
-                                                                        <Text style={styles.textAddress}>{item.item.address}</Text>
-                                                                        <Text style={styles.textStatus}>Trạng thái: {item.item.status}</Text>
-                                                                        <Text style={styles.textChiTiet}>Chi tiết >></Text>
-                                                                </View>
-                                                        </TouchableOpacity>
-                                                );
-                                        }}
-                                />
+                                                                >
+                                                                        <Image
+                                                                                source={{ uri: `${urlServer}${item.item.imageRestaurant[0]}` }}
+                                                                                style={{
+                                                                                        height: 120,
+                                                                                        width: 120,
+                                                                                }}
+                                                                        />
+                                                                        <View style={styles.containerText}>
+                                                                                <Text style={styles.textRestaurant}>{item.item.name}</Text>
+                                                                                <Text style={styles.textAddress}>{item.item.address}</Text>
+                                                                                <Text style={styles.textStatus}>Trạng thái: {item.item.status}</Text>
+                                                                                <Text style={styles.textChiTiet}>Chi tiết >></Text>
+                                                                        </View>
+                                                                </TouchableOpacity>
+                                                        );
+                                                }}
+                                        />
+                                </View>
+
                                 <Modal
                                         visible={this.state.visibleFormConfirm}
                                         animationType="slide"
@@ -193,7 +195,8 @@ export default class ConfirmRestaurant extends Component {
 
 const styles = StyleSheet.create({
         container: {
-                flex: 1
+                flex: 1,
+                backgroundColor: background
         },
         containerHeader: {
                 width: '100%',

@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, FlatList, StatusBar, Dimensions, Picker, TextInput, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import { colorMain, urlServer } from '../../config';
+import { colorMain, urlServer, background } from '../../config';
 export default class Search extends Component {
         static navigationOptions = ({ navigation }) => {
                 return {
-                        tabBarLabel: 'Tìm kiếm',
-                        tabBarIcon: ({ tintColor }) => (<Icon name='search' size={25} color={tintColor} />)
+                        title: 'Tìm Kiếm',
+                        headerTitleStyle: {
+                                fontFamily: 'UVN-Baisau-Bold',
+                        }
                 }
         }
 
@@ -15,17 +17,22 @@ export default class Search extends Component {
                 super(props);
                 this.state = {
                         textSearch: '',
-                        type: 'restaurant',
+                        type: 'bar',
                         address: 'Hồ Chí Minh',
                         listRestaurant: [],
                 }
         }
 
         componentDidMount () {
+                const condition = this.props.navigation.getParam('Condition');
+                this.setState({
+                        type: condition.type,
+                        address: condition.address
+                })
                 const data = {
                         content: this.state.textSearch,
-                        type: this.state.type,
-                        address: this.state.address
+                        type: condition.type,
+                        address: condition.address
                 }
                 this.props.onSearchRestaurant(data);
         }
@@ -38,9 +45,13 @@ export default class Search extends Component {
         }
 
 
-        _onClickItemFlatList (id) {
+        _onClickItemFlatList (idRestaurant, idAdmin) {
+                var data = {
+                        idRestaurant: idRestaurant,
+                        idAdmin: idAdmin
+                }
                 this.props.navigation.navigate('DetailRestaurant', {
-                        idRestaurant: id
+                        idRestaurant: data
                 });
         }
 
@@ -122,7 +133,7 @@ export default class Search extends Component {
                                                         return (
                                                                 <TouchableOpacity style={styles.containerItemList}
                                                                         onPress={() => {
-                                                                                this._onClickItemFlatList(item.item._id);
+                                                                                this._onClickItemFlatList(item.item._id, item.item.idAdmin);
                                                                         }}>
                                                                         <View>
                                                                                 <Image
@@ -136,13 +147,6 @@ export default class Search extends Component {
                                                                         <View style={styles.containerInfo}>
                                                                                 <Text style={styles.textNameRestaurant}>{item.item.name}</Text>
                                                                                 <Text style={styles.textTypeRestaurant}>{item.item.type}</Text>
-                                                                                {/* <View style={{
-                                                                                        flexDirection: 'row',
-                                                                                        alignItems: 'center',
-                                                                                }}>
-                                                                                        <IconFontAwesome name='phone' size={20} color={colorMain} />
-                                                                                        <Text style={styles.textPhone}>{item.item.phone}</Text>
-                                                                                </View> */}
                                                                                 <Text
                                                                                         style={styles.textAddress}
                                                                                         numberOfLines={1}
@@ -161,7 +165,8 @@ export default class Search extends Component {
 
 const styles = StyleSheet.create({
         container: {
-                flex: 1
+                flex: 1,
+                backgroundColor: background
         },
         header: {
                 height: 150,

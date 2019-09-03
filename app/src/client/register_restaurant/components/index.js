@@ -34,7 +34,7 @@ export default class RegisterRestaurant extends Component {
                         prevState.modalLoading = nextProps.modalLoading;
                 }
                 if (nextProps.changeScreen !== prevState.changeScreen && nextProps.changeScreen !== undefined) {
-                        nextProps.navigation.navigate('AppAdminRestaurant');
+                        // nextProps.navigation.navigate('AppAdminRestaurant');
                 }
                 return null;
         }
@@ -151,11 +151,15 @@ export default class RegisterRestaurant extends Component {
                                                         value={this.state.name}
                                                 />
                                                 <Text style={styles.textHint}>Giới thiệu</Text>
-                                                <TextInput style={styles.textInput}
+                                                <TextInput style={{
+                                                        borderBottomWidth: 1,
+                                                        fontFamily: 'OpenSans-Regular',
+                                                        height: 100
+                                                }}
                                                         editable={true}
+                                                        placeholder='Tối đa 10 dòng'
                                                         multiline={true}
-                                                        numberOfLines={4}
-                                                        maxLength={40}
+                                                        numberOfLines={10}
                                                         onChangeText={(text) => {
                                                                 this.setState({
                                                                         introduce: text
@@ -466,7 +470,6 @@ const styles = StyleSheet.create({
         textInput: {
                 borderBottomWidth: 1,
                 fontFamily: 'OpenSans-Regular',
-
         },
         containerModal: {
                 flex: 1

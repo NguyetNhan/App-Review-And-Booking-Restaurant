@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator, SafeAreaView, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Validate from 'validate.js';
+import { socket } from '../../socket';
 
 //FIXME: chưa fix lỗi hủy màn hình login sau khi đăng nhập
 export default class Login extends Component {
@@ -13,26 +14,29 @@ export default class Login extends Component {
                         validateEmail: null,
                         isLoading: false,
                         infoUser: null,
-                        authorities: null,
+                        account: null,
                         messages: ''
                 };
+        }
+        componentDidMount () {
         }
 
         static getDerivedStateFromProps (props, state) {
                 if (props.infoUser !== undefined) {
                         props.onAddAccountIntoLocal(props.infoUser);
                 }
-                if (props.authorities !== undefined) {
-                        state.authorities = props.authorities;
-                        if (props.authorities === 'client') {
+                if (props.account !== undefined && state.account !== props.account) {
+                        state.account = props.account;
+                        socket.emit('idAccount', props.account._id);
+                        if (props.account.authorities === 'client') {
                                 props.navigation.navigate('Client');
-                        } else if (props.authorities === 'admin') {
+                        } else if (props.account.authorities === 'admin') {
                                 props.navigation.navigate('AppAdmin');
-                        } else if (props.authorities === 'admin-restaurant') {
+                        } else if (props.account.authorities === 'admin-restaurant') {
                                 props.navigation.navigate('AppAdminRestaurant');
                         }
                 }
-                if (props.loading !== state.isLoading && props.isLoading !== undefined) {
+                if (props.loading !== state.isLoading && props.loading !== undefined) {
                         state.isLoading = props.loading;
                 }
                 if (props.messages !== state.messages && props.messages !== undefined) {
@@ -40,10 +44,6 @@ export default class Login extends Component {
                         ToastAndroid.show(props.messages, ToastAndroid.LONG);
                 }
                 return null;
-        }
-
-        componentWillUnmount () {
-
         }
 
         onClickButtonLogin () {

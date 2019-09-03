@@ -1,36 +1,70 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, FlatList, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, FlatList, ToastAndroid, ScrollView, Modal, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer } from '../../config';
+import Carousel from 'react-native-snap-carousel';
+import ItemAddress from './item_address';
+import ItemList from './item_list';
 
 export default class Home extends Component {
         static navigationOptions = ({ navigation }) => {
                 return {
-                        tabBarLabel: 'Trang chủ',
-                        tabBarIcon: ({ tintColor }) => (<Icon name='home' size={25} color={tintColor} />)
+                        tabBarLabel: 'Khám Phá',
+                        tabBarIcon: ({ tintColor }) => (<Icon name='search' size={25} color={tintColor} />)
                 }
         }
 
         constructor (props) {
                 super(props);
                 this.state = {
-                        listRestaurant: ["options restaurant"],
+                        listRestaurant: [],
+                        listCoffee: [],
+                        listBar: [],
                         refreshing: false,
                         page: 1,
                         total_page: null,
                         isUpdateState: true,
                         typeRestaurant: null,
                         isLoadMore: true,
-                        messages: ''
+                        messages: '',
+                        indexSliderImage: 0,
+                        indexSliderImageRestaurant: 0,
+                        indexSliderImageCoffee: 0,
+                        indexSliderImageBar: 0,
+                        address: [
+                                {
+                                        name: 'Hồ Chí Minh',
+                                        image: require('../../assets/images/image_hcm.jpg')
+                                },
+                                {
+                                        name: 'Hà Nội',
+                                        image: require('../../assets/images/image_hanoi.jpg')
+                                },
+                                {
+                                        name: 'Đà Nẵng',
+                                        image: require('../../assets/images/image_danang.jpg')
+                                }
+                        ],
                 }
+                this._onClickItemFlatList = this._onClickItemFlatList.bind(this);
+                this._onClickModalRestaurant = this._onClickModalRestaurant.bind(this);
+                this._onClickModalCoffee = this._onClickModalCoffee.bind(this);
+                this._onClickModalBar = this._onClickModalBar.bind(this);
         }
 
         componentDidMount () {
-                const data = {
-                        type: this.state.typeRestaurant,
+                this.props.onFetchListRestaurant({
+                        type: 'restaurant',
                         page: 1
-                }
-                this.props.onFetchListRestaurant(data);
+                });
+                this.props.onFetchListBar({
+                        type: 'bar',
+                        page: 1
+                });
+                this.props.onFetchListCoffee({
+                        type: 'coffee',
+                        page: 1
+                });
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -43,32 +77,31 @@ export default class Home extends Component {
                                 prevState.isLoadMore = true;
                         }
                 }
-                if (nextProps.page !== prevState.page && nextProps.page !== undefined) {
+                if (nextProps.listCoffee !== prevState.listCoffee && nextProps.listCoffee !== undefined) {
                         if (prevState.isUpdateState) {
-                                prevState.page = nextProps.page
+                                const array = (prevState.listCoffee).concat(nextProps.listCoffee);
+                                prevState.listCoffee = array;
                         } else {
                                 prevState.isUpdateState = true;
+                                prevState.isLoadMore = true;
                         }
                 }
-                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined) {
-                        prevState.total_page = nextProps.total_page
+                if (nextProps.listBar !== prevState.listBar && nextProps.listBar !== undefined) {
+                        if (prevState.isUpdateState) {
+                                const array = (prevState.listBar).concat(nextProps.listBar);
+                                prevState.listBar = array;
+                        } else {
+                                prevState.isUpdateState = true;
+                                prevState.isLoadMore = true;
+                        }
                 }
                 if (nextProps.messages !== prevState.messages && nextProps.messages !== undefined) {
-                        ToastAndroid.show(fetchListRestaurantFailed.messages, ToastAndroid.SHORT);
+                        console.log('fetchListRestaurantFailed.messages: ', fetchListRestaurantFailed.messages);
+                }
+                if (nextProps.isLoading !== prevState.refreshing && nextProps.isLoading !== undefined) {
+                        prevState.refreshing = nextProps.isLoading
                 }
                 return null;
-        }
-
-        _onRefresh () {
-                this.setState({
-                        listRestaurant: ["options restaurant"],
-                        isUpdateState: false
-                })
-                const data = {
-                        type: this.state.typeRestaurant,
-                        page: 1
-                }
-                this.props.onFetchListRestaurant(data);
         }
 
         _onLoadMoreRestaurant () {
@@ -78,7 +111,7 @@ export default class Home extends Component {
                         const total_page = this.state.total_page;
                         const pageNew = page + 1;
                         if (pageNew > total_page) {
-                                ToastAndroid.show('Không còn dữ liệu !', ToastAndroid.SHORT);
+                                //  ToastAndroid.show('Không còn dữ liệu !', ToastAndroid.SHORT);
                         } else {
                                 const data = {
                                         type: this.state.typeRestaurant,
@@ -92,7 +125,7 @@ export default class Home extends Component {
         _onClickButtonIconTypeRestaurant (type) {
                 this.setState({
                         typeRestaurant: type,
-                        listRestaurant: ["options restaurant"],
+                        listRestaurant: [],
                         isUpdateState: false,
                         page: 1,
                         isLoadMore: false
@@ -104,15 +137,63 @@ export default class Home extends Component {
                 this.props.onFetchListRestaurant(data);
         }
 
-        _onClickItemFlatList (id) {
+        _onClickItemFlatList (idRestaurant, idAdmin) {
+                var data = {
+                        idRestaurant: idRestaurant,
+                        idAdmin: idAdmin
+                }
                 this.props.navigation.navigate('DetailRestaurant', {
-                        idRestaurant: id
+                        idRestaurant: data
                 });
         }
 
+        _onRefresh = () => {
+                this.setState({
+                        listRestaurant: [],
+                        listCoffee: [],
+                        listBar: [],
+                        refreshing: true
+                });
+                this.props.onFetchListRestaurant({
+                        type: 'restaurant',
+                        page: 1
+                });
+                this.props.onFetchListBar({
+                        type: 'bar',
+                        page: 1
+                });
+                this.props.onFetchListCoffee({
+                        type: 'coffee',
+                        page: 1
+                });
 
+        }
+
+        _onClickModalRestaurant () {
+                this.setState({
+                        visibleModalRestaurant: !this.state.visibleModalRestaurant
+                })
+        }
+        _onClickModalBar () {
+                this.setState({
+                        visibleModalBar: !this.state.visibleModalBar
+                })
+        }
+        _onClickModalCoffee () {
+                this.setState({
+                        visibleModalCoffee: !this.state.visibleModalCoffee
+                })
+        }
+        _onClickButtonSearch (type, address) {
+                this.props.navigation.navigate('Search', {
+                        Condition: {
+                                type: type,
+                                address: address
+                        }
+                });
+        }
         render () {
-                const { height, width } = Dimensions.get('window');
+                const screenWidth = Dimensions.get('window').width;
                 return (
                         <View style={styles.container}>
                                 <StatusBar
@@ -123,152 +204,196 @@ export default class Home extends Component {
                                         <TouchableOpacity onPress={this.props.navigation.openDrawer}>
                                                 <Icon name='menu' size={25} color='black' />
                                         </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Restaurant App</Text>
-                                        <TouchableOpacity>
-                                                <Icon name='user' size={25} color='black' />
+                                        <Text style={styles.textHeader}>Khám Phá</Text>
+                                        <TouchableOpacity onPress={() => {
+                                                this.props.navigation.navigate('Search', {
+                                                        Condition: {
+                                                                type: 'restaurant',
+                                                                address: 'Hồ Chí Minh'
+                                                        }
+                                                });
+                                        }}>
+                                                <Icon name='search' size={25} color='black' />
                                         </TouchableOpacity>
                                 </View>
-                                <View style={{
-                                        paddingHorizontal: 20,
-                                }}>
-                                        <FlatList
-                                                style={{
-                                                        marginVertical: 15
+                                <ScrollView
+                                        refreshControl={
+                                                <RefreshControl
+                                                        refreshing={this.state.refreshing}
+                                                        onRefresh={this._onRefresh}
+                                                />
+                                        }
+                                >
+                                        <View style={styles.selectIconType}>
+                                                <TouchableOpacity style={{
+                                                        backgroundColor: 'white',
+                                                        width: (screenWidth - 60) / 3,
+                                                        height: (screenWidth - 60) / 3,
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
                                                 }}
-                                                data={this.state.listRestaurant}
-                                                extraData={this.state}
-                                                keyExtractor={(item, index) => index.toString()}
-                                                showsVerticalScrollIndicator={false}
-                                                refreshing={this.state.refreshing}
-                                                onRefresh={() => {
-                                                        this._onRefresh();
+                                                        onPress={() => {
+                                                                this._onClickButtonSearch('restaurant', 'Hồ Chí Minh')
+                                                        }}
+                                                >
+                                                        <Image
+                                                                source={require('../../assets/images/icon_restaurant.png')}
+                                                                style={styles.imageIconSelectType}
+                                                        />
+                                                        <Text style={styles.textTitleType}>Nhà hàng</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={{
+                                                        backgroundColor: 'white',
+                                                        width: (screenWidth - 60) / 3,
+                                                        height: (screenWidth - 60) / 3,
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        marginHorizontal: 10
                                                 }}
-                                                // on load more
-                                                onEndReached={() => {
-                                                        this._onLoadMoreRestaurant();
+                                                        onPress={() => {
+                                                                this._onClickButtonSearch('coffee', 'Hồ Chí Minh')
+                                                        }}
+                                                >
+                                                        <Image
+                                                                source={require('../../assets/images/icon_coffee.png')}
+                                                                style={styles.imageIconSelectType}
+                                                        />
+                                                        <Text style={styles.textTitleType}>Coffee & Trà</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={{
+                                                        backgroundColor: 'white',
+                                                        width: (screenWidth - 60) / 3,
+                                                        height: (screenWidth - 60) / 3,
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
                                                 }}
-                                                //  onEndReachedThreshold={1}
+                                                        onPress={() => {
+                                                                this._onClickButtonSearch('bar', 'Hồ Chí Minh')
+                                                        }}
+                                                >
+                                                        <Image
+                                                                source={require('../../assets/images/icon_bar.png')}
+                                                                style={styles.imageIconSelectType}
+                                                        />
+                                                        <Text style={styles.textTitleType}>Bar</Text>
+                                                </TouchableOpacity>
+                                        </View>
+                                        {/* <Text style={{
+                                                margin: 20,
+                                                fontFamily: 'UVN-Baisau-Bold',
+                                                fontSize: 20,
+                                                textTransform: 'capitalize'
+                                        }}>địa điểm phổ biến</Text>
+                                        <Carousel
+                                                data={this.state.address}
+                                                layout={'default'}
+                                                sliderWidth={screenWidth}
+                                                sliderHeight={300}
+                                                firstItem={0}
+                                                itemWidth={250}
+                                                onSnapToItem={(index) => this.setState({ indexSliderImage: index })}
+                                                inactiveSlideScale={0.94}
+                                                inactiveSlideOpacity={0.5}
                                                 renderItem={(item) => {
-                                                        if (item.index === 0) {
-                                                                return (
-                                                                        <View style={styles.selectIconType}>
-                                                                                <TouchableOpacity style={{
-                                                                                        backgroundColor: 'white',
-                                                                                        width: (width - 60) / 3,
-                                                                                        height: (width - 60) / 3,
-                                                                                        alignItems: 'center',
-                                                                                        justifyContent: 'center'
-                                                                                }}
-                                                                                        onPress={() => {
-                                                                                                this._onClickButtonIconTypeRestaurant('restaurant');
-                                                                                        }}
-                                                                                >
-                                                                                        <Image
-                                                                                                source={require('../../assets/images/icon_restaurant.png')}
-                                                                                                style={styles.imageIconSelectType}
-                                                                                        />
-                                                                                        <Text style={styles.textTitleType}>Nhà hàng</Text>
-                                                                                </TouchableOpacity>
-                                                                                <TouchableOpacity style={{
-                                                                                        backgroundColor: 'white',
-                                                                                        width: (width - 60) / 3,
-                                                                                        height: (width - 60) / 3,
-                                                                                        alignItems: 'center',
-                                                                                        justifyContent: 'center',
-                                                                                        marginHorizontal: 10
-                                                                                }}
-                                                                                        onPress={() => {
-                                                                                                this._onClickButtonIconTypeRestaurant('coffee');
-                                                                                        }}
-                                                                                >
-                                                                                        <Image
-                                                                                                source={require('../../assets/images/icon_coffee.png')}
-                                                                                                style={styles.imageIconSelectType}
-                                                                                        />
-                                                                                        <Text style={styles.textTitleType}>Coffee & Trà</Text>
-                                                                                </TouchableOpacity>
-                                                                                <TouchableOpacity style={{
-                                                                                        backgroundColor: 'white',
-                                                                                        width: (width - 60) / 3,
-                                                                                        height: (width - 60) / 3,
-                                                                                        alignItems: 'center',
-                                                                                        justifyContent: 'center'
-                                                                                }}
-                                                                                        onPress={() => {
-                                                                                                this._onClickButtonIconTypeRestaurant('bar');
-                                                                                        }}
-                                                                                >
-                                                                                        <Image
-                                                                                                source={require('../../assets/images/icon_bar.png')}
-                                                                                                style={styles.imageIconSelectType}
-                                                                                        />
-                                                                                        <Text style={styles.textTitleType}>Bar</Text>
-                                                                                </TouchableOpacity>
-                                                                        </View>
-                                                                );
-                                                        } else {
-                                                                return (
-                                                                        <TouchableOpacity
-                                                                                onPress={() => {
-                                                                                        this._onClickItemFlatList(item.item._id);
-                                                                                }}
-                                                                        >
-                                                                                <View style={{
-                                                                                        width: '100%',
-                                                                                        height: width - 40,
-                                                                                        marginVertical: 15,
-                                                                                        backgroundColor: 'white'
-                                                                                }}   >
-                                                                                        <View style={{
-                                                                                                flex: 2
-                                                                                        }}>
-                                                                                                <Image
-                                                                                                        source={{ uri: `${urlServer}${item.item.imageRestaurant[0]}` }}
-                                                                                                        style={{
-                                                                                                                flex: 1
-                                                                                                        }}
-                                                                                                />
-                                                                                                <View style={styles.containerTextDanhGia}>
-                                                                                                        <Text style={{
-                                                                                                                color: 'white',
-                                                                                                                fontFamily: 'UVN-Baisau-Bold',
-                                                                                                                fontSize: 18
-                                                                                                        }}>9,2</Text>
-                                                                                                </View>
-                                                                                        </View>
-                                                                                        <View style={styles.containerContentTitleItemList}>
-                                                                                                <View>
-                                                                                                        <Text style={styles.textTitleRestaurantItemList}
-                                                                                                                numberOfLines={1}
-                                                                                                        >{item.item.name}</Text>
-                                                                                                        <Text style={styles.textTypeRestaurantItemList}>{item.item.type}</Text>
-                                                                                                </View>
-                                                                                                <View style={{
-                                                                                                        flexDirection: 'row',
-                                                                                                        alignItems: 'center',
-                                                                                                }}>
-                                                                                                        <Text style={styles.textStatusItemList}>đang mở cửa</Text>
-                                                                                                        <View style={{
-                                                                                                                width: 4,
-                                                                                                                height: 4,
-                                                                                                                backgroundColor: 'black',
-                                                                                                                borderRadius: 2,
-                                                                                                                marginHorizontal: 10
-                                                                                                        }} />
-                                                                                                        <Text style={styles.textAddressItemList}
-                                                                                                                numberOfLines={1}
-                                                                                                                ellipsizeMode='tail'
-                                                                                                        >{item.item.address}</Text>
-                                                                                                </View>
-                                                                                        </View>
-                                                                                </View>
-                                                                        </TouchableOpacity>
-                                                                );
-                                                        }
-
+                                                        return (
+                                                                <ItemAddress
+                                                                        address={item.item}
+                                                                />
+                                                        );
+                                                }}
+                                        /> */}
+                                        <View style={styles.containerTitle}>
+                                                <Text style={styles.textTitle}>top ăn uống</Text>
+                                                <Text style={styles.textXemThem}>xem thêm</Text>
+                                        </View>
+                                        <Carousel
+                                                data={this.state.address}
+                                                layout={'default'}
+                                                sliderWidth={screenWidth}
+                                                sliderHeight={300}
+                                                firstItem={0}
+                                                itemWidth={250}
+                                                onSnapToItem={(index) => this.setState({ indexSliderImage: index })}
+                                                inactiveSlideScale={0.94}
+                                                inactiveSlideOpacity={0.5}
+                                                renderItem={(item) => {
+                                                        return (
+                                                                <ItemAddress
+                                                                        address={item.item}
+                                                                />
+                                                        );
                                                 }}
                                         />
-                                </View>
+                                        <View style={styles.containerTitle}>
+                                                <Text style={styles.textTitle}>nhà hàng không gian đẹp</Text>
+                                                <Text style={styles.textXemThem}>xem thêm</Text>
+                                        </View>
+                                        <Carousel
+                                                data={this.state.listRestaurant}
+                                                layout={'default'}
+                                                sliderWidth={screenWidth}
+                                                sliderHeight={300}
+                                                firstItem={0}
+                                                itemWidth={250}
+                                                onSnapToItem={(index) => this.setState({ indexSliderImageRestaurant: index })}
+                                                inactiveSlideScale={0.94}
+                                                inactiveSlideOpacity={0.5}
+                                                renderItem={(item) => {
+                                                        return (
+                                                                <ItemList
+                                                                        _onClickItemFlatList={this._onClickItemFlatList}
+                                                                        itemList={item.item}
+                                                                />
+                                                        );
+                                                }}
+                                        />
+                                        <View style={styles.containerTitle}>
+                                                <Text style={styles.textTitle}>quán cà phê độc đáo</Text>
+                                                <Text style={styles.textXemThem}>xem thêm</Text>
+                                        </View>
+                                        <Carousel
+                                                data={this.state.listCoffee}
+                                                layout={'default'}
+                                                sliderWidth={screenWidth}
+                                                sliderHeight={300}
+                                                firstItem={0}
+                                                itemWidth={250}
+                                                onSnapToItem={(index) => this.setState({ indexSliderImageCoffee: index })}
+                                                inactiveSlideScale={0.94}
+                                                inactiveSlideOpacity={0.5}
+                                                renderItem={(item) => {
+                                                        return (
+                                                                <ItemList
+                                                                        _onClickItemFlatList={this._onClickItemFlatList}
+                                                                        itemList={item.item}
+                                                                />
+                                                        );
+                                                }}
+                                        />
+                                        <View style={styles.containerTitle}>
+                                                <Text style={styles.textTitle}>quán bar sành điệu</Text>
+                                                <Text style={styles.textXemThem}>xem thêm</Text>
+                                        </View>
+                                        <Carousel
+                                                data={this.state.listBar}
+                                                layout={'default'}
+                                                sliderWidth={screenWidth}
+                                                sliderHeight={300}
+                                                firstItem={0}
+                                                itemWidth={250}
+                                                onSnapToItem={(index) => this.setState({ indexSliderImageBar: index })}
+                                                inactiveSlideScale={0.94}
+                                                inactiveSlideOpacity={0.5}
+                                                renderItem={(item) => {
+                                                        return (
+                                                                <ItemList
+                                                                        _onClickItemFlatList={this._onClickItemFlatList}
+                                                                        itemList={item.item}
+                                                                />
+                                                        );
+                                                }}
+                                        />
+                                </ScrollView>
                         </View>
                 );
         }
@@ -294,7 +419,9 @@ const styles = StyleSheet.create({
         },
         selectIconType: {
                 flexDirection: 'row',
-                marginVertical: 15
+                margin: 20,
+                alignItems: 'center',
+                justifyContent: 'space-between',
         },
         imageIconSelectType: {
                 width: 50,
@@ -305,39 +432,21 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize'
         },
-        textTitleRestaurantItemList: {
+        textTitle: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 25,
-                textTransform: 'capitalize'
+                fontSize: 20,
+                textTransform: "capitalize"
         },
-        textTypeRestaurantItemList: {
-                fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'uppercase'
+        containerTitle: {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: 20
         },
-        textStatusItemList: {
+        textXemThem: {
                 fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 18,
                 color: colorMain,
                 textTransform: 'capitalize'
-        },
-        textAddressItemList: {
-                fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'capitalize',
-                flex: 1,
-        },
-        containerTextDanhGia: {
-                width: 50,
-                height: 50,
-                borderRadius: 25,
-                backgroundColor: colorMain,
-                position: 'absolute',
-                bottom: -25,
-                right: 30,
-                alignItems: 'center',
-                justifyContent: 'center'
-        },
-        containerContentTitleItemList: {
-                flex: 1,
-                padding: 20,
-                justifyContent: 'space-between'
         }
 })

@@ -27,9 +27,10 @@ export default class Menu extends Component {
                         idRestaurant: null,
                         listMenu: [],
                         refreshing: false,
-                        messages: ''
+                        messages: '',
+                        idAdmin: null,
+                        showEdit: false
                 }
-                this._onGetInfoAccount();
                 this._onClickCloseAddMenu = this._onClickCloseAddMenu.bind(this);
                 this._onClickCloseSelectImage = this._onClickCloseSelectImage.bind(this);
                 this._onClickOpenSelectImage = this._onClickOpenSelectImage.bind(this);
@@ -43,25 +44,31 @@ export default class Menu extends Component {
                         account: account,
                         authorities: account.authorities
                 })
+                const id = this.props.navigation.getParam('idRestaurant');
+                this.setState({
+                        idRestaurant: id.idRestaurant,
+                        idAdmin: id.idAdmin
+                })
+                if (account.id == id.idAdmin) {
+                        this.setState({
+                                showEdit: true
+                        })
+                }
+                this.props.onFetchMenu(id.idRestaurant);
         }
 
         componentDidMount () {
-                const id = this.props.navigation.getParam('idRestaurant');
-                this.setState({
-                        idRestaurant: id
-                })
-                this.props.onFetchMenu(id);
+                this._onGetInfoAccount();
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.visibleLoading && nextProps.visibleLoading !== undefined) {
+                if (nextProps.isLoading !== prevState.visibleLoading) {
                         prevState.visibleLoading = nextProps.isLoading
                 }
                 if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined) {
                         prevState.listMenu = nextProps.listMenu
                 }
-                if (nextProps.messages !== prevState.messages && nextProps.messages !== undefined) {
-                        prevState.messages = nextProps.messages
+                if (nextProps.messages !== undefined) {
                         alert(nextProps.messages)
                 }
                 return null
@@ -105,13 +112,12 @@ export default class Menu extends Component {
                                 />
                                 <View style={styles.header}>
                                         <TouchableOpacity onPress={() => {
-                                                //  this.props.navigation.navigate('Home');
-                                                this.props.navigation.goBack();
+                                                this.props.navigation.navigate('Home');
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
                                         {
-                                                this.state.authorities === 'admin-restaurant' ? <TouchableOpacity onPress={() => {
+                                                this.state.showEdit ? <TouchableOpacity onPress={() => {
                                                         this.setState({
                                                                 visibleAddMenu: !this.state.visibleAddMenu
                                                         })
@@ -185,7 +191,8 @@ export default class Menu extends Component {
 
 const styles = StyleSheet.create({
         container: {
-                flex: 1
+                flex: 1,
+                backgroundColor: background
         },
         header: {
                 height: 50,

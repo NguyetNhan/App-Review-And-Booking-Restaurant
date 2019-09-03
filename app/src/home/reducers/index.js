@@ -1,4 +1,11 @@
-import { FETCH_LIST_RESTAURANT_SUCCEEDED, FETCH_LIST_RESTAURANT_FAILED } from '../actions/action_types';
+import {
+        FETCH_LIST_RESTAURANT_SUCCEEDED,
+        FETCH_LIST_RESTAURANT_FAILED,
+        FETCH_LIST_BAR_FAILED,
+        FETCH_LIST_BAR_SUCCEEDED,
+        FETCH_LIST_COFFEE_FAILED,
+        FETCH_LIST_COFFEE_SUCCEEDED
+} from '../actions/action_types';
 
 
 const HomeReducers = (state = [], action) => {
@@ -12,6 +19,30 @@ const HomeReducers = (state = [], action) => {
                 case FETCH_LIST_RESTAURANT_FAILED:
                         return {
                                 FetchListRestaurantFailed: {
+                                        messages: action.messages
+                                }
+                        };
+                case FETCH_LIST_BAR_SUCCEEDED:
+                        return {
+                                FetchListBarSucceeded: {
+                                        data: action.data
+                                }
+                        };
+                case FETCH_LIST_BAR_FAILED:
+                        return {
+                                FetchListBarFailed: {
+                                        messages: action.messages
+                                }
+                        };
+                case FETCH_LIST_COFFEE_SUCCEEDED:
+                        return {
+                                FetchListCoffeeSucceeded: {
+                                        data: action.data
+                                }
+                        };
+                case FETCH_LIST_COFFEE_FAILED:
+                        return {
+                                FetchListCoffeeFailed: {
                                         messages: action.messages
                                 }
                         };

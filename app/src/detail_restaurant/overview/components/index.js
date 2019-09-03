@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Modal } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Modal, ScrollView } from 'react-native';
 import { urlServer, colorMain, background } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconFoundation from 'react-native-vector-icons/Foundation';
 import Carousel from 'react-native-snap-carousel';
 import { AccountModel } from '../../../models/account';
 import EditRestaurant from './edit_restaurant';
+
 
 export default class OverView extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -28,7 +30,9 @@ export default class OverView extends Component {
                         address: '',
                         introduce: '',
                         visibleModalEditRestaurant: false,
-                        messages: ''
+                        messages: '',
+                        numberOfLines: 4,
+                        showButtonXemThem: true
                 }
                 this._onGetInfoAccount();
                 this._onClickCloseModalEdit = this._onClickCloseModalEdit.bind(this);
@@ -44,7 +48,11 @@ export default class OverView extends Component {
 
         componentDidMount () {
                 const id = this.props.navigation.getParam('idRestaurant');
-                this.props.onFetchDetailRestaurant(id);
+                // this.setState({
+                //         idRestaurant: id.idRestaurant,
+                //         idAdmin: id.idAdmin
+                // })
+                this.props.onFetchDetailRestaurant(id.idRestaurant);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -84,7 +92,7 @@ export default class OverView extends Component {
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
-                                        {
+                                        {/* {
                                                 this.state.authorities === 'admin-restaurant' ? <TouchableOpacity onPress={() => {
                                                         this.setState({
                                                                 visibleModalEditRestaurant: true
@@ -92,108 +100,159 @@ export default class OverView extends Component {
                                                 }}>
                                                         <Icon name='edit' size={25} color='black' />
                                                 </TouchableOpacity> : null
-                                        }
+                                        } */}
                                 </View>
-                                <View style={styles.containerSliderImage}>
-                                        <Carousel
-                                                ref={(c) => { this._slider1Ref = c; }}
-                                                data={this.state.imageRestaurant}
-                                                renderItem={(item) => {
-                                                        return (
-                                                                <View style={{
-                                                                        borderRadius: 50
-                                                                }}>
-                                                                        <Image
-                                                                                source={{ uri: `${urlServer}${item.item}` }}
-                                                                                style={{
-                                                                                        width: 250,
-                                                                                        height: 200,
-                                                                                        borderRadius: 10,
-                                                                                }}
-                                                                        />
-                                                                </View>
-                                                        );
-                                                }}
-                                                layout={'default'}
-                                                sliderWidth={screenWidth}
-                                                sliderHeight={300}
-                                                firstItem={0}
-                                                itemWidth={250}
-                                                loop={true}
-                                                loopClonesPerSide={2}
-                                                autoplay={true}
-                                                autoplayDelay={500}
-                                                autoplayInterval={3000}
-                                                onSnapToItem={(index) => this.setState({ indexSliderImage: index })}
-                                                inactiveSlideScale={0.94}
-                                                inactiveSlideOpacity={0.3}
-                                        />
-                                        <View style={styles.containerTextDanhGia}>
-                                                <Text style={{
-                                                        color: 'white',
-                                                        fontFamily: 'UVN-Baisau-Bold',
-                                                        fontSize: 18
-                                                }}>9,2</Text>
-                                        </View>
-                                </View>
+                                <ScrollView>
+                                        <View style={styles.containerSliderImage}>
+                                                <Carousel
+                                                        ref={(c) => { this._slider1Ref = c; }}
+                                                        data={this.state.imageRestaurant}
+                                                        renderItem={(item) => {
+                                                                return (
 
-                                <View style={styles.content}>
-                                        <Text style={styles.textTitleRestaurant}
-                                                numberOfLines={1}
-                                        >{this.state.name}</Text>
-                                        <View style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between'
-                                        }}>
-                                                <Text style={styles.textTypeRestaurant}>{this.state.type}</Text>
+                                                                        <View style={{
+                                                                                borderRadius: 50
+                                                                        }}>
+                                                                                <Image
+                                                                                        source={{ uri: `${urlServer}${item.item}` }}
+                                                                                        style={{
+                                                                                                width: 250,
+                                                                                                height: 200,
+                                                                                                borderRadius: 10,
+                                                                                        }}
+                                                                                />
+                                                                        </View>
+
+                                                                );
+                                                        }}
+                                                        layout={'default'}
+                                                        sliderWidth={screenWidth}
+                                                        sliderHeight={300}
+                                                        firstItem={0}
+                                                        itemWidth={250}
+                                                        loop={true}
+                                                        loopClonesPerSide={2}
+                                                        autoplay={true}
+                                                        autoplayDelay={500}
+                                                        autoplayInterval={3000}
+                                                        onSnapToItem={(index) => this.setState({ indexSliderImage: index })}
+                                                        inactiveSlideScale={0.94}
+                                                        inactiveSlideOpacity={0.3}
+                                                />
+                                                <View style={styles.containerTextDanhGia}>
+                                                        <Text style={{
+                                                                color: 'white',
+                                                                fontFamily: 'UVN-Baisau-Bold',
+                                                                fontSize: 18
+                                                        }}>9,2</Text>
+                                                </View>
+                                        </View>
+
+                                        <View style={styles.content}>
+                                                <Text style={styles.textTitleRestaurant}
+                                                        numberOfLines={1}
+                                                >{this.state.name}</Text>
+                                                <View style={{
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between'
+                                                }}>
+                                                        <Text style={styles.textTypeRestaurant}>{this.state.type}</Text>
+
+                                                        <View style={{
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                        }}>
+                                                                <IconFontAwesome name='phone' size={20} color={colorMain} />
+                                                                <Text style={{
+                                                                        fontFamily: 'UVN-Baisau-Regular',
+                                                                        marginVertical: 10,
+                                                                        marginLeft: 10
+                                                                }}>{this.state.phone}</Text>
+                                                        </View>
+                                                </View>
 
                                                 <View style={{
                                                         flexDirection: 'row',
                                                         alignItems: 'center',
                                                 }}>
-                                                        <IconFontAwesome name='phone' size={20} color={colorMain} />
+                                                        <Text style={styles.textStatus}>đang mở cửa</Text>
+                                                        <View style={{
+                                                                width: 4,
+                                                                height: 4,
+                                                                backgroundColor: 'black',
+                                                                borderRadius: 2,
+                                                                marginHorizontal: 10
+                                                        }} />
+                                                        <Text style={styles.textAddress}
+                                                        >{this.state.address}</Text>
+                                                </View>
+                                                <Text style={styles.textIntroduce}
+                                                        numberOfLines={this.state.numberOfLines}
+                                                        ellipsizeMode='tail'
+                                                >{this.state.introduce}</Text>
+                                                {
+                                                        this.state.showButtonXemThem ?
+                                                                <View style={{
+                                                                        width: '100%',
+                                                                        justifyContent: 'space-between',
+                                                                        flexDirection: 'row'
+                                                                }}>
+                                                                        <View />
+                                                                        <TouchableOpacity onPress={() => {
+                                                                                this.setState({
+                                                                                        numberOfLines: 100,
+                                                                                        showButtonXemThem: false
+                                                                                })
+                                                                        }}>
+                                                                                <Text style={{
+                                                                                        fontFamily: 'UVN-Baisau-Regular',
+                                                                                        fontSize: 12,
+                                                                                        color: colorMain
+                                                                                }}>Xem Thêm</Text>
+                                                                        </TouchableOpacity>
+                                                                </View>
+                                                                : null
+                                                }
+
+                                        </View>
+                                        <View style={styles.containerButton}>
+                                                <TouchableOpacity style={styles.button}>
+                                                        <IconSimpleLineIcons name='clock' size={20} color='black' />
                                                         <Text style={{
                                                                 fontFamily: 'UVN-Baisau-Regular',
-                                                                marginVertical: 10,
-                                                                marginLeft: 10
-                                                        }}>{this.state.phone}</Text>
-                                                </View>
+                                                                marginTop: 5,
+                                                                fontSize: 12
+                                                        }}>8AM-10PM</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.button}>
+                                                        <Icon name='customerservice' size={20} color={colorMain} />
+                                                        <Text style={{
+                                                                fontFamily: 'UVN-Baisau-Regular',
+                                                                marginTop: 5,
+                                                                fontSize: 12,
+                                                                color: colorMain
+                                                        }}>Tư Vấn</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.button}>
+                                                        <IconFoundation name='clipboard-pencil' size={20} color={colorMain} />
+                                                        <Text style={{
+                                                                fontFamily: 'UVN-Baisau-Regular',
+                                                                marginTop: 5,
+                                                                fontSize: 12,
+                                                                color: colorMain
+                                                        }}>Đặt Tiệc</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.button}>
+                                                        <IconSimpleLineIcons name='pin' size={20} color='black' />
+                                                        <Text style={{
+                                                                fontFamily: 'UVN-Baisau-Regular',
+                                                                marginTop: 5,
+                                                                fontSize: 12
+                                                        }}>Theo Dõi</Text>
+                                                </TouchableOpacity>
                                         </View>
-
-                                        <View style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
-                                        }}>
-                                                <Text style={styles.textStatus}>đang mở cửa</Text>
-                                                <View style={{
-                                                        width: 4,
-                                                        height: 4,
-                                                        backgroundColor: 'black',
-                                                        borderRadius: 2,
-                                                        marginHorizontal: 10
-                                                }} />
-                                                <Text style={styles.textAddress}
-                                                >{this.state.address}</Text>
-                                        </View>
-                                        <Text style={styles.textIntroduce}>{this.state.introduce}</Text>
-                                </View>
-                                <View style={styles.containerButton}>
-                                        <TouchableOpacity style={styles.button}>
-                                                <IconSimpleLineIcons name='clock' size={30} color='black' />
-                                                <Text style={{
-                                                        fontFamily: 'UVN-Baisau-Regular',
-                                                        marginTop: 5
-                                                }}>8AM-10PM</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.button}>
-                                                <IconSimpleLineIcons name='pin' size={30} color='black' />
-                                                <Text style={{
-                                                        fontFamily: 'UVN-Baisau-Regular',
-                                                        marginTop: 5
-                                                }}>Theo dõi</Text>
-                                        </TouchableOpacity>
-                                </View>
+                                </ScrollView>
                                 <Modal
                                         visible={this.state.visibleModalEditRestaurant}
                                         animationType='slide'
@@ -222,7 +281,7 @@ const styles = StyleSheet.create({
                 flexDirection: 'row',
                 marginHorizontal: 20,
                 justifyContent: 'center',
-                marginVertical: 20
+                marginVertical: 20,
         },
         header: {
                 height: 50,
@@ -277,8 +336,8 @@ const styles = StyleSheet.create({
                 backgroundColor: 'white',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 85,
-                height: 85,
-                marginHorizontal: 20
+                width: 60,
+                height: 60,
+                marginHorizontal: 10
         },
 });
