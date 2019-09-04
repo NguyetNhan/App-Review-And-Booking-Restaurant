@@ -25,9 +25,11 @@ export default class Notification extends Component {
                         page: 1,
                         total_page: 1
                 }
+
                 socket.on('notification', (data) => {
                         alert(data);
                 })
+                this._onClickItem = this._onClickItem.bind(this);
         }
 
         async _getAccountFromLocal () {
@@ -95,6 +97,15 @@ export default class Notification extends Component {
                 }
         }
 
+        _onClickItem (data) {
+                const authorities = this.state.account.authorities;
+                if (authorities === 'admin') {
+                        if (data.type === 'register_restaurant') {
+                                this.props.navigation.navigate('ConfirmRestaurant')
+                        }
+                }
+        }
+
         render () {
                 return (
                         <View style={styles.container}   >
@@ -136,6 +147,8 @@ export default class Notification extends Component {
                                                                         type={item.item.type}
                                                                         time={item.item.time}
                                                                         idAccount={item.item.idAccount}
+                                                                        idRestaurant={item.item.idRestaurant}
+                                                                        _onClickItem={this._onClickItem}
                                                                 />
                                                         );
                                                 }}

@@ -6,6 +6,7 @@ import { AccountModel } from '../../../models/account';
 import AddMenu from './add_menu';
 import SelectImage from './select_image';
 import ItemListMenu from './item_list_menu';
+import DetailMenu from './detail_menu';
 export default class Menu extends Component {
         static navigationOptions = ({ navigation }) => {
                 return {
@@ -29,13 +30,20 @@ export default class Menu extends Component {
                         refreshing: false,
                         messages: '',
                         idAdmin: null,
-                        showEdit: false
+                        showEdit: false,
+                        visibleDetailMenu: false,
+                        nameSelect: '',
+                        imageSelect: '',
+                        introduceSelect: '',
+                        priceSelect: '',
                 }
                 this._onClickCloseAddMenu = this._onClickCloseAddMenu.bind(this);
                 this._onClickCloseSelectImage = this._onClickCloseSelectImage.bind(this);
                 this._onClickOpenSelectImage = this._onClickOpenSelectImage.bind(this);
                 this._onClickSelectImage = this._onClickSelectImage.bind(this);
                 this._onClickCompleteAddMenu = this._onClickCompleteAddMenu.bind(this);
+                this._onClickCloseDetailMenu = this._onClickCloseDetailMenu.bind(this);
+                this._onClickOpenDetailMenu = this._onClickOpenDetailMenu.bind(this);
         }
 
         async _onGetInfoAccount () {
@@ -102,6 +110,20 @@ export default class Menu extends Component {
                 data.idRestaurant = this.state.idRestaurant;
                 this.props.onAddMenu(data);
         }
+        _onClickCloseDetailMenu () {
+                this.setState({
+                        visibleDetailMenu: !this.state.visibleDetailMenu
+                });
+        }
+        _onClickOpenDetailMenu (data) {
+                this.setState({
+                        visibleDetailMenu: !this.state.visibleDetailMenu,
+                        nameSelect: data.nameSelect,
+                        imageSelect: data.imageSelect,
+                        introduceSelect: data.introduceSelect,
+                        priceSelect: data.priceSelect
+                });
+        }
 
         render () {
                 return (
@@ -143,6 +165,7 @@ export default class Menu extends Component {
                                                                         image={item.item.image}
                                                                         introduce={item.item.introduce}
                                                                         price={item.item.price}
+                                                                        _onClickOpenDetailMenu={this._onClickOpenDetailMenu}
                                                                 />
                                                         );
                                                 }}
@@ -183,6 +206,19 @@ export default class Menu extends Component {
                                         }} >
                                                 <ActivityIndicator animating={true} size={80} color={colorMain} />
                                         </View>
+                                </Modal>
+                                <Modal
+                                        visible={this.state.visibleDetailMenu}
+                                        transparent={false}
+                                        animationType='slide'
+                                >
+                                        <DetailMenu
+                                                _onClickCloseDetailMenu={this._onClickCloseDetailMenu}
+                                                nameSelect={this.state.nameSelect}
+                                                introduceSelect={this.state.introduceSelect}
+                                                imageSelect={this.state.imageSelect}
+                                                priceSelect={this.state.priceSelect}
+                                        />
                                 </Modal>
                         </View >
                 );

@@ -10,7 +10,9 @@ export default class SelectImage extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        photos: []
+                        photos: [],
+                        isLoading: false,
+                        amount: 30
                 };
                 this.requestCameraPermission();
         }
@@ -34,7 +36,7 @@ export default class SelectImage extends Component {
 
         async  _handleButtonPress () {
                 var result = await CameraRoll.getPhotos({
-                        first: 30,
+                        first: this.state.amount,
                         assetType: 'Photos',
                 });
                 var listPhotos = result.edges;
@@ -42,13 +44,32 @@ export default class SelectImage extends Component {
                         item.node.image.selected = false;
                 }
                 this.setState({
-                        photos: listPhotos
+                        photos: listPhotos,
+                        has_next_page: result.page_info.has_next_page
                 });
         }
 
         onClickSelectImage (uri) {
                 this.props.onClickSelectImage(uri);
                 this.props.onClickCloseSelectImage();
+        }
+
+        async  onLoadMoreImage () {
+                if (this.state.has_next_page) {
+                        var result = await CameraRoll.getPhotos({
+                                first: this.state.amount + 30,
+                                assetType: 'Photos',
+                        });
+                        var listPhotos = result.edges;
+                        for (var item of listPhotos) {
+                                item.node.image.selected = false;
+                        }
+                        this.setState({
+                                photos: listPhotos,
+                                has_next_page: result.page_info.has_next_page,
+                                amount: this.state.amount + 30,
+                        });
+                }
         }
 
         render () {
@@ -71,6 +92,13 @@ export default class SelectImage extends Component {
                                                 keyExtractor={(item, index) => index.toString()}
                                                 numColumns={3}
                                                 horizontal={false}
+                                                onEndReached={() => {
+                                                        this.onLoadMoreImage();
+                                                }}
+                                                refreshing={this.state.isLoading}
+                                                onRefresh={() => {
+                                                        this._handleButtonPress();
+                                                }}
                                                 renderItem={(item) => {
                                                         return (
                                                                 <TouchableOpacity

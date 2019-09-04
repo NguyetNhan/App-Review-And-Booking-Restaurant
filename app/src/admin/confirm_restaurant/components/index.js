@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar, FlatList, Image, ActivityIndicator, Modal, ScrollView, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar, FlatList, Image, Modal, ScrollView, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer, background } from '../../../config';
 export default class ConfirmRestaurant extends Component {
@@ -18,9 +18,10 @@ export default class ConfirmRestaurant extends Component {
                         phoneSelect: '',
                         refreshing: false,
                         type: '',
-                        messages: ''
+                        messages: '',
                 };
         }
+
 
         componentDidMount () {
                 this.props.onFetchListConfirmRestaurant();
@@ -32,6 +33,7 @@ export default class ConfirmRestaurant extends Component {
                 }
                 if (props.visibleFormConfirm !== state.visibleFormConfirm && props.visibleFormConfirm !== undefined) {
                         state.visibleFormConfirm = props.visibleFormConfirm;
+
                 }
                 if (props.isLoading !== state.isLoading && props.isLoading !== undefined) {
                         state.listData = props.listData;
@@ -40,7 +42,6 @@ export default class ConfirmRestaurant extends Component {
                         state.messages = props.messages;
                         ToastAndroid.show(props.messages, ToastAndroid.LONG);
                 }
-
                 return null;
         }
 
@@ -74,6 +75,7 @@ export default class ConfirmRestaurant extends Component {
         }
 
         render () {
+                console.log(this.state.idRestaurantFromParams);
                 return (
                         <View style={styles.container}>
                                 <StatusBar
@@ -173,6 +175,7 @@ export default class ConfirmRestaurant extends Component {
                                                                 <TouchableOpacity style={styles.buttonAgree}
                                                                         onPress={() => {
                                                                                 this.onClickButtonAgree();
+                                                                                this.props.onFetchListConfirmRestaurant();
                                                                         }}
                                                                 >
                                                                         <Text style={styles.textButtonAgree}>Đồng ý</Text>
@@ -180,6 +183,7 @@ export default class ConfirmRestaurant extends Component {
                                                                 <TouchableOpacity style={styles.buttonCancel}
                                                                         onPress={() => {
                                                                                 this.onClickButtonCancel();
+                                                                                this.props.onFetchListConfirmRestaurant();
                                                                         }}
                                                                 >
                                                                         <Text style={styles.textButtonCancel}>Hủy</Text>
@@ -226,7 +230,8 @@ const styles = StyleSheet.create({
         },
         textRestaurant: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 18
+                fontSize: 18,
+                textTransform: 'capitalize'
         },
         textAddress: {
                 fontFamily: 'OpenSans-Regular',

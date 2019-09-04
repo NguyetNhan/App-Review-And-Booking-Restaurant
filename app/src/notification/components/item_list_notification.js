@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { urlServer } from '../../config';
 
 export default class ItemListNotification extends Component {
@@ -11,29 +11,39 @@ export default class ItemListNotification extends Component {
                         image: props.image,
                         type: props.type,
                         time: props.time,
-                        idAccount: props.idAccount
+                        idAccount: props.idAccount,
+                        idRestaurant: props.idRestaurant
                 };
         }
 
         render () {
+                const date = new Date(this.state.time);
+                const formatDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}h${date.getMinutes()}`;
                 return (
-                        <View style={styles.container}>
-                                <Image
-                                        source={{ uri: `${urlServer}${this.state.image}` }}
-                                        style={styles.image}
-                                />
-                                <View style={styles.containerText}>
-                                        <Text style={styles.textTitle}
-                                                numberOfLines={1}
-                                        >{this.state.title}</Text>
-                                        <Text style={styles.textContent}
-                                                numberOfLines={2}
-                                        >{this.state.content}</Text>
-                                        <Text style={styles.textTime}
-                                                numberOfLines={1}
-                                        >{this.state.time}</Text>
+                        <TouchableOpacity onPress={() => {
+                                this.props._onClickItem({
+                                        type: this.state.type,
+                                        idRestaurant: this.state.idRestaurant
+                                });
+                        }}>
+                                <View style={styles.container}>
+                                        <Image
+                                                source={{ uri: `${urlServer}${this.state.image}` }}
+                                                style={styles.image}
+                                        />
+                                        <View style={styles.containerText}>
+                                                <Text style={styles.textTitle}
+                                                        numberOfLines={1}
+                                                >{this.state.title}</Text>
+                                                <Text style={styles.textContent}
+                                                        numberOfLines={2}
+                                                >{this.state.content}</Text>
+                                                <Text style={styles.textTime}
+                                                        numberOfLines={1}
+                                                >{formatDate}</Text>
+                                        </View>
                                 </View>
-                        </View>
+                        </TouchableOpacity >
                 );
         }
 }

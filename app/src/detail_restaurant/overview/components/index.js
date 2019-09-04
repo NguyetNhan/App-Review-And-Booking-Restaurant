@@ -32,7 +32,8 @@ export default class OverView extends Component {
                         visibleModalEditRestaurant: false,
                         messages: '',
                         numberOfLines: 4,
-                        showButtonXemThem: true
+                        showButtonXemThem: true,
+                        idRestaurant: null
                 }
                 this._onGetInfoAccount();
                 this._onClickCloseModalEdit = this._onClickCloseModalEdit.bind(this);
@@ -48,10 +49,9 @@ export default class OverView extends Component {
 
         componentDidMount () {
                 const id = this.props.navigation.getParam('idRestaurant');
-                // this.setState({
-                //         idRestaurant: id.idRestaurant,
-                //         idAdmin: id.idAdmin
-                // })
+                this.setState({
+                        idRestaurant: id
+                });
                 this.props.onFetchDetailRestaurant(id.idRestaurant);
         }
 
@@ -75,6 +75,12 @@ export default class OverView extends Component {
         _onClickCloseModalEdit () {
                 this.setState({
                         visibleModalEditRestaurant: !this.state.visibleModalEditRestaurant
+                });
+        }
+
+        _onClickButtonOrder () {
+                this.props.navigation.navigate('Order', {
+                        idRestaurant: this.state.idRestaurant
                 });
         }
 
@@ -234,7 +240,11 @@ export default class OverView extends Component {
                                                                 color: colorMain
                                                         }}>Tư Vấn</Text>
                                                 </TouchableOpacity>
-                                                <TouchableOpacity style={styles.button}>
+                                                <TouchableOpacity style={styles.button}
+                                                        onPress={() => {
+                                                                this._onClickButtonOrder();
+                                                        }}
+                                                >
                                                         <IconFoundation name='clipboard-pencil' size={20} color={colorMain} />
                                                         <Text style={{
                                                                 fontFamily: 'UVN-Baisau-Regular',

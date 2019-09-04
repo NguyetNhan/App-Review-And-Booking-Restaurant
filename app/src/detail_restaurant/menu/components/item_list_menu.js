@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { urlServer, colorMain } from '../../../config';
 
 export default class ItemListMenu extends Component {
@@ -34,25 +34,34 @@ export default class ItemListMenu extends Component {
 
         render () {
                 return (
-                        <View style={styles.container}>
-                                <Image
-                                        source={{ uri: `${urlServer}${this.state.image}` }}
-                                        style={styles.image}
-                                />
-                                <View style={styles.content}>
-                                        <Text style={styles.name}
-                                                numberOfLines={1}
-                                                ellipsizeMode='tail'
-                                        >{this.state.name}</Text>
-                                        <Text style={styles.price}
-                                                numberOfLines={1}
-                                                ellipsizeMode='tail'>{this.convertVND(this.state.price)} VND</Text>
-                                        <Text style={styles.introduce}
-                                                numberOfLines={2}
-                                                ellipsizeMode='tail'
-                                        >{this.state.introduce}</Text>
+                        <TouchableOpacity onPress={() => {
+                                this.props._onClickOpenDetailMenu({
+                                        nameSelect: this.state.name,
+                                        imageSelect: this.state.image,
+                                        introduceSelect: this.state.introduce,
+                                        priceSelect: this.state.price
+                                });
+                        }}>
+                                <View style={styles.container}>
+                                        <Image
+                                                source={{ uri: `${urlServer}${this.state.image}` }}
+                                                style={styles.image}
+                                        />
+                                        <View style={styles.content}>
+                                                <Text style={styles.name}
+                                                        numberOfLines={1}
+                                                        ellipsizeMode='tail'
+                                                >{this.state.name}</Text>
+                                                <Text style={styles.price}
+                                                        numberOfLines={1}
+                                                        ellipsizeMode='tail'>{this.convertVND(this.state.price)} VND</Text>
+                                                <Text style={styles.introduce}
+                                                        numberOfLines={2}
+                                                        ellipsizeMode='tail'
+                                                >{this.state.introduce}</Text>
+                                        </View>
                                 </View>
-                        </View>
+                        </TouchableOpacity>
                 );
         }
 }

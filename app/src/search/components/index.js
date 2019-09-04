@@ -4,15 +4,6 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import { colorMain, urlServer, background } from '../../config';
 export default class Search extends Component {
-        static navigationOptions = ({ navigation }) => {
-                return {
-                        title: 'Tìm Kiếm',
-                        headerTitleStyle: {
-                                fontFamily: 'UVN-Baisau-Bold',
-                        }
-                }
-        }
-
         constructor (props) {
                 super(props);
                 this.state = {
@@ -20,7 +11,7 @@ export default class Search extends Component {
                         type: 'bar',
                         address: 'Hồ Chí Minh',
                         listRestaurant: [],
-                }
+                };
         }
 
         componentDidMount () {
@@ -28,18 +19,18 @@ export default class Search extends Component {
                 this.setState({
                         type: condition.type,
                         address: condition.address
-                })
+                });
                 const data = {
                         content: this.state.textSearch,
                         type: condition.type,
                         address: condition.address
-                }
+                };
                 this.props.onSearchRestaurant(data);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.listRestaurant !== prevState.listRestaurant) {
-                        prevState.listRestaurant = nextProps.listRestaurant
+                        prevState.listRestaurant = nextProps.listRestaurant;
                 }
                 return null;
         }
@@ -49,7 +40,7 @@ export default class Search extends Component {
                 var data = {
                         idRestaurant: idRestaurant,
                         idAdmin: idAdmin
-                }
+                };
                 this.props.navigation.navigate('DetailRestaurant', {
                         idRestaurant: data
                 });
@@ -61,9 +52,18 @@ export default class Search extends Component {
                 return (
                         <View style={styles.container}>
                                 <StatusBar
-                                        barStyle='dark-content'
                                         backgroundColor='white'
+                                        barStyle='dark-content'
                                 />
+                                <View style={styles.containerHeader}>
+                                        <TouchableOpacity onPress={() => {
+                                                this.props.navigation.goBack();
+                                        }}>
+                                                <Icon name='arrow-left' size={25} color='black' />
+                                        </TouchableOpacity>
+                                        <Text style={styles.textHeader}>Tìm Kiếm</Text>
+                                        <View />
+                                </View>
                                 <View style={styles.header}>
                                         <TextInput
                                                 style={styles.textInputSearch}
@@ -73,12 +73,12 @@ export default class Search extends Component {
                                                         this.setState({
                                                                 textSearch: text,
 
-                                                        })
+                                                        });
                                                         const data = {
                                                                 content: text,
                                                                 type: this.state.type,
                                                                 address: this.state.address
-                                                        }
+                                                        };
                                                         this.props.onSearchRestaurant(data);
                                                 }}
                                         />
@@ -90,12 +90,12 @@ export default class Search extends Component {
                                                         onValueChange={(itemValue, itemIndex) => {
                                                                 this.setState({
                                                                         address: itemValue,
-                                                                })
+                                                                });
                                                                 const data = {
                                                                         content: this.state.textSearch,
                                                                         address: itemValue,
                                                                         type: this.state.type,
-                                                                }
+                                                                };
                                                                 this.props.onSearchRestaurant(data);
                                                         }}>
                                                         <Picker.Item label="Hồ Chí Minh" value="Hồ Chí Minh" />
@@ -109,12 +109,12 @@ export default class Search extends Component {
                                                         selectedValue={this.state.address}
                                                         style={styles.picker}
                                                         onValueChange={(itemValue, itemIndex) => {
-                                                                this.setState({ address: itemValue })
+                                                                this.setState({ address: itemValue });
                                                                 const data = {
                                                                         content: this.state.textSearch,
                                                                         type: itemValue,
                                                                         address: this.state.address
-                                                                }
+                                                                };
                                                                 this.props.onSearchRestaurant(data);
                                                         }}>
                                                         <Picker.Item label="Nhà Hàng" value="restaurant" />
@@ -167,6 +167,20 @@ const styles = StyleSheet.create({
         container: {
                 flex: 1,
                 backgroundColor: background
+        },
+        containerHeader: {
+                width: '100%',
+                height: 50,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                backgroundColor: 'white',
+                alignItems: 'center',
+                paddingHorizontal: 20
+        },
+        textHeader: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 20,
+                textTransform: 'capitalize'
         },
         header: {
                 height: 150,

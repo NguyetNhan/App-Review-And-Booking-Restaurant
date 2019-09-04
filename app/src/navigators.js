@@ -21,6 +21,7 @@ import Overview from './detail_restaurant/overview/containers';
 import Menu from './detail_restaurant/menu/containers';
 import Review from './detail_restaurant/review/components';
 import Chat from './chat/components';
+import Order from './order/components';
 
 
 const RouteBottomTabConfig = {
@@ -177,6 +178,15 @@ const MainNavigatorClient = createStackNavigator(
                 },
                 Search: {
                         screen: Search,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Order: {
+                        screen: Order,
+                        navigationOptions: {
+                                header: null,
+                        },
                 }
         }, {
                 initialRouteName: 'DrawerNavigatorClient'
@@ -297,6 +307,15 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                 },
                 Search: {
                         screen: Search,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Order: {
+                        screen: Order,
+                        navigationOptions: {
+                                header: null,
+                        },
                 }
         }, {
                 initialRouteName: 'DrawerNavigatorAdminRestaurant'
@@ -402,6 +421,15 @@ const MainNavigatorAdmin = createStackNavigator(
                 },
                 Search: {
                         screen: Search,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Order: {
+                        screen: Order,
+                        navigationOptions: {
+                                header: null,
+                        },
                 }
         }, {
                 initialRouteName: 'DrawerNavigatorAdmin'
