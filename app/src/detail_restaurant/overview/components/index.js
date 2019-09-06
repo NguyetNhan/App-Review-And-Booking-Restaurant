@@ -48,7 +48,7 @@ export default class OverView extends Component {
         }
 
         componentDidMount () {
-                const id = this.props.navigation.getParam('idRestaurant');
+                const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
                 this.setState({
                         idRestaurant: id
                 });
@@ -80,7 +80,7 @@ export default class OverView extends Component {
 
         _onClickButtonOrder () {
                 this.props.navigation.navigate('Order', {
-                        idRestaurant: this.state.idRestaurant
+                        idRestaurantForOrder: this.state.idRestaurant.idRestaurant
                 });
         }
 

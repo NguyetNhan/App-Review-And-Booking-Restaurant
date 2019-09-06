@@ -52,7 +52,7 @@ export default class Menu extends Component {
                         account: account,
                         authorities: account.authorities
                 })
-                const id = this.props.navigation.getParam('idRestaurant');
+                const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
                 this.setState({
                         idRestaurant: id.idRestaurant,
                         idAdmin: id.idAdmin

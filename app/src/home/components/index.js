@@ -143,7 +143,7 @@ export default class Home extends Component {
                         idAdmin: idAdmin
                 }
                 this.props.navigation.navigate('DetailRestaurant', {
-                        idRestaurant: data
+                        IdConfigDetailRestaurant: data
                 });
         }
 

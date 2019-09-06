@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
 export default class Follow extends Component {
@@ -17,7 +17,12 @@ export default class Follow extends Component {
         render () {
                 return (
                         <View>
-                                <Text>Follow</Text>
+                                <TouchableOpacity onPress={() => {
+                                        this.props.navigation.navigate('Map');
+                                }}>
+                                        <Text>Follow</Text>
+                                </TouchableOpacity>
+
                         </View>
                 );
         }

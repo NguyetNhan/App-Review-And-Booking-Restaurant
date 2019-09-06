@@ -4,12 +4,14 @@ import Icon from 'react-native-vector-icons/Feather';
 import { AccountModel } from '../../models/account';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { urlServer, colorMain, background } from '../../config';
+import ItemMenu from './item_menu';
 
+//FIXME: chưa get được list menu
 export default class Order extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        idRestaurant: props.navigation.getParam('idRestaurant', null),
+                        idRestaurant: props.navigation.getParam('idRestaurantForOrder', null),
                         account: null,
                         date: new Date(),
                         modeDate: 'date',
@@ -20,7 +22,8 @@ export default class Order extends Component {
                         phone: '0123456789',
                         amount: '1',
                         note: '',
-
+                        visibleListMenu: false,
+                        listMenu: []
                 };
         }
 
@@ -30,13 +33,22 @@ export default class Order extends Component {
                 this.setState({
                         account: account,
                         name: account.name,
-                        phone: account.phone
+                        phone: account.phone.toString()
                 });
         }
 
         componentDidMount () {
                 this._getAccountFromLocal();
+                this.props.onFetchListMenu(this.state.idRestaurant);
         }
+
+        static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined) {
+                        prevState.listMenu = nextProps.listMenu;
+                }
+                return null;
+        }
+
 
         _onClickShowDatePicker () {
                 this.setState({
@@ -117,7 +129,7 @@ export default class Order extends Component {
                                                                 phone: text
                                                         });
                                                 }}
-                                                keyboardType='numeric'
+                                                keyboardType='number-pad'
                                         />
                                         <Text style={styles.title}>số lượng người</Text>
                                         <TextInput
@@ -162,7 +174,13 @@ export default class Order extends Component {
                                         />
                                         <Text style={styles.title}>thực đơn</Text>
                                         <View style={styles.containerButton}>
-                                                <TouchableOpacity style={styles.buttonSelectMenu}>
+                                                <TouchableOpacity style={styles.buttonSelectMenu}
+                                                        onPress={() => {
+                                                                this.setState({
+                                                                        visibleListMenu: !this.state.visibleListMenu
+                                                                });
+                                                        }}
+                                                >
                                                         <Text
                                                                 style={styles.textButtonSelectMenu}
                                                         >chọn</Text>
@@ -192,6 +210,42 @@ export default class Order extends Component {
                                                         /> : null
                                         }
                                 </View>
+                                <Modal
+                                        visible={this.state.visibleListMenu}
+                                        animationType='slide'
+                                        transparent={false}
+                                >
+                                        <View style={styles.containerModalListMenu}>
+                                                <View style={styles.containerHeader}>
+                                                        <TouchableOpacity onPress={() => {
+                                                                this.setState({
+                                                                        visibleListMenu: !this.state.visibleListMenu
+                                                                });
+                                                        }}>
+                                                                <Icon name='arrow-left' size={25} color='black' />
+                                                        </TouchableOpacity>
+                                                        <Text style={styles.textHeader}>MENU</Text>
+                                                        <View />
+                                                </View>
+                                                <View style={styles.containerFlatList}>
+                                                        <FlatList
+                                                                data={this.state.listMenu}
+                                                                extraData={this.state}
+                                                                keyExtractor={(item, index) => index.toString()}
+                                                                renderItem={(item) => {
+                                                                        return (
+                                                                                <ItemMenu
+                                                                                        name={item.item.name}
+                                                                                        image={item.item.image}
+                                                                                        introduce={item.item.introduce}
+                                                                                        price={item.item.price}
+                                                                                />
+                                                                        );
+                                                                }}
+                                                        />
+                                                </View>
+                                        </View>
+                                </Modal>
                         </View>
                 );
         }
@@ -255,4 +309,10 @@ const styles = StyleSheet.create({
                 fontSize: 20,
                 textTransform: 'capitalize'
         },
+        containerModalListMenu: {
+                flex: 1
+        },
+        containerFlatList: {
+                flex: 1
+        }
 });

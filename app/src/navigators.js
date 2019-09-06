@@ -21,7 +21,8 @@ import Overview from './detail_restaurant/overview/containers';
 import Menu from './detail_restaurant/menu/containers';
 import Review from './detail_restaurant/review/components';
 import Chat from './chat/components';
-import Order from './order/components';
+import Order from './order/containers';
+import Map from './map/components';
 
 
 const RouteBottomTabConfig = {
@@ -64,20 +65,20 @@ const DetailRestaurant = createMaterialTopTabNavigator(
                         screen: Review
                 }
         }, {
-                initialRouteName: 'Overview',
-                tabBarOptions: {
-                        inactiveTintColor: 'gray',
-                        activeTintColor: colorMain,
-                        labelStyle: {
-                                fontFamily: 'OpenSans-Bold',
-                                textTransform: 'capitalize'
-                        },
-                        style: {
-                                backgroundColor: 'white'
-                        },
+        initialRouteName: 'Overview',
+        tabBarOptions: {
+                inactiveTintColor: 'gray',
+                activeTintColor: colorMain,
+                labelStyle: {
+                        fontFamily: 'OpenSans-Bold',
+                        textTransform: 'capitalize'
                 },
-                tabBarPosition: 'bottom',
-        }
+                style: {
+                        backgroundColor: 'white'
+                },
+        },
+        tabBarPosition: 'bottom',
+}
 );
 
 class DrawerContentClient extends Component {
@@ -187,10 +188,16 @@ const MainNavigatorClient = createStackNavigator(
                         navigationOptions: {
                                 header: null,
                         },
+                },
+                Map: {
+                        screen: Map,
+                        navigationOptions: {
+                                header: null,
+                        },
                 }
         }, {
-                initialRouteName: 'DrawerNavigatorClient'
-        }
+        initialRouteName: 'DrawerNavigatorClient'
+}
 );
 
 
@@ -318,8 +325,8 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                         },
                 }
         }, {
-                initialRouteName: 'DrawerNavigatorAdminRestaurant'
-        }
+        initialRouteName: 'DrawerNavigatorAdminRestaurant'
+}
 );
 
 class DrawerContentAdmin extends Component {
@@ -432,8 +439,8 @@ const MainNavigatorAdmin = createStackNavigator(
                         },
                 }
         }, {
-                initialRouteName: 'DrawerNavigatorAdmin'
-        }
+        initialRouteName: 'DrawerNavigatorAdmin'
+}
 );
 
 const styleDrawerAdminRestaurant = StyleSheet.create({

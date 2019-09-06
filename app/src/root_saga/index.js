@@ -12,6 +12,7 @@ import { WatchSearchRestaurantFromAPI } from '../search/sagas';
 import { WatchFetchDetailRestaurantFormAPI } from '../detail_restaurant/overview/sagas';
 import { WatchAddMenuOnAPI, WatchFetchMenuFromAPI } from '../detail_restaurant/menu/sagas';
 import { WatchFetchNotificationFromAPI } from '../notification/sagas';
+import { WatchFetchListMenuForOrderFromAPI } from '../order/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -29,6 +30,7 @@ export default function* RootSaga () {
                 WatchFetchMenuFromAPI(),
                 WatchFetchListCoffeeFromAPI(),
                 WatchFetchListBarFromAPI(),
-                WatchFetchNotificationFromAPI()
+                WatchFetchNotificationFromAPI(),
+                WatchFetchListMenuForOrderFromAPI()
         ]);
 }
