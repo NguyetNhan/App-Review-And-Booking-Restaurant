@@ -56,54 +56,8 @@ export default class AuthLoading extends Component {
                                         } else if (accountNew.authorities === 'admin-restaurant') {
                                                 this.props.navigation.navigate('AppAdminRestaurant');
                                         }
-                                }, 500);
+                                }, 200);
                         }
-                        // var realm = await Realm.open({ schema: [AccountModel.AccountSchema] });
-                        // var account = await realm.objects(AccountModel.Account);
-
-                        // if (account.length === 0) {
-                        //         realm.close();
-                        //         this.props.navigation.navigate('Auth');
-                        // } else {
-                        //         let data = {
-                        //                 authorities: null,
-                        //                 name: null,
-                        //                 email: null,
-                        //                 password: null,
-                        //         };
-                        //         for (let item of account) {
-                        //                 data.name = item.name;
-                        //                 data.authorities = item.authorities;
-                        //                 data.email = item.email;
-                        //                 data.password = item.password;
-                        //         }
-                        //         realm.close();
-                        //         console.log('data: ', data);
-                        //         const response = await fetch(urlLogin, {
-                        //                 method: 'POST',
-                        //                 headers: {
-                        //                         Accept: 'application/json',
-                        //                         'Content-Type': 'application/json',
-                        //                 },
-                        //                 body: JSON.stringify({
-                        //                         email: data.email,
-                        //                         password: data.password,
-                        //                 })
-                        //         }).then(convertJson => convertJson.json());
-                        //         console.log('response: ', response);
-                        //         this.setState({
-                        //                 account: data
-                        //         });
-                        //         setTimeout(() => {
-                        //                 if (this.state.account.authorities === 'client') {
-                        //                         this.props.navigation.navigate('Client');
-                        //                 } else if (this.state.account.authorities === 'admin') {
-                        //                         this.props.navigation.navigate('AppAdmin');
-                        //                 } else if (this.state.account.authorities === 'admin-restaurant') {
-                        //                         this.props.navigation.navigate('AppAdminRestaurant');
-                        //                 }
-                        //         }, 500);
-                        // }
                 } catch (error) {
                         console.log('error: ', error);
                 }

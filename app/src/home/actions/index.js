@@ -5,7 +5,10 @@ import {
         FETCH_LIST_BAR, FETCH_LIST_BAR_FAILED,
         FETCH_LIST_BAR_SUCCEEDED,
         FETCH_LIST_COFFEE,
-        FETCH_LIST_COFFEE_FAILED, FETCH_LIST_COFFEE_SUCCEEDED
+        FETCH_LIST_COFFEE_FAILED, FETCH_LIST_COFFEE_SUCCEEDED,
+        FETCH_NEARBY_LOCATION_RESTAURANT_FAILED,
+        FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME,
+        FETCH_NEARBY_LOCATION_RESTAURANT_SUCCEEDED
 } from './action_types';
 
 export const onFetchListRestaurant = (data) => {
@@ -70,6 +73,27 @@ export const onFetchListBarSucceeded = (data) => {
 export const onFetchListBarFailed = (messages) => {
         return {
                 type: FETCH_LIST_BAR_FAILED,
+                messages
+        };
+};
+
+export const onFetchNearbyLocationRestaurant = (position) => {
+        return {
+                type: FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME,
+                position
+        };
+};
+
+export const onFetchNearbyLocationRestaurantSucceeded = (data) => {
+        return {
+                type: FETCH_NEARBY_LOCATION_RESTAURANT_SUCCEEDED,
+                data
+        };
+};
+
+export const onFetchNearbyLocationRestaurantFailed = (messages) => {
+        return {
+                type: FETCH_NEARBY_LOCATION_RESTAURANT_FAILED,
                 messages
         };
 };

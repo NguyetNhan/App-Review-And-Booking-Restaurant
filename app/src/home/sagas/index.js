@@ -2,7 +2,8 @@ import { put, takeLatest } from 'redux-saga/effects';
 import {
         FETCH_LIST_RESTAURANT,
         FETCH_LIST_BAR,
-        FETCH_LIST_COFFEE
+        FETCH_LIST_COFFEE,
+        FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME
 } from '../actions/action_types';
 import {
         onFetchListRestaurantFailed,
@@ -10,9 +11,12 @@ import {
         onFetchListBarFailed,
         onFetchListBarSucceeded,
         onFetchListCoffeeFailed,
-        onFetchListCoffeeSucceeded
+        onFetchListCoffeeSucceeded,
+        onFetchNearbyLocationRestaurantFailed,
+        onFetchNearbyLocationRestaurantSucceeded
 } from '../actions';
 import { API } from './API';
+import { API as MapAPI } from '../../map/sagas/API';
 
 function* FetchListRestaurantFromAPI (action) {
         try {
@@ -63,4 +67,21 @@ function* FetchListBarFromAPI (action) {
 
 export function* WatchFetchListBarFromAPI () {
         yield takeLatest(FETCH_LIST_BAR, FetchListBarFromAPI);
+}
+
+function* FetchNearbyLocationRestaurantFromAPI (action) {
+        try {
+                const results = yield MapAPI.FetchNearbyLocationRestaurant(action.position);
+                if (results.error) {
+                        yield put(onFetchNearbyLocationRestaurantFailed(results.messages));
+                } else {
+                        yield put(onFetchNearbyLocationRestaurantSucceeded(results.data));
+                }
+        } catch (error) {
+                yield put(onFetchNearbyLocationRestaurantFailed(error.message));
+        }
+}
+
+export function* WatchFetchNearbyLocationRestaurantForHomeFromAPI () {
+        yield takeLatest(FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME, FetchNearbyLocationRestaurantFromAPI);
 }

@@ -175,6 +175,9 @@ export default class Menu extends Component {
                                         visible={this.state.visibleAddMenu}
                                         transparent={false}
                                         animationType='slide'
+                                        onRequestClose={() => {
+                                                this._onClickCloseAddMenu()
+                                        }}
                                 >
                                         <AddMenu
                                                 uriImageSelect={this.state.uriImageSelect}
@@ -187,6 +190,9 @@ export default class Menu extends Component {
                                         visible={this.state.visibleSelectImage}
                                         transparent={false}
                                         animationType='slide'
+                                        onRequestClose={() => {
+                                                this._onClickCloseSelectImage()
+                                        }}
                                 >
                                         <SelectImage
                                                 onClickCloseSelectImage={this._onClickCloseSelectImage}
@@ -211,6 +217,9 @@ export default class Menu extends Component {
                                         visible={this.state.visibleDetailMenu}
                                         transparent={false}
                                         animationType='slide'
+                                        onRequestClose={() => {
+                                                this._onClickCloseDetailMenu()
+                                        }}
                                 >
                                         <DetailMenu
                                                 _onClickCloseDetailMenu={this._onClickCloseDetailMenu}

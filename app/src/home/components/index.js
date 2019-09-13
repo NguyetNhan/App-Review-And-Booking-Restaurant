@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, FlatList, ToastAndroid, ScrollView, Modal, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, FlatList, ToastAndroid, ScrollView, Modal, RefreshControl, PermissionsAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer } from '../../config';
 import Carousel from 'react-native-snap-carousel';
 import ItemAddress from './item_address';
 import ItemList from './item_list';
+import Geolocation from '@react-native-community/geolocation';
 
 export default class Home extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -20,6 +21,7 @@ export default class Home extends Component {
                         listRestaurant: [],
                         listCoffee: [],
                         listBar: [],
+                        listRestaurantFollowLocation: [],
                         refreshing: false,
                         page: 1,
                         total_page: null,
@@ -31,6 +33,7 @@ export default class Home extends Component {
                         indexSliderImageRestaurant: 0,
                         indexSliderImageCoffee: 0,
                         indexSliderImageBar: 0,
+                        indexSliderImageRestaurantFollowLocation: 0,
                         address: [
                                 {
                                         name: 'Hồ Chí Minh',
@@ -46,10 +49,38 @@ export default class Home extends Component {
                                 }
                         ],
                 }
+                this.requestLocationPermission();
                 this._onClickItemFlatList = this._onClickItemFlatList.bind(this);
                 this._onClickModalRestaurant = this._onClickModalRestaurant.bind(this);
                 this._onClickModalCoffee = this._onClickModalCoffee.bind(this);
                 this._onClickModalBar = this._onClickModalBar.bind(this);
+        }
+
+        async  requestLocationPermission () {
+                try {
+                        const granted = await PermissionsAndroid.request(
+                                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                        );
+                        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                                Geolocation.getCurrentPosition((position) => {
+                                        const position1 = {
+                                                latitude: position.coords.latitude,
+                                                longitude: position.coords.longitude,
+                                        }
+                                        this.props.onFetchNearbyLocationRestaurant(position1);
+                                }, (error) => {
+                                        console.log('error: ', error);
+                                }, {
+                                        enableHighAccuracy: true,
+                                        timeout: 20000,
+                                        maximumAge: 1000
+                                })
+                        } else {
+                                alert('Chức năng này không được bạn cho phép sử dụng !');
+                        }
+                } catch (err) {
+                        console.warn(err);
+                }
         }
 
         componentDidMount () {
@@ -68,6 +99,15 @@ export default class Home extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.listRestaurantFollowLocation !== prevState.listRestaurantFollowLocation && nextProps.listRestaurantFollowLocation !== undefined) {
+                        if (prevState.isUpdateState) {
+                                const array = (prevState.listRestaurantFollowLocation).concat(nextProps.listRestaurantFollowLocation);
+                                prevState.listRestaurantFollowLocation = array;
+                        } else {
+                                prevState.isUpdateState = true;
+                                prevState.isLoadMore = true;
+                        }
+                }
                 if (nextProps.listRestaurant !== prevState.listRestaurant && nextProps.listRestaurant !== undefined) {
                         if (prevState.isUpdateState) {
                                 const array = (prevState.listRestaurant).concat(nextProps.listRestaurant);
@@ -143,7 +183,8 @@ export default class Home extends Component {
                         idAdmin: idAdmin
                 }
                 this.props.navigation.navigate('DetailRestaurant', {
-                        IdConfigDetailRestaurant: data
+                        IdConfigDetailRestaurant: data,
+                        GoBack: 'Home'
                 });
         }
 
@@ -152,6 +193,7 @@ export default class Home extends Component {
                         listRestaurant: [],
                         listCoffee: [],
                         listBar: [],
+                        listRestaurantFollowLocation: [],
                         refreshing: true
                 });
                 this.props.onFetchListRestaurant({
@@ -166,7 +208,7 @@ export default class Home extends Component {
                         type: 'coffee',
                         page: 1
                 });
-
+                this.requestLocationPermission();
         }
 
         _onClickModalRestaurant () {
@@ -325,6 +367,29 @@ export default class Home extends Component {
                                                 }}
                                         />
                                         <View style={styles.containerTitle}>
+                                                <Text style={styles.textTitle}>các địa điểm gần bạn nhất</Text>
+                                                <Text style={styles.textXemThem}>xem thêm</Text>
+                                        </View>
+                                        <Carousel
+                                                data={this.state.listRestaurantFollowLocation}
+                                                layout={'default'}
+                                                sliderWidth={screenWidth}
+                                                sliderHeight={300}
+                                                firstItem={0}
+                                                itemWidth={250}
+                                                onSnapToItem={(index) => this.setState({ indexSliderImageRestaurantFollowLocation: index })}
+                                                inactiveSlideScale={0.94}
+                                                inactiveSlideOpacity={0.5}
+                                                renderItem={(item) => {
+                                                        return (
+                                                                <ItemList
+                                                                        _onClickItemFlatList={this._onClickItemFlatList}
+                                                                        itemList={item.item}
+                                                                />
+                                                        );
+                                                }}
+                                        />
+                                        <View style={styles.containerTitle}>
                                                 <Text style={styles.textTitle}>nhà hàng không gian đẹp</Text>
                                                 <Text style={styles.textXemThem}>xem thêm</Text>
                                         </View>
@@ -445,7 +510,7 @@ const styles = StyleSheet.create({
         },
         textXemThem: {
                 fontFamily: 'UVN-Baisau-Regular',
-                fontSize: 18,
+                fontSize: 12,
                 color: colorMain,
                 textTransform: 'capitalize'
         }

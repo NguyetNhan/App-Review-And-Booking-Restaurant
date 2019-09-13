@@ -9,7 +9,6 @@ import { AccountModel } from './models/account';
 
 import Home from './home/containers';
 import Search from './search/containers';
-import Deal from './deal/components';
 import Notification from './notification/containers';
 import Follow from './follow/components';
 import AuthLoading from './auth_loading/components';
@@ -22,7 +21,7 @@ import Menu from './detail_restaurant/menu/containers';
 import Review from './detail_restaurant/review/components';
 import Chat from './chat/components';
 import Order from './order/containers';
-import Map from './map/components';
+import Map from './map/containers';
 
 
 const RouteBottomTabConfig = {
@@ -32,8 +31,8 @@ const RouteBottomTabConfig = {
         Chat: {
                 screen: Chat,
         },
-        Deal: {
-                screen: Deal,
+        Map: {
+                screen: Map,
         },
         Notification: {
                 screen: Notification,
@@ -48,7 +47,7 @@ const BottomTabNavigatorConfig = {
         activeColor: colorMain,
         inactiveColor: 'gray',
         barStyle: { backgroundColor: 'white' },
-        order: ['Deal', 'Chat', 'Home', 'Notification', 'Follow']
+        order: ['Home', 'Chat', 'Map', 'Notification', 'Follow']
 };
 
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
@@ -118,7 +117,6 @@ class DrawerContentClient extends Component {
                                         <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
                                 </View>
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={() => {
                                                         this.props.navigation.closeDrawer();
@@ -127,7 +125,6 @@ class DrawerContentClient extends Component {
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
                                         </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
                                                         await AccountModel.DeleteAccountInfoFromDatabaseLocal();
@@ -136,7 +133,6 @@ class DrawerContentClient extends Component {
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
                                         </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                 </View>
                         </View>
                 );
@@ -189,12 +185,7 @@ const MainNavigatorClient = createStackNavigator(
                                 header: null,
                         },
                 },
-                Map: {
-                        screen: Map,
-                        navigationOptions: {
-                                header: null,
-                        },
-                }
+
         }, {
         initialRouteName: 'DrawerNavigatorClient'
 }
@@ -240,7 +231,6 @@ class DrawerContentAdminRestaurant extends Component {
                                         <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
                                 </View>
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity onPress={async () => {
                                                 this.props.navigation.closeDrawer();
                                                 const idAccount = this.state.account.id;
@@ -265,7 +255,6 @@ class DrawerContentAdminRestaurant extends Component {
                                         }}>
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Cửa hàng</Text>
                                         </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
                                                         await AccountModel.DeleteAccountInfoFromDatabaseLocal();
@@ -274,7 +263,6 @@ class DrawerContentAdminRestaurant extends Component {
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
                                         </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                 </View>
                         </View>
                 );
@@ -323,7 +311,7 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                         navigationOptions: {
                                 header: null,
                         },
-                }
+                },
         }, {
         initialRouteName: 'DrawerNavigatorAdminRestaurant'
 }
@@ -367,7 +355,6 @@ class DrawerContentAdmin extends Component {
                                 </View>
 
                                 <View style={styleDrawerAdminRestaurant.containerAction}>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={() => {
                                                         this.props.navigation.closeDrawer();
@@ -376,7 +363,6 @@ class DrawerContentAdmin extends Component {
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Xác nhận nhà hàng</Text>
                                         </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                         <TouchableOpacity
                                                 onPress={async () => {
                                                         await AccountModel.DeleteAccountInfoFromDatabaseLocal();
@@ -385,7 +371,6 @@ class DrawerContentAdmin extends Component {
                                         >
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
                                         </TouchableOpacity>
-                                        <View style={styleDrawerAdminRestaurant.line} />
                                 </View>
                         </View>
                 );
@@ -437,7 +422,7 @@ const MainNavigatorAdmin = createStackNavigator(
                         navigationOptions: {
                                 header: null,
                         },
-                }
+                },
         }, {
         initialRouteName: 'DrawerNavigatorAdmin'
 }
@@ -482,19 +467,14 @@ const styleDrawerAdminRestaurant = StyleSheet.create({
         },
         containerAction: {
                 flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                marginTop: 30
         },
         textAction: {
                 color: 'black',
                 fontFamily: 'UVN-Baisau-Bold',
-                margin: 15
+                margin: 18
         },
-        line: {
-                backgroundColor: 'rgba(0,0,0,0.3)',
-                height: 1,
-                width: 200
-        }
 });
 
 const AuthStack = createStackNavigator(

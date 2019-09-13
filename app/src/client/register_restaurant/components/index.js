@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import { Picker, View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, PermissionsAndroid, Image, Modal, FlatList, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
+import Geolocation from '@react-native-community/geolocation';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { colorMain } from '../../../config';
+import { colorMain, urlServer, KEY_API_GOOGLE_MAP } from '../../../config';
+import SelectPlaceOnMap from './map';
+import Geocoder from 'react-native-geocoder';
 
-//FIXME: không hiện loading khi nhấn nút đăng kí
-
+const { height, width } = Dimensions.get('window');
 export default class RegisterRestaurant extends Component {
 
         constructor (props) {
                 super(props);
                 this.state = {
-                        modalVisible: false,
+                        visibleModalSelectImage: false,
                         photos: [],
                         selectImage: null,
                         name: 'Ngọc Linh',
@@ -24,15 +27,26 @@ export default class RegisterRestaurant extends Component {
                         isLoading: false,
                         timeOpen: '8',
                         timeClose: '22',
-                        modalLoading: false,
                         changeScreen: false,
-                        amount: 30
+                        amount: 30,
+                        visibleModalSelectPlaceOnMap: false,
+                        region: {
+                                latitude: 21.0242225,
+                                longitude: 105.8207913,
+                                latitudeDelta: 0.00922 * 1.5,
+                                longitudeDelta: 0.00421 * 1.5
+                        },
+                        marker: null
                 };
+                Geocoder.fallbackToGoogle(KEY_API_GOOGLE_MAP);
+                this.requestLocationPermission();
+                this._onClickCloseModalMap = this._onClickCloseModalMap.bind(this);
+                this._onClickComplete = this._onClickComplete.bind(this);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.modalLoading !== prevState.modalLoading && nextProps.modalLoading !== undefined) {
-                        prevState.modalLoading = nextProps.modalLoading;
+                if (nextProps.isLoading !== prevState.isLoading) {
+                        prevState.isLoading = nextProps.isLoading;
                 }
                 if (nextProps.changeScreen !== prevState.changeScreen && nextProps.changeScreen !== undefined) {
                         // nextProps.navigation.navigate('AppAdminRestaurant');
@@ -41,7 +55,40 @@ export default class RegisterRestaurant extends Component {
         }
 
 
-
+        async  requestLocationPermission () {
+                try {
+                        const granted = await PermissionsAndroid.request(
+                                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                        );
+                        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                                Geolocation.getCurrentPosition((position) => {
+                                        var region = {
+                                                latitude: position.coords.latitude,
+                                                longitude: position.coords.longitude,
+                                                latitudeDelta: 0.00922 * 1.5,
+                                                longitudeDelta: 0.00421 * 1.5
+                                        };
+                                        this.setState({
+                                                region: region,
+                                                marker: {
+                                                        latitude: position.coords.latitude,
+                                                        longitude: position.coords.longitude,
+                                                }
+                                        });
+                                }, (error) => {
+                                        console.log('error: ', error);
+                                }, {
+                                        enableHighAccuracy: true,
+                                        timeout: 20000,
+                                        maximumAge: 1000
+                                });
+                        } else {
+                                alert('Chức năng này không được bạn cho phép sử dụng !');
+                        }
+                } catch (err) {
+                        console.warn(err);
+                }
+        }
         async  requestCameraPermission () {
                 try {
                         const granted = await PermissionsAndroid.request(
@@ -117,7 +164,7 @@ export default class RegisterRestaurant extends Component {
 
         onClickButtonRegister () {
                 this.setState({
-                        modalLoading: !this.state.modalLoading
+                        isLoading: !this.state.isLoading
                 });
                 const listImage = this.state.selectImage;
                 var image = [];
@@ -136,13 +183,48 @@ export default class RegisterRestaurant extends Component {
                         image: image,
                         phone: this.state.phone,
                         type: this.state.type,
-                        time: `${this.state.timeOpen}-${this.state.timeClose}`
+                        time: `${this.state.timeOpen}-${this.state.timeClose}`,
+                        position: {
+                                latitude: this.state.marker.latitude,
+                                longitude: this.state.marker.longitude,
+                        }
                 };
                 this.props.onRegisterRestaurant(data);
         }
 
+        _onClickOpenModalMap () {
+                this.setState({
+                        visibleModalSelectPlaceOnMap: !this.state.visibleModalSelectPlaceOnMap
+                });
+        }
+
+        _onClickCloseModalMap () {
+                this.setState({
+                        visibleModalSelectPlaceOnMap: !this.state.visibleModalSelectPlaceOnMap
+                });
+        }
+
+        _onClickComplete (position) {
+                this.setState({
+                        marker: position
+                });
+        }
+
+        async  _onEndCompleteEditAddress () {
+                try {
+                        const res = await Geocoder.geocodeAddress(`${this.state.address}, ${this.state.textQuan}, ${this.state.textTinh},Việt Nam`);
+                        this.setState({
+                                marker: {
+                                        latitude: res[0].position.lat,
+                                        longitude: res[0].position.lng,
+                                },
+                        });
+                } catch (error) {
+                        console.log('error: ', error);
+                }
+        }
+
         render () {
-                const { height, width } = Dimensions.get('window');
                 return (
                         <View style={styles.container}>
                                 <StatusBar
@@ -157,9 +239,7 @@ export default class RegisterRestaurant extends Component {
                                         </TouchableOpacity>
                                         <Text style={styles.textHeader}>Đăng kí cửa hàng</Text>
                                 </View>
-                                <ScrollView
-                                        showsVerticalScrollIndicator={false}
-                                >
+                                <ScrollView                                >
                                         <View style={styles.containerForm}>
                                                 <Text style={styles.textHint}>Tên cửa hàng</Text>
                                                 <TextInput style={styles.textInput}
@@ -216,23 +296,15 @@ export default class RegisterRestaurant extends Component {
                                                         value={this.state.phone}
                                                 />
                                                 <Text style={styles.textHint}>Địa chỉ</Text>
-                                                <Picker
-                                                        selectedValue={this.state.textTinh}
-                                                        style={{
-                                                                height: 50,
-                                                                fontFamily: 'OpenSans-Regular',
+                                                <TextInput style={styles.textInput}
+                                                        placeholder='Tỉnh, Thành Phố'
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        textTinh: text
+                                                                });
                                                         }}
-                                                        onValueChange={(itemValue, itemIndex) =>
-                                                                this.setState({ textTinh: itemValue })
-                                                        }>
-                                                        <Picker.Item label="Hồ Chí Minh" value="Hồ Chí Minh" />
-                                                        <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                                        <Picker.Item label="Đà Nẵng" value="Đà Nẵng" />
-                                                </Picker>
-                                                <View style={{
-                                                        height: 1,
-                                                        backgroundColor: 'gray'
-                                                }} />
+                                                        value={this.state.textTinh}
+                                                />
                                                 <TextInput style={styles.textInput}
                                                         placeholder='Quận, Huyện'
                                                         onChangeText={(text) => {
@@ -249,7 +321,25 @@ export default class RegisterRestaurant extends Component {
                                                                 });
                                                         }}
                                                         value={this.state.address}
+                                                        onEndEditing={() => {
+                                                                this._onEndCompleteEditAddress();
+                                                        }}
                                                 />
+                                                <Text style={styles.textHint}>Bản đồ</Text>
+                                                <TouchableOpacity onPress={() => {
+                                                        this._onClickOpenModalMap();
+                                                }} >
+                                                        <MapView
+                                                                style={styles.map}
+                                                                region={this.state.region}
+                                                                provider={PROVIDER_GOOGLE}
+                                                                zoomEnabled={false}
+                                                        >
+                                                                {
+                                                                        this.state.marker === null ? null : <Marker coordinate={this.state.marker} />
+                                                                }
+                                                        </MapView>
+                                                </TouchableOpacity>
                                                 <Text style={styles.textHint}>Thời gian mở cửa</Text>
                                                 <View style={{
                                                         flexDirection: 'row',
@@ -343,7 +433,7 @@ export default class RegisterRestaurant extends Component {
                                                         }}>Ảnh giới thiệu</Text>
                                                         <TouchableOpacity onPress={() => {
                                                                 this.setState({
-                                                                        modalVisible: !this.state.modalVisible
+                                                                        visibleModalSelectImage: !this.state.visibleModalSelectImage
                                                                 });
                                                                 this.requestCameraPermission();
                                                         }} >
@@ -386,12 +476,18 @@ export default class RegisterRestaurant extends Component {
                                 <Modal
                                         animationType="slide"
                                         transparent={false}
-                                        visible={this.state.modalVisible} >
+                                        visible={this.state.visibleModalSelectImage}
+                                        onRequestClose={() => {
+                                                this.setState({
+                                                        visibleModalSelectImage: !this.state.visibleModalSelectImage
+                                                });
+                                        }}
+                                >
                                         <View style={styles.containerModal}>
                                                 <View style={styles.headerModal}>
                                                         <TouchableOpacity onPress={() => {
                                                                 this.setState({
-                                                                        modalVisible: !this.state.modalVisible
+                                                                        visibleModalSelectImage: !this.state.visibleModalSelectImage
                                                                 });
                                                         }} >
                                                                 <Icon name='down' size={30} color='black' />
@@ -400,7 +496,7 @@ export default class RegisterRestaurant extends Component {
                                                         <TouchableOpacity
                                                                 onPress={() => {
                                                                         this.setState({
-                                                                                modalVisible: !this.state.modalVisible
+                                                                                visibleModalSelectImage: !this.state.visibleModalSelectImage
                                                                         });
                                                                         this.onClickCompleteSelectImage();
                                                                 }} >
@@ -455,17 +551,31 @@ export default class RegisterRestaurant extends Component {
                                 <Modal
                                         transparent={true}
                                         animationType='slide'
-                                        visible={this.state.modalLoading}
+                                        visible={this.state.isLoading}
                                 >
-                                        <View
-                                                style={{
-                                                        flex: 1,
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        backgroundColor: 'rgba(f,f,f,0.3)'
-                                                }}>
-                                                <ActivityIndicator animating={true} size={80} color={colorMain} />
+                                        <View style={{
+                                                flex: 1,
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: 'rgba(0,0,0,0.5)'
+                                        }}>
+                                                <ActivityIndicator animating={true} size={100} color={colorMain} />
                                         </View>
+                                </Modal>
+                                <Modal
+                                        transparent={false}
+                                        animationType='slide'
+                                        visible={this.state.visibleModalSelectPlaceOnMap}
+                                        onRequestClose={() => {
+                                                this._onClickCloseModalMap();
+                                        }}
+                                >
+                                        <SelectPlaceOnMap
+                                                _onClickComplete={this._onClickComplete}
+                                                _onClickCloseModalMap={this._onClickCloseModalMap}
+                                                _marker={this.state.marker}
+                                                _region={this.state.region}
+                                        />
                                 </Modal>
                         </View>
                 );
@@ -484,6 +594,9 @@ const styles = StyleSheet.create({
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginBottom: 10
+        },
+        containerModalMap: {
+                flex: 1
         },
         textInputSeletion: {
                 flex: 1,
@@ -533,7 +646,7 @@ const styles = StyleSheet.create({
         },
         containerForm: {
                 flex: 1,
-                paddingHorizontal: 20
+                marginHorizontal: 20
         },
         containerLoading: {
                 flex: 1,
@@ -553,5 +666,10 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Bold',
                 fontSize: 20,
                 marginLeft: 10
+        },
+        map: {
+                width: '100%',
+                height: 150,
+                marginTop: 10
         }
 });

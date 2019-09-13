@@ -9,18 +9,18 @@ const mapStateToProps = (state) => {
                 if (resultsRegister.data.error) {
                         ToastAndroid.show(resultsRegister.data.message, ToastAndroid.LONG);
                         return {
-                                modalLoading: false
+                                isLoading: false
                         };
                 } else {
                         alert(resultsRegister.data.message);
                         return {
-                                modalLoading: false,
+                                isLoading: false,
                                 changeScreen: true
                         };
                 }
         } else {
                 return {
-                        modalLoading: false
+                        isLoading: false
                 };
         }
 };

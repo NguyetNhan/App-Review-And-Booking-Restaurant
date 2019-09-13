@@ -42,7 +42,8 @@ export default class Search extends Component {
                         idAdmin: idAdmin
                 };
                 this.props.navigation.navigate('DetailRestaurant', {
-                        IdConfigDetailRestaurant: data
+                        IdConfigDetailRestaurant: data,
+                        GoBack: 'Search'
                 });
         }
 

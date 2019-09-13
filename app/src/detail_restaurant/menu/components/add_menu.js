@@ -13,6 +13,7 @@ export default class AddMenu extends Component {
                 };
         }
 
+
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.uriImageSelect !== prevState.uriImageSelect) {
                         prevState.uriImageSelect = nextProps.uriImageSelect;

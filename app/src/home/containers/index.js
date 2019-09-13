@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onFetchListRestaurant, onFetchListBar, onFetchListCoffee } from '../actions';
+import { onFetchListRestaurant, onFetchListBar, onFetchListCoffee, onFetchNearbyLocationRestaurant } from '../actions';
 
 const mapStateToProps = (state) => {
         const fetchListRestaurantSucceeded = state.HomeReducers.FetchListRestaurantSucceeded;
@@ -9,7 +9,19 @@ const mapStateToProps = (state) => {
         const fetchListBarFailed = state.HomeReducers.FetchListBarFailed;
         const fetchListCoffeeSucceeded = state.HomeReducers.FetchListCoffeeSucceeded;
         const fetchListCoffeeFailed = state.HomeReducers.FetchListCoffeeFailed;
-        if (fetchListRestaurantSucceeded !== undefined) {
+        const fetchListRestaurantFollowLocationSucceeded = state.HomeReducers.FetchListRestaurantFollowLocationSucceeded;
+        const fetchListRestaurantFollowLocationFailed = state.HomeReducers.FetchListRestaurantFollowLocationFailed;
+        if (fetchListRestaurantFollowLocationSucceeded !== undefined) {
+                return {
+                        isLoading: false,
+                        listRestaurantFollowLocation: fetchListRestaurantFollowLocationSucceeded.data
+                };
+        } else if (fetchListRestaurantFollowLocationFailed !== undefined) {
+                return {
+                        isLoading: false,
+                        messages: fetchListRestaurantFollowLocationFailed.messages
+                };
+        } else if (fetchListRestaurantSucceeded !== undefined) {
                 return {
                         isLoading: false,
                         listRestaurant: fetchListRestaurantSucceeded.data.data,
@@ -57,6 +69,9 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onFetchListCoffee: (data) => {
                         dispatch(onFetchListCoffee(data));
+                },
+                onFetchNearbyLocationRestaurant: (position) => {
+                        dispatch(onFetchNearbyLocationRestaurant(position));
                 }
         };
 };

@@ -15,6 +15,8 @@ RegisterRestaurant = async (data, idAccount) => {
                 formData.append('idAdmin', idAccount);
                 formData.append('type', data.type);
                 formData.append('time_activity', data.time);
+                formData.append('latitude', data.position.latitude);
+                formData.append('longitude', data.position.longitude);
                 const response = await fetch(urlRegisterRestaurant, {
                         method: 'POST',
                         headers: {

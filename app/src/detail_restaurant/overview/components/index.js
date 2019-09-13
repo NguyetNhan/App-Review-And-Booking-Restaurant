@@ -4,7 +4,7 @@ import { urlServer, colorMain, background } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconFoundation from 'react-native-vector-icons/Foundation';
+import IconFontisto from 'react-native-vector-icons/Fontisto';
 import Carousel from 'react-native-snap-carousel';
 import { AccountModel } from '../../../models/account';
 import EditRestaurant from './edit_restaurant';
@@ -33,7 +33,8 @@ export default class OverView extends Component {
                         messages: '',
                         numberOfLines: 4,
                         showButtonXemThem: true,
-                        idRestaurant: null
+                        idRestaurant: null,
+                        screenGoBack: null
                 }
                 this._onGetInfoAccount();
                 this._onClickCloseModalEdit = this._onClickCloseModalEdit.bind(this);
@@ -49,8 +50,10 @@ export default class OverView extends Component {
 
         componentDidMount () {
                 const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
+                const screenGoBack = this.props.navigation.getParam('GoBack');
                 this.setState({
-                        idRestaurant: id
+                        idRestaurant: id,
+                        screenGoBack: screenGoBack
                 });
                 this.props.onFetchDetailRestaurant(id.idRestaurant);
         }
@@ -94,19 +97,10 @@ export default class OverView extends Component {
                                 />
                                 <View style={styles.header}>
                                         <TouchableOpacity onPress={() => {
-                                                this.props.navigation.navigate('Home');
+                                                this.props.navigation.navigate(this.state.screenGoBack);
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
-                                        {/* {
-                                                this.state.authorities === 'admin-restaurant' ? <TouchableOpacity onPress={() => {
-                                                        this.setState({
-                                                                visibleModalEditRestaurant: true
-                                                        })
-                                                }}>
-                                                        <Icon name='edit' size={25} color='black' />
-                                                </TouchableOpacity> : null
-                                        } */}
                                 </View>
                                 <ScrollView>
                                         <View style={styles.containerSliderImage}>
@@ -182,7 +176,11 @@ export default class OverView extends Component {
                                                         flexDirection: 'row',
                                                         alignItems: 'center',
                                                 }}>
-                                                        <Text style={styles.textStatus}>đang mở cửa</Text>
+                                                        <View>
+                                                                <Text style={styles.textStatus}>đang mở cửa</Text>
+                                                                <Text style={styles.textTime}>8am - 10pm</Text>
+                                                        </View>
+
                                                         <View style={{
                                                                 width: 4,
                                                                 height: 4,
@@ -224,42 +222,24 @@ export default class OverView extends Component {
                                         </View>
                                         <View style={styles.containerButton}>
                                                 <TouchableOpacity style={styles.button}>
-                                                        <IconSimpleLineIcons name='clock' size={20} color='black' />
-                                                        <Text style={{
-                                                                fontFamily: 'UVN-Baisau-Regular',
-                                                                marginTop: 5,
-                                                                fontSize: 12
-                                                        }}>8AM-10PM</Text>
+                                                        <IconFontisto name='navigate' size={20} color={colorMain} />
+                                                        <Text style={styles.textNavigation}>bản đồ</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={styles.button}>
                                                         <Icon name='customerservice' size={20} color={colorMain} />
-                                                        <Text style={{
-                                                                fontFamily: 'UVN-Baisau-Regular',
-                                                                marginTop: 5,
-                                                                fontSize: 12,
-                                                                color: colorMain
-                                                        }}>Tư Vấn</Text>
+                                                        <Text style={styles.textNavigation}>Tư Vấn</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={styles.button}
                                                         onPress={() => {
                                                                 this._onClickButtonOrder();
                                                         }}
                                                 >
-                                                        <IconFoundation name='clipboard-pencil' size={20} color={colorMain} />
-                                                        <Text style={{
-                                                                fontFamily: 'UVN-Baisau-Regular',
-                                                                marginTop: 5,
-                                                                fontSize: 12,
-                                                                color: colorMain
-                                                        }}>Đặt Tiệc</Text>
+                                                        <IconFontAwesome name='edit' size={20} color={colorMain} />
+                                                        <Text style={styles.textNavigation}>Đặt Tiệc</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={styles.button}>
-                                                        <IconSimpleLineIcons name='pin' size={20} color='black' />
-                                                        <Text style={{
-                                                                fontFamily: 'UVN-Baisau-Regular',
-                                                                marginTop: 5,
-                                                                fontSize: 12
-                                                        }}>Theo Dõi</Text>
+                                                        <IconSimpleLineIcons name='pin' size={20} color={colorMain} />
+                                                        <Text style={styles.textNavigation}>Theo Dõi</Text>
                                                 </TouchableOpacity>
                                         </View>
                                 </ScrollView>
@@ -322,6 +302,11 @@ const styles = StyleSheet.create({
                 color: colorMain,
                 textTransform: 'capitalize'
         },
+        textTime: {
+                fontFamily: 'UVN-Baisau-Regular',
+                color: 'black',
+                textTransform: 'uppercase'
+        },
         textAddress: {
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
@@ -350,4 +335,10 @@ const styles = StyleSheet.create({
                 height: 60,
                 marginHorizontal: 10
         },
+        textNavigation: {
+                fontFamily: 'UVN-Baisau-Regular',
+                marginTop: 5,
+                fontSize: 12,
+                textTransform: 'capitalize'
+        }
 });
