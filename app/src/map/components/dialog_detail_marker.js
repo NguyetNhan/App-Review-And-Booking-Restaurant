@@ -9,6 +9,7 @@ export default class DialogDetailMarker extends Component {
                         type: props.type,
                         title: props.title,
                         address: props.address,
+                        item: props.item
                 };
         }
 
@@ -21,9 +22,33 @@ export default class DialogDetailMarker extends Component {
                                                 source={{ uri: `${urlServer}${this.state.image}` }}
                                                 style={styles.image}
                                         />
-                                        <Text>{this.state.title}</Text>
-                                        <Text>{this.state.type}</Text>
-                                        <Text>{this.state.address}</Text>
+                                        <Text style={styles.title}>{this.state.title}</Text>
+                                        <Text style={styles.type}>{this.state.type}</Text>
+                                        <Text style={styles.address}>{this.state.address}</Text>
+                                        <Text style={styles.distance}>cách bạn {this.state.item.distance} m</Text>
+                                        <View style={styles.containerButton}>
+                                                <TouchableOpacity
+                                                        style={styles.button}
+                                                        onPress={() => {
+                                                                this.props._onClickDetail(this.state.item._id);
+                                                                this.props._onClickCloseDialogDetailMarker();
+                                                        }}
+                                                >
+                                                        <Text style={styles.textButton}>chi tiết</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                        style={styles.button}
+                                                        onPress={() => {
+                                                                this.props._onClickDirections({
+                                                                        latitude: this.state.item.position.latitude,
+                                                                        longitude: this.state.item.position.longitude
+                                                                });
+                                                                this.props._onClickCloseDialogDetailMarker();
+                                                        }}
+                                                >
+                                                        <Text style={styles.textButton}>chỉ đường</Text>
+                                                </TouchableOpacity>
+                                        </View>
                                 </View>
                         </View>
                 );
@@ -45,5 +70,45 @@ const styles = StyleSheet.create({
         image: {
                 width: 250,
                 height: 150
-        }
+        },
+        title: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 20,
+                color: colorMain,
+                marginTop: 10
+        },
+        type: {
+                fontFamily: 'UVN-Baisau-Bold',
+                textTransform: 'uppercase',
+                fontSize: 10
+        },
+        address: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textAlign: 'center',
+                marginTop: 10,
+                marginHorizontal: 20
+        },
+        distance: {
+                fontFamily: 'UVN-Baisau-Bold',
+                marginBottom: 10,
+                textTransform: 'capitalize'
+        },
+        containerButton: {
+                flexDirection: 'row',
+                marginBottom: 20
+        },
+        button: {
+                width: 75,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 15,
+                backgroundColor: colorMain,
+                marginHorizontal: 5
+        },
+        textButton: {
+                color: 'white',
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize'
+        },
 });

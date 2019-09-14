@@ -7,7 +7,7 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
 import Carousel from 'react-native-snap-carousel';
 import { AccountModel } from '../../../models/account';
-import EditRestaurant from './edit_restaurant';
+import MapDirections from './map';
 
 
 export default class OverView extends Component {
@@ -29,15 +29,15 @@ export default class OverView extends Component {
                         phone: '',
                         address: '',
                         introduce: '',
-                        visibleModalEditRestaurant: false,
                         messages: '',
                         numberOfLines: 4,
                         showButtonXemThem: true,
                         idRestaurant: null,
-                        screenGoBack: null
+                        screenGoBack: null,
+                        visibleModalMap: false
                 }
                 this._onGetInfoAccount();
-                this._onClickCloseModalEdit = this._onClickCloseModalEdit.bind(this);
+                this._onClickCloseModalMap = this._onClickCloseModalMap.bind(this);
         }
 
         async _onGetInfoAccount () {
@@ -75,16 +75,23 @@ export default class OverView extends Component {
                 return null;
         }
 
-        _onClickCloseModalEdit () {
-                this.setState({
-                        visibleModalEditRestaurant: !this.state.visibleModalEditRestaurant
-                });
-        }
 
         _onClickButtonOrder () {
                 this.props.navigation.navigate('Order', {
                         idRestaurantForOrder: this.state.idRestaurant.idRestaurant
                 });
+        }
+
+        _onClickOpenModalMap () {
+                this.setState({
+                        visibleModalMap: !this.state.visibleModalMap
+                })
+        }
+
+        _onClickCloseModalMap () {
+                this.setState({
+                        visibleModalMap: !this.state.visibleModalMap
+                })
         }
 
         render () {
@@ -130,11 +137,11 @@ export default class OverView extends Component {
                                                         sliderHeight={300}
                                                         firstItem={0}
                                                         itemWidth={250}
-                                                        loop={true}
-                                                        loopClonesPerSide={2}
-                                                        autoplay={true}
-                                                        autoplayDelay={500}
-                                                        autoplayInterval={3000}
+                                                        // loop={true}
+                                                        // loopClonesPerSide={2}
+                                                        // autoplay={true}
+                                                        // autoplayDelay={500}
+                                                        // autoplayInterval={3000}
                                                         onSnapToItem={(index) => this.setState({ indexSliderImage: index })}
                                                         inactiveSlideScale={0.94}
                                                         inactiveSlideOpacity={0.3}
@@ -221,7 +228,11 @@ export default class OverView extends Component {
 
                                         </View>
                                         <View style={styles.containerButton}>
-                                                <TouchableOpacity style={styles.button}>
+                                                <TouchableOpacity style={styles.button}
+                                                        onPress={() => {
+                                                                this._onClickOpenModalMap();
+                                                        }}
+                                                >
                                                         <IconFontisto name='navigate' size={20} color={colorMain} />
                                                         <Text style={styles.textNavigation}>bản đồ</Text>
                                                 </TouchableOpacity>
@@ -244,14 +255,16 @@ export default class OverView extends Component {
                                         </View>
                                 </ScrollView>
                                 <Modal
-                                        visible={this.state.visibleModalEditRestaurant}
+                                        visible={this.state.visibleModalMap}
                                         animationType='slide'
                                         transparent={false}
-                                        style={{
-                                                flex: 1
-                                        }}  >
-                                        <EditRestaurant
-                                                _onClickCloseModalEdit={this._onClickCloseModalEdit}
+                                        onRequestClose={() => {
+                                                this._onClickCloseModalMap();
+                                        }}
+                                >
+                                        <MapDirections
+                                                _onClickCloseModalMap={this._onClickCloseModalMap}
+                                                restaurant={this.state.restaurant}
                                         />
                                 </Modal>
                         </View>

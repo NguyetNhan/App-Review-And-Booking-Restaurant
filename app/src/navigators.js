@@ -247,7 +247,8 @@ class DrawerContentAdminRestaurant extends Component {
                                                                 idAdmin: this.state.account.id
                                                         };
                                                         this.props.navigation.navigate('DetailRestaurant', {
-                                                                idRestaurant: id
+                                                                IdConfigDetailRestaurant: id,
+                                                                GoBack: 'Home'
                                                         });
                                                 } catch (err) {
                                                         console.log('err: ', err);

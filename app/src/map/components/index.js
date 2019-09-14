@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Dimensions, PermissionsAndroid, StatusBar, Alert, ToastAndroid, Modal } from 'react-native';
 import MapView, {
-        PROVIDER_GOOGLE, Marker, Polyline, UrlTile,
-        Callout,
-        CalloutSubview,
-        ProviderPropType,
+        PROVIDER_GOOGLE,
+        Marker
 } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import MapViewDirections from 'react-native-maps-directions';
@@ -15,6 +13,8 @@ import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import CustomItemMarker from './custom_item_marker';
 import DialogDetailMarker from './dialog_detail_marker';
+
+const { width, height } = Dimensions.get('window');
 
 export default class Map extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -39,11 +39,16 @@ export default class Map extends Component {
                         titleDialogMarker: null,
                         typeDialogMarker: null,
                         addressDialogMarker: null,
-
+                        markerSelected: null,
+                        destination: null,
+                        origin: null
                 };
+                this.mapView = null;
                 this.requestLocationPermission();
                 Geocoder.fallbackToGoogle(KEY_API_GOOGLE_MAP);
                 this._onClickCloseDialogDetailMarker = this._onClickCloseDialogDetailMarker.bind(this);
+                this._onClickDetail = this._onClickDetail.bind(this);
+                this._onClickDirections = this._onClickDirections.bind(this);
         }
 
 
@@ -147,7 +152,7 @@ export default class Map extends Component {
                 });
         }
 
-        _onClickMarker (idRestaurant) {
+        _onClickDetail (idRestaurant) {
                 var data = {
                         idRestaurant: idRestaurant,
                         idAdmin: null
@@ -169,8 +174,22 @@ export default class Map extends Component {
                         titleDialogMarker: item.name,
                         typeDialogMarker: item.type,
                         addressDialogMarker: item.address,
-                        imageDialogMarker: item.imageRestaurant[0]
+                        imageDialogMarker: item.imageRestaurant[0],
+                        markerSelected: item
                 });
+        }
+
+        _onClickDirections = (position) => {
+                this.setState({
+                        origin: {
+                                latitude: this.state.region.latitude,
+                                longitude: this.state.region.longitude
+                        },
+                        destination: {
+                                latitude: position.latitude,
+                                longitude: position.longitude
+                        }
+                })
         }
 
         render () {
@@ -201,25 +220,41 @@ export default class Map extends Component {
                                                 style={styles.map}
                                                 region={this.state.region}
                                                 provider={PROVIDER_GOOGLE}
-                                                loadingEnabled={true}
                                                 zoomEnabled={true}
                                                 scrollEnabled={true}
+                                                loadingBackgroundColor='white'
+                                                loadingIndicatorColor={colorMain}
+                                                loadingEnabled={true}
                                         >
                                                 {
                                                         this.state.marker === null ? null : <Marker
-                                                                //  image={require('../../assets/images/map.jpg')}
                                                                 coordinate={this.state.marker}
                                                                 pinColor={colorMain}
                                                                 title='Vị Trí Của Bạn'
-                                                        //    centerOffset={{ x: 0, y: 0 }}
                                                         >
                                                         </Marker>
                                                 }
-                                                {/* <MapViewDirections
-                                                        origin='số 28 đường 22, phường linh đông, quận thủ đức, thành phố hồ chí minh'
-                                                        destination='số 100 đường 25, phường linh đông, quận thủ đức, thành phố hồ chí minh'
-                                                        apikey={GOOGLE_MAPS_API_KEY}
-                                                /> */}
+                                                {
+                                                        this.state.origin && this.state.destination !== null ? <MapViewDirections
+                                                                origin={this.state.origin}
+                                                                destination={this.state.destination}
+                                                                apikey={KEY_API_GOOGLE_MAP}
+                                                                language='vn'
+                                                                strokeWidth={3}
+                                                                strokeColor={colorMain}
+                                                                onStart={(params) => {
+                                                                        console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
+                                                                }}
+                                                                onReady={result => {
+                                                                        console.log('result: ', result);
+                                                                        console.log(`Distance: ${result.distance} km`)
+                                                                        console.log(`Duration: ${result.duration} min.`)
+                                                                }}
+                                                                onError={(errorMessage) => {
+                                                                        console.log('errorMessage: ', errorMessage);
+                                                                }}
+                                                        /> : null
+                                                }
                                                 {
                                                         this.state.listRestaurant.map(item =>
                                                                 <Marker
@@ -227,7 +262,6 @@ export default class Map extends Component {
                                                                         coordinate={item.position}
                                                                         centerOffset={{ x: 0, y: 50 }}
                                                                         onPress={() => {
-                                                                                //  this._onClickMarker(item._id);
                                                                                 this._onClickOpenDialogDetailMarker(item);
                                                                         }}
                                                                 >
@@ -257,10 +291,13 @@ export default class Map extends Component {
                                 >
                                         <DialogDetailMarker
                                                 _onClickCloseDialogDetailMarker={this._onClickCloseDialogDetailMarker}
+                                                item={this.state.markerSelected}
                                                 image={this.state.imageDialogMarker}
                                                 title={this.state.titleDialogMarker}
                                                 type={this.state.typeDialogMarker}
                                                 address={this.state.addressDialogMarker}
+                                                _onClickDetail={this._onClickDetail}
+                                                _onClickDirections={this._onClickDirections}
                                         />
                                 </Modal>
                         </View>

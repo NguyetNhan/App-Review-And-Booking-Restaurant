@@ -82,6 +82,10 @@ export default class Login extends Component {
                 }
         }
 
+        componentWillUnmount () {
+
+        }
+
         render () {
                 return (
                         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
