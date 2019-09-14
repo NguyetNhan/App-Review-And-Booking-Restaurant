@@ -2,5 +2,8 @@
   "urlServer": "http://192.168.1.144:3000",
   "colorMain": "#22D499",
   "background": "#f6f6f6",
+<<<<<<< HEAD
   "KEY_API_GOOGLE_MAP": "AIzaSyA50HcGSlo7TZTGS4Sg6s4_-gjaIceIRlA"
+=======
+>>>>>>> ee03fb09f30fccc94796124bf5dfbd5bc0db53d0
 }
