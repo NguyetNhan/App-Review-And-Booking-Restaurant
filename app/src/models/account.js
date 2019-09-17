@@ -11,6 +11,7 @@ const AccountSchema = {
                 password: 'string',
                 name: 'string',
                 phone: 'int',
+                avatar: 'string'
         }
 };
 
@@ -27,6 +28,7 @@ AddInfoAccountFromDatabaseLocal = async (data) => {
                                 phone: data.phone,
                                 id: data.id,
                                 password: data.password,
+                                avatar: data.avatar
                         });
                 });
                 realm.close();
@@ -46,6 +48,7 @@ FetchInfoAccountFromDatabaseLocal = async () => {
                         password: null,
                         name: null,
                         phone: null,
+                        avatar: null
                 };
                 if (account.length == 1) {
                         for (item of account) {
@@ -55,6 +58,7 @@ FetchInfoAccountFromDatabaseLocal = async () => {
                                 result.password = item.password;
                                 result.name = item.name;
                                 result.phone = item.phone;
+                                result.avatar = item.avatar;
                         }
                 } else {
                         result = null;

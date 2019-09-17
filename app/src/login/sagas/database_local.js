@@ -7,14 +7,27 @@ AddAccountIntoLocal = async (data) => {
                 var filter = account.filtered(`id like '${data._id}'`);
                 if (filter.length === 0) {
                         await realm.write(() => {
-                                realm.create('Account', {
-                                        authorities: data.authorities,
-                                        email: data.email,
-                                        name: data.name,
-                                        phone: data.phone,
-                                        id: data._id,
-                                        password: data.password,
-                                });
+                                if (data.avatar === null) {
+                                        realm.create(AccountModel.Account, {
+                                                authorities: data.authorities,
+                                                email: data.email,
+                                                name: data.name,
+                                                phone: data.phone,
+                                                id: data._id,
+                                                password: data.password,
+                                                avatar: 'null'
+                                        });
+                                } else {
+                                        realm.create(AccountModel.Account, {
+                                                authorities: data.authorities,
+                                                email: data.email,
+                                                name: data.name,
+                                                phone: data.phone,
+                                                id: data._id,
+                                                password: data.password,
+                                                avatar: data.avatar
+                                        });
+                                }
                         });
                         realm.close();
                         return {
@@ -30,7 +43,10 @@ AddAccountIntoLocal = async (data) => {
                         };
                 }
         } catch (error) {
-                console.log(error);
+                return {
+                        error: true,
+                        message: error.message
+                };
         }
 };
 

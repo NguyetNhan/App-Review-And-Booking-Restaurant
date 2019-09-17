@@ -12,9 +12,11 @@ export default class ItemListNotification extends Component {
                         type: props.type,
                         time: props.time,
                         idAccount: props.idAccount,
-                        idRestaurant: props.idRestaurant
+                        idRestaurant: props.idRestaurant,
+                        idOrder: props.idOrder
                 };
         }
+
 
         render () {
                 const date = new Date(this.state.time);
@@ -23,7 +25,8 @@ export default class ItemListNotification extends Component {
                         <TouchableOpacity onPress={() => {
                                 this.props._onClickItem({
                                         type: this.state.type,
-                                        idRestaurant: this.state.idRestaurant
+                                        idRestaurant: this.state.idRestaurant,
+                                        idOrder: this.state.idOrder
                                 });
                         }}>
                                 <View style={styles.container}>

@@ -1,6 +1,8 @@
 import {
         FETCH_LIST_MENU_ORDER_FAILED,
-        FETCH_LIST_MENU_ORDER_SUCCEEDED
+        FETCH_LIST_MENU_ORDER_SUCCEEDED,
+        ADD_ORDER_FAILED,
+        ADD_ORDER_SUCCEEDED
 } from '../actions/action_types';
 
 
@@ -15,6 +17,18 @@ const OrderReducers = (state = [], action) => {
                 case FETCH_LIST_MENU_ORDER_FAILED:
                         return {
                                 FetchMenuFailed: {
+                                        messages: action.messages
+                                }
+                        };
+                case ADD_ORDER_SUCCEEDED:
+                        return {
+                                AddOrderSucceeded: {
+                                        data: action.data
+                                }
+                        };
+                case ADD_ORDER_FAILED:
+                        return {
+                                AddOrderFailed: {
                                         messages: action.messages
                                 }
                         };

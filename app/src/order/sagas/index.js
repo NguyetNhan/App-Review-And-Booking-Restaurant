@@ -1,6 +1,6 @@
 import { put, takeLatest } from 'redux-saga/effects';
-import { onFetchListMenuFailed, onFetchListMenuSucceeded } from '../actions';
-import { FETCH_LIST_MENU_ORDER } from '../actions/action_types';
+import { onFetchListMenuFailed, onFetchListMenuSucceeded, onAddOrderFailed, onAddOrderSucceeded } from '../actions';
+import { FETCH_LIST_MENU_ORDER, ADD_ORDER } from '../actions/action_types';
 import { API } from './API';
 
 function* FetchListMenuForOrderFromAPI (action) {
@@ -12,10 +12,27 @@ function* FetchListMenuForOrderFromAPI (action) {
                         yield put(onFetchListMenuSucceeded(results.data));
                 }
         } catch (error) {
-                console.log('error: ', error);
+                yield put(onFetchListMenuFailed(error.message));
         }
 }
 
 export function* WatchFetchListMenuForOrderFromAPI () {
         yield takeLatest(FETCH_LIST_MENU_ORDER, FetchListMenuForOrderFromAPI);
+}
+
+function* AddOrderIntoDatabase (action) {
+        try {
+                const results = yield API.AddOrderIntoDatabase(action.data);
+                if (results.error) {
+                        yield put(onAddOrderFailed(results.messages));
+                } else {
+                        yield put(onAddOrderSucceeded(results));
+                }
+        } catch (error) {
+                yield put(onAddOrderFailed(error.message));
+        }
+}
+
+export function* WatchAddOrderIntoDatabase () {
+        yield takeLatest(ADD_ORDER, AddOrderIntoDatabase);
 }

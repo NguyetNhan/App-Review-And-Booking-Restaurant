@@ -15,6 +15,36 @@ FetchMenuFromAPI = async (idRestaurant) => {
         }
 };
 
+AddOrderIntoDatabase = async (data) => {
+        try {
+                const response = await fetch(`${urlServer}/order/add-order`, {
+                        method: 'POST',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                                idClient: data.idClient,
+                                idRestaurant: data.idRestaurant,
+                                customerName: data.customerName,
+                                customerEmail: data.customerEmail,
+                                customerPhone: data.customerPhone,
+                                amountPerson: data.amountPerson,
+                                food: data.food,
+                                receptionTime: data.receptionTime,
+                                totalMoney: data.totalMoney,
+                                note: data.note,
+                        })
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                console.log('error: ', error);
+
+        }
+};
+
+
 export const API = {
-        FetchMenuFromAPI
+        FetchMenuFromAPI,
+        AddOrderIntoDatabase
 };

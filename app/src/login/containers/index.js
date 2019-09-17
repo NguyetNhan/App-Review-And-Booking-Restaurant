@@ -6,34 +6,36 @@ const mapStateToProps = (state) => {
         const stateNew = state.LoginReducers;
         const resultsLogin = state.LoginReducers.Login;
         const resultsAddAccount = state.LoginReducers.AddAccount;
-        if (stateNew !== undefined) {
-                if (resultsLogin !== undefined) {
-                        if (resultsLogin.data.error) {
-                                return {
-                                        loading: false,
-                                        messages: resultsLogin.data.message
-                                };
-                        } else {
-                                return {
-                                        infoUser: resultsLogin.data.data,
-                                        loading: true
-                                };
-                        }
-                } else if (resultsAddAccount !== undefined) {
-                        if (resultsAddAccount.data.error) {
-                                return {
-                                        loading: false
-                                };
-                        } else {
-                                return {
-                                        loading: false,
-                                        account: resultsAddAccount.data.data,
-                                        messages: resultsAddAccount.data.message
-                                };
-                        }
+        console.log('resultsAddAccount: ', resultsAddAccount);
+        /* if (stateNew !== undefined) {
+             
+        } else {
+                return {
+                        loading: false
+                };
+        } */
+        if (resultsLogin !== undefined) {
+                if (resultsLogin.data.error) {
+                        return {
+                                loading: false,
+                                messages: resultsLogin.data.message
+                        };
                 } else {
                         return {
+                                infoUser: resultsLogin.data.data,
+                                loading: true
+                        };
+                }
+        } else if (resultsAddAccount !== undefined) {
+                if (resultsAddAccount.data.error) {
+                        return {
                                 loading: false
+                        };
+                } else {
+                        return {
+                                loading: false,
+                                account: resultsAddAccount.data.data,
+                                messages: resultsAddAccount.data.message
                         };
                 }
         } else {

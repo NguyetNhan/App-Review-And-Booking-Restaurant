@@ -99,9 +99,14 @@ export default class Notification extends Component {
 
         _onClickItem (data) {
                 const authorities = this.state.account.authorities;
-                if (authorities === 'admin') {
-                        if (data.type === 'register_restaurant') {
+                if (data.type === 'register_restaurant') {
+                        if (authorities === 'admin') {
                                 this.props.navigation.navigate('ConfirmRestaurant')
+                        }
+                }
+                else if (data.type === 'order') {
+                        if (authorities === 'admin-restaurant') {
+                                console.log(data);
                         }
                 }
         }
@@ -148,6 +153,7 @@ export default class Notification extends Component {
                                                                         time={item.item.time}
                                                                         idAccount={item.item.idAccount}
                                                                         idRestaurant={item.item.idRestaurant}
+                                                                        idOrder={item.item.idOrder}
                                                                         _onClickItem={this._onClickItem}
                                                                 />
                                                         );

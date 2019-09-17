@@ -52,7 +52,7 @@ export default class DetailMenu extends Component {
                                                         onPress={() => {
                                                                 this.props._onClickCloseDetailMenu();
                                                         }}>
-                                                        <Icon name='down' size={30} color='white' />
+                                                        <Icon name='arrowleft' size={25} color='black' />
                                                 </TouchableOpacity>
                                         </View>
                                         <View style={styles.content}>

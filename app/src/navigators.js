@@ -22,6 +22,7 @@ import Review from './detail_restaurant/review/components';
 import Chat from './chat/components';
 import Order from './order/containers';
 import Map from './map/containers';
+import Deal from './deal/containers';
 
 
 const RouteBottomTabConfig = {
@@ -126,6 +127,14 @@ class DrawerContentClient extends Component {
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props.navigation.closeDrawer();
+                                                        this.props.navigation.navigate('Deal');
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đơn hàng</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
                                                 onPress={async () => {
                                                         await AccountModel.DeleteAccountInfoFromDatabaseLocal();
                                                         this.props.navigation.navigate('Auth');
@@ -145,6 +154,9 @@ const DrawerNavigatorClient = createDrawerNavigator(
                         screen: RegisterRestaurant,
                 },
                 App: BottomTabNavigator,
+                Deal: {
+                        screen: Deal,
+                },
         },
         {
                 initialRouteName: 'App',
@@ -257,6 +269,14 @@ class DrawerContentAdminRestaurant extends Component {
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Cửa hàng</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props.navigation.closeDrawer();
+                                                        this.props.navigation.navigate('Deal');
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đơn hàng</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
                                                 onPress={async () => {
                                                         await AccountModel.DeleteAccountInfoFromDatabaseLocal();
                                                         this.props.navigation.navigate('Auth');
@@ -273,6 +293,9 @@ class DrawerContentAdminRestaurant extends Component {
 const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
         {
                 App: BottomTabNavigator,
+                Deal: {
+                        screen: Deal,
+                },
         },
         {
                 initialRouteName: 'App',
@@ -474,7 +497,8 @@ const styleDrawerAdminRestaurant = StyleSheet.create({
         textAction: {
                 color: 'black',
                 fontFamily: 'UVN-Baisau-Bold',
-                margin: 18
+                margin: 18,
+                textTransform: 'capitalize'
         },
 });
 

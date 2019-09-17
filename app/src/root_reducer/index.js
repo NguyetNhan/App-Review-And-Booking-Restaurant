@@ -10,6 +10,7 @@ import MenuReducers from '../detail_restaurant/menu/reducers';
 import NotificationReducers from '../notification/reducers';
 import OrderReducers from '../order/reducers';
 import MapReducers from '../map/reducers';
+import DealReducers from '../deal/reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -22,7 +23,8 @@ const RootReducer = combineReducers({
         MenuReducers,
         NotificationReducers,
         OrderReducers,
-        MapReducers
+        MapReducers,
+        DealReducers
 });
 
 export default RootReducer;
