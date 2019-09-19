@@ -223,7 +223,7 @@ export default class Map extends Component {
                                         </TouchableOpacity>
                                 </View>
                                 <View style={styles.containerMap} >
-                                        {/*        <MapView
+                                        <MapView
                                                 style={styles.map}
                                                 region={this.state.region}
                                                 provider={PROVIDER_GOOGLE}
@@ -277,17 +277,6 @@ export default class Map extends Component {
                                                                 </Marker>
                                                         )
                                                 }
-                                        </MapView> */}
-                                        <MapView
-                                                style={styles.map}
-                                                region={this.state.region}
-                                                provider={PROVIDER_GOOGLE}
-                                                zoomEnabled={true}
-                                                scrollEnabled={true}
-                                                loadingIndicatorColor={colorMain}
-                                                loadingEnabled={this.state.loadingMap}
-                                        >
-
                                         </MapView>
                                         <View style={styles.containerButtonLocation}>
                                                 <TouchableOpacity style={styles.buttonLocation}

@@ -13,7 +13,8 @@ export default class Deal extends Component {
                         listOrder: [],
                         page: 1,
                         total_page: null,
-                        isRefresh: true
+                        isRefresh: false,
+                        isLoadMore: false
                 };
                 this._onClickOrder = this._onClickOrder.bind(this);
         }
@@ -36,14 +37,13 @@ export default class Deal extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined) {
-                        console.log('prevState.isRefresh: ', prevState.isRefresh);
-                        if (prevState.isRefresh) {
-                                console.log('1');
-                                //   prevState.listOrder = prevState.listOrder.concat(nextProps.listOrder);
-                                prevState.listOrder = nextProps.listOrder;
-                                prevState.isRefresh = false;
-                        }
+                if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && prevState.isRefresh && !prevState.isLoadMore) {
+                        prevState.isRefresh = false;
+                } else if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
+                        prevState.listOrder = nextProps.listOrder;
+                } else if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && prevState.isLoadMore) {
+                        prevState.listOrder = prevState.listOrder.concat(nextProps.listOrder);
+                        prevState.isLoadMore = false;
                 }
                 if (nextProps.page !== prevState.page && nextProps.page !== undefined) {
                         prevState.page = nextProps.page;
@@ -63,6 +63,7 @@ export default class Deal extends Component {
 
         _onRefreshListOrder () {
                 this.setState({
+                        page: 1,
                         listOrder: [],
                         isLoading: true,
                         isRefresh: true
@@ -74,7 +75,23 @@ export default class Deal extends Component {
         }
 
         _onLoadMoreListOrder () {
+                const page = this.state.page;
+                const total_page = this.state.total_page;
+                if (page < total_page) {
+                        const data = {
+                                idAdmin: this.state.account.id,
+                                page: page + 1
+                        };
+                        this.props.onFetchListOrder(data);
+                        this.setState({
+                                isLoading: true,
+                                isLoadMore: true
+                        });
+                }
+        }
 
+        componentWillUnmount () {
+                this.props.onResetProps();
         }
         render () {
                 return (
@@ -104,6 +121,10 @@ export default class Deal extends Component {
                                                 onRefresh={() => {
                                                         this._onRefreshListOrder();
                                                 }}
+                                                onEndReached={() => {
+                                                        this._onLoadMoreListOrder();
+                                                }}
+                                                onEndReachedThreshold={0.1}
                                                 renderItem={(item) => {
                                                         return (
                                                                 <ItemFlatList

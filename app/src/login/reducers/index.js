@@ -1,4 +1,8 @@
-import { LOGIN_RESULTS, ADD_ACCOUNT_INTO_LOCAL_RESULTS } from '../actions/action_types';
+import {
+        LOGIN_RESULTS,
+        ADD_ACCOUNT_INTO_LOCAL_RESULTS,
+        RESET_PROPS
+} from '../actions/action_types';
 
 
 const LoginReducers = (state = [], action) => {
@@ -13,6 +17,13 @@ const LoginReducers = (state = [], action) => {
                         return {
                                 AddAccount: {
                                         data: action.data
+                                }
+                        };
+                case RESET_PROPS:
+                        return {
+                                ResetProps: {
+                                        loading: false,
+                                        account: null,
                                 }
                         };
                 default:

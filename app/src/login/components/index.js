@@ -83,7 +83,7 @@ export default class Login extends Component {
         }
 
         componentWillUnmount () {
-
+                this.props.onResetProps();
         }
 
         render () {

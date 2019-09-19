@@ -1,4 +1,10 @@
-import { LOGIN, LOGIN_RESULTS, ADD_ACCOUNT_INTO_LOCAL, ADD_ACCOUNT_INTO_LOCAL_RESULTS } from './action_types';
+import {
+        LOGIN,
+        LOGIN_RESULTS,
+        ADD_ACCOUNT_INTO_LOCAL,
+        ADD_ACCOUNT_INTO_LOCAL_RESULTS,
+        RESET_PROPS
+} from './action_types';
 
 export const onLogin = (data) => {
         return {
@@ -28,3 +34,8 @@ export const onAddAccountIntoLocalResults = (data) => {
         };
 };
 
+export const onResetProps = () => {
+        return {
+                type: RESET_PROPS,
+        };
+};

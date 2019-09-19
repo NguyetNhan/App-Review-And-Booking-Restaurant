@@ -1,9 +1,10 @@
 import { connect } from 'react-redux';
-import { onFetchListOrder } from '../actions';
+import { onFetchListOrder, onResetProps } from '../actions';
 import Component from '../components';
 const mapStateToProps = (state) => {
         const fetchListOrderForAdminSucceeded = state.DealReducers.FetchSucceeded;
         const fetchListOrderForAdminFailed = state.DealReducers.FetchFailed;
+        const resetProps = state.DealReducers.ResetProps;
         if (fetchListOrderForAdminSucceeded !== undefined) {
                 return {
                         isLoading: false,
@@ -16,6 +17,8 @@ const mapStateToProps = (state) => {
                         isLoading: false,
                         message: fetchListOrderForAdminFailed.messages
                 };
+        } else if (resetProps !== undefined) {
+                return resetProps;
         } else {
                 return {
                         isLoading: false,
@@ -26,6 +29,9 @@ const mapDispatchToProps = (dispatch) => {
         return {
                 onFetchListOrder: (data) => {
                         dispatch(onFetchListOrder(data));
+                },
+                onResetProps: () => {
+                        dispatch(onResetProps());
                 }
         };
 };

@@ -20,7 +20,7 @@ export default class Notification extends Component {
                         account: null,
                         listNotification: [],
                         isLoading: false,
-                        isRefresh: true,
+                        isRefresh: false,
                         page: 1,
                         total_page: 1,
                         isLoadMore: false
@@ -49,14 +49,13 @@ export default class Notification extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined) {
-                        if (prevState.isRefresh) {
-                                prevState.listNotification = nextProps.listNotification;
-                                prevState.isRefresh = false;
-                        } else if (prevState.isLoadMore) {
-                                prevState.listNotification = prevState.listNotification.concat(nextProps.listNotification);
-                                prevState.isLoadMore = false;
-                        }
+                if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && prevState.isRefresh && !prevState.isLoadMore) {
+                        prevState.isRefresh = false;
+                } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
+                        prevState.listNotification = nextProps.listNotification;
+                } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && prevState.isLoadMore) {
+                        prevState.listNotification = prevState.listNotification.concat(nextProps.listNotification);
+                        prevState.isLoadMore = false;
                 }
                 if (nextProps.isLoading !== prevState.isLoading) {
                         prevState.isLoading = nextProps.isLoading
@@ -79,6 +78,7 @@ export default class Notification extends Component {
                         page: 1,
                 };
                 this.setState({
+                        page: 1,
                         listNotification: [],
                         isLoading: true,
                         isRefresh: true
@@ -151,7 +151,7 @@ export default class Notification extends Component {
                                                 onEndReached={() => {
                                                         this._onLoadMore();
                                                 }}
-                                                onEndReachedThreshold={1}
+                                                onEndReachedThreshold={0.1}
                                                 renderItem={(item) => {
                                                         return (
                                                                 <ItemListNotification

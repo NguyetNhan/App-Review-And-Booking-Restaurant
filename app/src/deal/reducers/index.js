@@ -1,6 +1,7 @@
 import {
         FETCH_LIST_ORDER_FOR_ADMIN_FAILED,
-        FETCH_LIST_ORDER_FOR_ADMIN_SUCCEEDED
+        FETCH_LIST_ORDER_FOR_ADMIN_SUCCEEDED,
+        RESET_PROPS
 } from '../actions/action_types';
 
 const DealReducers = (state = [], action) => {
@@ -17,7 +18,15 @@ const DealReducers = (state = [], action) => {
                                         messages: action.messages
                                 }
                         };
-
+                case RESET_PROPS:
+                        return {
+                                ResetProps: {
+                                        page: 1,
+                                        total_page: null,
+                                        listOrder: [],
+                                        isLoading: false,
+                                }
+                        };
                 default:
                         return state;
         }
