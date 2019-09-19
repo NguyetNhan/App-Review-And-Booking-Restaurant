@@ -154,9 +154,7 @@ const DrawerNavigatorClient = createDrawerNavigator(
                         screen: RegisterRestaurant,
                 },
                 App: BottomTabNavigator,
-                Deal: {
-                        screen: Deal,
-                },
+
         },
         {
                 initialRouteName: 'App',
@@ -197,7 +195,12 @@ const MainNavigatorClient = createStackNavigator(
                                 header: null,
                         },
                 },
-
+                Deal: {
+                        screen: Deal,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
         }, {
         initialRouteName: 'DrawerNavigatorClient'
 }
@@ -293,9 +296,6 @@ class DrawerContentAdminRestaurant extends Component {
 const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
         {
                 App: BottomTabNavigator,
-                Deal: {
-                        screen: Deal,
-                },
         },
         {
                 initialRouteName: 'App',
@@ -332,6 +332,12 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                 },
                 Order: {
                         screen: Order,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Deal: {
+                        screen: Deal,
                         navigationOptions: {
                                 header: null,
                         },

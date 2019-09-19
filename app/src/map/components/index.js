@@ -41,7 +41,8 @@ export default class Map extends Component {
                         addressDialogMarker: null,
                         markerSelected: null,
                         destination: null,
-                        origin: null
+                        origin: null,
+                        loadingMap: true
                 };
                 this.mapView = null;
                 this.requestLocationPermission();
@@ -73,6 +74,9 @@ export default class Map extends Component {
                                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
                         );
                         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                                this.setState({
+                                        loadingMap: true
+                                })
                                 Geolocation.getCurrentPosition((position) => {
                                         const position1 = {
                                                 latitude: position.coords.latitude,
@@ -97,11 +101,10 @@ export default class Map extends Component {
                                         this.setState({
                                                 region: region,
                                                 marker: {
-                                                        // latitude: res[0].position.lat,
-                                                        // longitude: res[0].position.lng
                                                         latitude: position.coords.latitude,
                                                         longitude: position.coords.longitude,
-                                                }
+                                                },
+                                                loadingMap: false
                                         });
                                 }, (error) => {
                                         console.log('error: ', error);
@@ -125,6 +128,9 @@ export default class Map extends Component {
         }
 
         _onClickButtonLocation () {
+                this.setState({
+                        loadingMap: true
+                })
                 Geolocation.getCurrentPosition((position) => {
                         var region = {
                                 latitude: position.coords.latitude,
@@ -137,7 +143,8 @@ export default class Map extends Component {
                                 marker: {
                                         latitude: position.coords.latitude,
                                         longitude: position.coords.longitude,
-                                }
+                                },
+                                loadingMap: false
                         });
                         this.props.onFetchNearbyLocationRestaurant({
                                 latitude: position.coords.latitude,
@@ -216,15 +223,14 @@ export default class Map extends Component {
                                         </TouchableOpacity>
                                 </View>
                                 <View style={styles.containerMap} >
-                                        <MapView
+                                        {/*        <MapView
                                                 style={styles.map}
                                                 region={this.state.region}
                                                 provider={PROVIDER_GOOGLE}
                                                 zoomEnabled={true}
                                                 scrollEnabled={true}
-                                                loadingBackgroundColor='white'
                                                 loadingIndicatorColor={colorMain}
-                                                loadingEnabled={true}
+                                                loadingEnabled={this.state.loadingMap}
                                         >
                                                 {
                                                         this.state.marker === null ? null : <Marker
@@ -271,6 +277,17 @@ export default class Map extends Component {
                                                                 </Marker>
                                                         )
                                                 }
+                                        </MapView> */}
+                                        <MapView
+                                                style={styles.map}
+                                                region={this.state.region}
+                                                provider={PROVIDER_GOOGLE}
+                                                zoomEnabled={true}
+                                                scrollEnabled={true}
+                                                loadingIndicatorColor={colorMain}
+                                                loadingEnabled={this.state.loadingMap}
+                                        >
+
                                         </MapView>
                                         <View style={styles.containerButtonLocation}>
                                                 <TouchableOpacity style={styles.buttonLocation}

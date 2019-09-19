@@ -234,7 +234,7 @@ export default class OverView extends Component {
                                                         }}
                                                 >
                                                         <IconFontisto name='navigate' size={20} color={colorMain} />
-                                                        <Text style={styles.textNavigation}>bản đồ</Text>
+                                                        <Text style={styles.textNavigation}>chỉ đường</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={styles.button}>
                                                         <Icon name='customerservice' size={20} color={colorMain} />

@@ -10,18 +10,20 @@ export default class Deal extends Component {
                 this.state = {
                         account: null,
                         isLoading: false,
-                        listOrder: []
+                        listOrder: [],
+                        page: 1,
+                        total_page: null,
+                        isRefresh: true
                 };
+                this._onClickOrder = this._onClickOrder.bind(this);
         }
 
 
         async _getInfoAccountFromLocal () {
-                this.setState({
-                        isLoading: true
-                });
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
                 this.setState({
-                        account: account
+                        account: account,
+                        isLoading: true,
                 });
                 this.props.onFetchListOrder({
                         idAdmin: account.id,
@@ -34,12 +36,46 @@ export default class Deal extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listOrder !== prevState.listOrder && nextProps !== undefined) {
-                        prevState.listOrder = nextProps.listOrder;
+                if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined) {
+                        console.log('prevState.isRefresh: ', prevState.isRefresh);
+                        if (prevState.isRefresh) {
+                                console.log('1');
+                                //   prevState.listOrder = prevState.listOrder.concat(nextProps.listOrder);
+                                prevState.listOrder = nextProps.listOrder;
+                                prevState.isRefresh = false;
+                        }
+                }
+                if (nextProps.page !== prevState.page && nextProps.page !== undefined) {
+                        prevState.page = nextProps.page;
+                }
+                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined) {
+                        prevState.total_page = nextProps.total_page;
+                }
+                if (nextProps.isLoading !== prevState.isLoading) {
+                        prevState.isLoading = nextProps.isLoading;
                 }
                 return null;
         }
 
+        _onClickOrder (idOrder) {
+                console.log('idOrder: ', idOrder);
+        }
+
+        _onRefreshListOrder () {
+                this.setState({
+                        listOrder: [],
+                        isLoading: true,
+                        isRefresh: true
+                });
+                this.props.onFetchListOrder({
+                        idAdmin: this.state.account.id,
+                        page: 1
+                });
+        }
+
+        _onLoadMoreListOrder () {
+
+        }
         render () {
                 return (
                         <View style={styles.container}>
@@ -63,12 +99,16 @@ export default class Deal extends Component {
                                         <FlatList
                                                 data={this.state.listOrder}
                                                 extraData={this.state}
-                                                keyExtractor={(item, index) => item._id}
+                                                keyExtractor={(item, index) => index.toString()}
                                                 refreshing={this.state.isLoading}
-                                                renderItem={() => {
+                                                onRefresh={() => {
+                                                        this._onRefreshListOrder();
+                                                }}
+                                                renderItem={(item) => {
                                                         return (
                                                                 <ItemFlatList
-
+                                                                        item={item.item}
+                                                                        _onClickOrder={this._onClickOrder}
                                                                 />
                                                         );
                                                 }}

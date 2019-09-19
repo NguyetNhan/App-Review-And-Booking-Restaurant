@@ -21,15 +21,28 @@ AddInfoAccountFromDatabaseLocal = async (data) => {
                 const account = await realm.objects(Account);
                 await realm.write(() => {
                         realm.delete(account);
-                        realm.create(Account, {
-                                authorities: data.authorities,
-                                email: data.email,
-                                name: data.name,
-                                phone: data.phone,
-                                id: data.id,
-                                password: data.password,
-                                avatar: data.avatar
-                        });
+                        if (data.avatar === null) {
+                                realm.create(Account, {
+                                        authorities: data.authorities,
+                                        email: data.email,
+                                        name: data.name,
+                                        phone: data.phone,
+                                        id: data.id,
+                                        password: data.password,
+                                        avatar: 'null'
+                                });
+                        } else {
+                                realm.create(Account, {
+                                        authorities: data.authorities,
+                                        email: data.email,
+                                        name: data.name,
+                                        phone: data.phone,
+                                        id: data.id,
+                                        password: data.password,
+                                        avatar: data.avatar
+                                });
+                        }
+
                 });
                 realm.close();
         } catch (error) {

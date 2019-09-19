@@ -3,17 +3,8 @@ import Component from '../components';
 import { onLogin, onAddAccountIntoLocal, } from '../actions';
 
 const mapStateToProps = (state) => {
-        const stateNew = state.LoginReducers;
         const resultsLogin = state.LoginReducers.Login;
         const resultsAddAccount = state.LoginReducers.AddAccount;
-        console.log('resultsAddAccount: ', resultsAddAccount);
-        /* if (stateNew !== undefined) {
-             
-        } else {
-                return {
-                        loading: false
-                };
-        } */
         if (resultsLogin !== undefined) {
                 if (resultsLogin.data.error) {
                         return {

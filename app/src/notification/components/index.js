@@ -20,10 +20,10 @@ export default class Notification extends Component {
                         account: null,
                         listNotification: [],
                         isLoading: false,
-                        isUpdateState: false,
-                        isLoadMore: false,
+                        isRefresh: true,
                         page: 1,
-                        total_page: 1
+                        total_page: 1,
+                        isLoadMore: false
                 }
 
                 socket.on('notification', (data) => {
@@ -50,13 +50,12 @@ export default class Notification extends Component {
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined) {
-                        if (prevState.isUpdateState) {
-                                const array = (prevState.listNotification).concat(nextProps.listNotification);
-                                prevState.listNotification = array;
-                        } else {
-                                prevState.listNotification = nextProps.listNotification
-                                prevState.isUpdateState = true;
-                                prevState.isLoadMore = true;
+                        if (prevState.isRefresh) {
+                                prevState.listNotification = nextProps.listNotification;
+                                prevState.isRefresh = false;
+                        } else if (prevState.isLoadMore) {
+                                prevState.listNotification = prevState.listNotification.concat(nextProps.listNotification);
+                                prevState.isLoadMore = false;
                         }
                 }
                 if (nextProps.isLoading !== prevState.isLoading) {
@@ -74,13 +73,15 @@ export default class Notification extends Component {
                 return null;
         }
 
-        _onRefresh = () => {
+        _onRefresh () {
                 const data = {
                         idAccount: this.state.account.id,
                         page: 1,
                 };
                 this.setState({
-                        isUpdateState: false
+                        listNotification: [],
+                        isLoading: true,
+                        isRefresh: true
                 })
                 this.props.onFetchNotification(data)
         }
@@ -93,7 +94,11 @@ export default class Notification extends Component {
                                 idAccount: this.state.account.id,
                                 page: page + 1,
                         };
-                        this.props.onFetchNotification(data)
+                        this.props.onFetchNotification(data);
+                        this.setState({
+                                isLoading: true,
+                                isLoadMore: true
+                        })
                 }
         }
 
@@ -140,8 +145,12 @@ export default class Notification extends Component {
                                                 extraData={this.state}
                                                 keyExtractor={(item, index) => index.toString()}
                                                 refreshing={this.state.isLoading}
-                                                onRefresh={this._onRefresh}
-                                                onEndReached={this._onLoadMore}
+                                                onRefresh={() => {
+                                                        this._onRefresh();
+                                                }}
+                                                onEndReached={() => {
+                                                        this._onLoadMore();
+                                                }}
                                                 onEndReachedThreshold={1}
                                                 renderItem={(item) => {
                                                         return (
