@@ -3,7 +3,8 @@ import { View, Text, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } 
 import Icon from 'react-native-vector-icons/AntDesign';
 import { urlServer, background } from '../../config';
 import { AccountModel } from '../../models/account';
-import ItemFlatList from './item_flat_list';
+import ItemListOrderAdminRestaurant from './item_list_order_admin_restaurant';
+import ItemListOrderClient from './item_list_order_client';
 export default class Deal extends Component {
         constructor (props) {
                 super(props);
@@ -22,14 +23,32 @@ export default class Deal extends Component {
 
         async _getInfoAccountFromLocal () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        account: account,
-                        isLoading: true,
-                });
-                this.props.onFetchListOrder({
-                        idAdmin: account.id,
-                        page: 1
-                });
+                if (account.authorities === 'admin-restaurant') {
+                        this.setState({
+                                account: account,
+                                isLoading: true,
+                        });
+                        this.props.onFetchListOrder({
+                                data: {
+                                        idAdmin: account.id,
+                                        page: 1,
+                                },
+                                type: 'admin-restaurant'
+                        });
+                } else if (account.authorities === 'client') {
+                        this.setState({
+                                account: account,
+                                isLoading: true,
+                        });
+                        this.props.onFetchListOrder({
+                                data: {
+                                        idClient: account.id,
+                                        page: 1,
+                                },
+                                type: 'client'
+                        });
+                }
+
         }
 
         componentDidMount () {
@@ -58,7 +77,9 @@ export default class Deal extends Component {
         }
 
         _onClickOrder (idOrder) {
-                console.log('idOrder: ', idOrder);
+                this.props.navigation.navigate('DetailDeal', {
+                        idOrder: idOrder
+                });
         }
 
         _onRefreshListOrder () {
@@ -68,21 +89,48 @@ export default class Deal extends Component {
                         isLoading: true,
                         isRefresh: true
                 });
-                this.props.onFetchListOrder({
-                        idAdmin: this.state.account.id,
-                        page: 1
-                });
+                const authorities = this.state.account.authorities;
+                if (authorities === 'admin-restaurant') {
+                        this.props.onFetchListOrder({
+                                data: {
+                                        idAdmin: this.state.account.id,
+                                        page: 1
+                                },
+                                type: 'admin-restaurant'
+                        });
+                } else if (authorities === 'client') {
+                        this.props.onFetchListOrder({
+                                data: {
+                                        idClient: this.state.account.id,
+                                        page: 1,
+                                },
+                                type: 'client'
+                        });
+                }
         }
 
         _onLoadMoreListOrder () {
                 const page = this.state.page;
                 const total_page = this.state.total_page;
                 if (page < total_page) {
-                        const data = {
-                                idAdmin: this.state.account.id,
-                                page: page + 1
-                        };
-                        this.props.onFetchListOrder(data);
+                        const authorities = this.state.account.authorities;
+                        if (authorities === 'admin-restaurant') {
+                                this.props.onFetchListOrder({
+                                        data: {
+                                                idAdmin: this.state.account.id,
+                                                page: page + 1
+                                        },
+                                        type: 'admin-restaurant'
+                                });
+                        } else if (authorities === 'client') {
+                                this.props.onFetchListOrder({
+                                        data: {
+                                                idClient: this.state.account.id,
+                                                page: page + 1
+                                        },
+                                        type: 'client'
+                                });
+                        }
                         this.setState({
                                 isLoading: true,
                                 isLoadMore: true
@@ -105,12 +153,7 @@ export default class Deal extends Component {
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
                                         <Text style={styles.textHeader}>đơn hàng</Text>
-                                        <TouchableOpacity onPress={() => {
-
-
-                                        }}>
-                                                <Icon name='search1' size={25} color='black' />
-                                        </TouchableOpacity>
+                                        <View />
                                 </View>
                                 <View style={styles.content}>
                                         <FlatList
@@ -126,12 +169,22 @@ export default class Deal extends Component {
                                                 }}
                                                 onEndReachedThreshold={0.1}
                                                 renderItem={(item) => {
-                                                        return (
-                                                                <ItemFlatList
-                                                                        item={item.item}
-                                                                        _onClickOrder={this._onClickOrder}
-                                                                />
-                                                        );
+                                                        if (this.state.account.authorities === 'admin-restaurant') {
+                                                                return (
+                                                                        <ItemListOrderAdminRestaurant
+                                                                                item={item.item}
+                                                                                _onClickOrder={this._onClickOrder}
+                                                                        />
+                                                                );
+                                                        } else if (this.state.account.authorities === 'client') {
+                                                                return (
+                                                                        <ItemListOrderClient
+                                                                                item={item.item}
+                                                                                _onClickOrder={this._onClickOrder}
+                                                                        />
+                                                                );
+                                                        }
+
                                                 }}
                                         />
                                 </View>

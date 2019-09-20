@@ -1,18 +1,18 @@
 import {
-        FETCH_LIST_ORDER_FOR_ADMIN_FAILED,
-        FETCH_LIST_ORDER_FOR_ADMIN_SUCCEEDED,
+        FETCH_LIST_ORDER_FAILED,
+        FETCH_LIST_ORDER_SUCCEEDED,
         RESET_PROPS
 } from '../actions/action_types';
 
 const DealReducers = (state = [], action) => {
         switch (action.type) {
-                case FETCH_LIST_ORDER_FOR_ADMIN_SUCCEEDED:
+                case FETCH_LIST_ORDER_SUCCEEDED:
                         return {
                                 FetchSucceeded: {
                                         data: action.data
                                 }
                         };
-                case FETCH_LIST_ORDER_FOR_ADMIN_FAILED:
+                case FETCH_LIST_ORDER_FAILED:
                         return {
                                 FetchFailed: {
                                         messages: action.messages

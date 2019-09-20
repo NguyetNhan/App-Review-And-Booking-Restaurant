@@ -2,20 +2,20 @@ import { connect } from 'react-redux';
 import { onFetchListOrder, onResetProps } from '../actions';
 import Component from '../components';
 const mapStateToProps = (state) => {
-        const fetchListOrderForAdminSucceeded = state.DealReducers.FetchSucceeded;
-        const fetchListOrderForAdminFailed = state.DealReducers.FetchFailed;
+        const fetchListOrderSucceeded = state.DealReducers.FetchSucceeded;
+        const fetchListOrderFailed = state.DealReducers.FetchFailed;
         const resetProps = state.DealReducers.ResetProps;
-        if (fetchListOrderForAdminSucceeded !== undefined) {
+        if (fetchListOrderSucceeded !== undefined) {
                 return {
                         isLoading: false,
-                        page: fetchListOrderForAdminSucceeded.data.page,
-                        total_page: fetchListOrderForAdminSucceeded.data.total_page,
-                        listOrder: fetchListOrderForAdminSucceeded.data.data
+                        page: fetchListOrderSucceeded.data.page,
+                        total_page: fetchListOrderSucceeded.data.total_page,
+                        listOrder: fetchListOrderSucceeded.data.data
                 };
-        } else if (fetchListOrderForAdminFailed !== undefined) {
+        } else if (fetchListOrderFailed !== undefined) {
                 return {
                         isLoading: false,
-                        message: fetchListOrderForAdminFailed.messages
+                        message: fetchListOrderFailed.messages
                 };
         } else if (resetProps !== undefined) {
                 return resetProps;

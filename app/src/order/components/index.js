@@ -27,7 +27,9 @@ export default class Order extends Component {
                         totalMoney: 0,
                         visibleInfoAccount: false,
                         isLoading: false,
-                        resultOrder: null
+                        resultOrder: null,
+                        currentPage: 0,
+                        labels: null,
                 };
                 this._onClickCloseListMenu = this._onClickCloseListMenu.bind(this);
                 this._onCheckFood = this._onCheckFood.bind(this);
@@ -184,7 +186,7 @@ export default class Order extends Component {
                                         }}>
                                                 <Icon name='arrow-left' size={25} color='black' />
                                         </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Đặt tiệc</Text>
+                                        <Text style={styles.textHeader}>đặt chỗ</Text>
                                         <View />
                                 </View>
                                 <View style={styles.content}>

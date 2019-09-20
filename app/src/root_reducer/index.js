@@ -11,6 +11,7 @@ import NotificationReducers from '../notification/reducers';
 import OrderReducers from '../order/reducers';
 import MapReducers from '../map/reducers';
 import DealReducers from '../deal/reducers';
+import DetailDealReducers from '../detail_deal/reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -24,7 +25,8 @@ const RootReducer = combineReducers({
         NotificationReducers,
         OrderReducers,
         MapReducers,
-        DealReducers
+        DealReducers,
+        DetailDealReducers
 });
 
 export default RootReducer;

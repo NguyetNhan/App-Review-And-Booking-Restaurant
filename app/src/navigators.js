@@ -23,6 +23,7 @@ import Chat from './chat/components';
 import Order from './order/containers';
 import Map from './map/containers';
 import Deal from './deal/containers';
+import DetailDeal from './detail_deal/containers';
 
 
 const RouteBottomTabConfig = {
@@ -201,6 +202,12 @@ const MainNavigatorClient = createStackNavigator(
                                 header: null,
                         },
                 },
+                DetailDeal: {
+                        screen: DetailDeal,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
         }, {
         initialRouteName: 'DrawerNavigatorClient'
 }
@@ -338,6 +345,12 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                 },
                 Deal: {
                         screen: Deal,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                DetailDeal: {
+                        screen: DetailDeal,
                         navigationOptions: {
                                 header: null,
                         },

@@ -15,6 +15,22 @@ FetchListOrderForAdminRestaurant = async (data) => {
         }
 };
 
+FetchListOrderForClient = async (data) => {
+        try {
+                const response = await fetch(`${urlServer}/order/client/${data.idClient}/page/${data.page}`, {
+                        method: 'GET',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        },
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                console.log('error: ', error);
+        }
+};
+
 export const API = {
-        FetchListOrderForAdminRestaurant
+        FetchListOrderForAdminRestaurant,
+        FetchListOrderForClient
 };

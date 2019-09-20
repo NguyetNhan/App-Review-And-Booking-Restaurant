@@ -246,7 +246,7 @@ export default class OverView extends Component {
                                                         }}
                                                 >
                                                         <IconFontAwesome name='edit' size={20} color={colorMain} />
-                                                        <Text style={styles.textNavigation}>Đặt Tiệc</Text>
+                                                        <Text style={styles.textNavigation}>Đặt Chỗ</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={styles.button}>
                                                         <IconSimpleLineIcons name='pin' size={20} color={colorMain} />

@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { urlServer, colorMain } from '../../config';
 import { convertVND } from '../../functions/convert';
 
-export default class ItemFlatList extends Component {
+export default class Item extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
