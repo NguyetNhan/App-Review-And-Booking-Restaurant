@@ -5,7 +5,8 @@ import ViewPager from '@react-native-community/viewpager';
 import { colorMain } from '../../config';
 import { AccountModel } from '../../models/account';
 import Confirm from '../containers/confirm';
-import ScanScreen from './activity';
+import ActivityAdminRestaurant from './activity_admin_restaurant';
+import ActivityClient from './activity_client';
 
 export default class Index extends Component {
         constructor (props) {
@@ -128,7 +129,18 @@ export default class Index extends Component {
 
                                                                                                 </View>
                                                                                                 <View key="2">
-                                                                                                        <ScanScreen />
+                                                                                                        {
+                                                                                                                this.state.account === null ? null :
+                                                                                                                        this.state.account.authorities === 'admin-restaurant' ?
+                                                                                                                                <ActivityAdminRestaurant /> :
+                                                                                                                                this.state.account.authorities === 'client' ?
+                                                                                                                                        this.state.detailOrder === null ?
+                                                                                                                                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                                                                                                                                        <ActivityIndicator animating={true} size={80} color={colorMain} />
+                                                                                                                                                </View> : <ActivityClient
+                                                                                                                                                        order={this.state.detailOrder}
+                                                                                                                                                /> : null
+                                                                                                        }
                                                                                                 </View>
                                                                                                 <View key="3">
                                                                                                         <Text>3 page</Text>
