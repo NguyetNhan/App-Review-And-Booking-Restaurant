@@ -26,7 +26,7 @@ function* FetchMenuFromAPI (action) {
                 if (results.error) {
                         yield put(onFetchMenuFailed(results.message));
                 } else {
-                        yield put(onFetchMenuSucceeded(results.data));
+                        yield put(onFetchMenuSucceeded(results));
                 }
         } catch (error) {
                 console.log('error: ', error);

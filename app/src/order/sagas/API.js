@@ -1,8 +1,8 @@
 import { urlServer } from '../../config';
 
-FetchMenuFromAPI = async (idRestaurant) => {
+FetchMenuFromAPI = async (data) => {
         try {
-                const response = await fetch(`${urlServer}/menu/idRestaurant/${idRestaurant}`, {
+                const response = await fetch(`${urlServer}/menu/idRestaurant/${data.idRestaurant}/page/${data.page}`, {
                         method: 'GET',
                         headers: {
                                 Accept: 'application/json',

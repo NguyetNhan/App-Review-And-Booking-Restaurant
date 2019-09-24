@@ -36,6 +36,10 @@ export default class Menu extends Component {
                         imageSelect: '',
                         introduceSelect: '',
                         priceSelect: '',
+                        page: 1,
+                        total_page: null,
+                        isRefresh: false,
+                        isLoadMore: false
                 }
                 this._onClickCloseAddMenu = this._onClickCloseAddMenu.bind(this);
                 this._onClickCloseSelectImage = this._onClickCloseSelectImage.bind(this);
@@ -62,7 +66,10 @@ export default class Menu extends Component {
                                 showEdit: true
                         })
                 }
-                this.props.onFetchMenu(id.idRestaurant);
+                this.props.onFetchMenu({
+                        idRestaurant: id.idRestaurant,
+                        page: 1
+                });
         }
 
         componentDidMount () {
@@ -73,8 +80,16 @@ export default class Menu extends Component {
                 if (nextProps.isLoading !== prevState.visibleLoading) {
                         prevState.visibleLoading = nextProps.isLoading
                 }
-                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined) {
-                        prevState.listMenu = nextProps.listMenu
+                /*   if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined) {
+                          prevState.listMenu = nextProps.listMenu
+                  } */
+                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && prevState.isRefresh && !prevState.isLoadMore) {
+                        prevState.isRefresh = false;
+                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
+                        prevState.listMenu = nextProps.listMenu;
+                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && prevState.isLoadMore) {
+                        prevState.listMenu = prevState.listMenu.concat(nextProps.listMenu);
+                        prevState.isLoadMore = false;
                 }
                 if (nextProps.messages !== undefined) {
                         alert(nextProps.messages)
@@ -82,6 +97,33 @@ export default class Menu extends Component {
                 return null
         }
 
+        _onRefreshListMenu () {
+                this.setState({
+                        page: 1,
+                        listMenu: [],
+                        isLoading: true,
+                        isRefresh: true
+                });
+                this.props.onFetchMenu({
+                        idRestaurant: this.state.idRestaurant,
+                        page: 1
+                });
+        }
+
+        _onLoadMoreListMenu () {
+                const page = this.state.page;
+                const total_page = this.state.total_page;
+                if (page < total_page) {
+                        this.props.onFetchMenu({
+                                idRestaurant: this.state.idRestaurant,
+                                page: page + 1
+                        });
+                        this.setState({
+                                isLoading: true,
+                                isLoadMore: true
+                        });
+                }
+        }
 
         _onClickCloseAddMenu () {
                 this.setState({
@@ -156,7 +198,11 @@ export default class Menu extends Component {
                                                 showsVerticalScrollIndicator={false}
                                                 refreshing={this.state.refreshing}
                                                 onRefresh={() => {
-                                                        this.props.onFetchMenu(this.state.idRestaurant);
+                                                        this._onRefreshListMenu()
+                                                }}
+                                                onEndReachedThreshold={0.1}
+                                                onEndReached={() => {
+                                                        this._onLoadMoreListMenu();
                                                 }}
                                                 renderItem={(item) => {
                                                         return (

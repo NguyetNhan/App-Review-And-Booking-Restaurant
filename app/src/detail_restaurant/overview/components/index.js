@@ -187,7 +187,6 @@ export default class OverView extends Component {
                                                                 <Text style={styles.textStatus}>đang mở cửa</Text>
                                                                 <Text style={styles.textTime}>8am - 10pm</Text>
                                                         </View>
-
                                                         <View style={{
                                                                 width: 4,
                                                                 height: 4,

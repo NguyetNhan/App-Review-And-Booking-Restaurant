@@ -20,7 +20,9 @@ const mapStateToProps = (state) => {
         } else if (fetchSucceeded !== undefined) {
                 return {
                         isLoading: false,
-                        listMenu: fetchSucceeded.data
+                        listMenu: fetchSucceeded.data.data,
+                        page: fetchSucceeded.data.page,
+                        total_page: fetchSucceeded.data.total_page,
                 };
         } else if (fetchFailed !== undefined) {
                 return {

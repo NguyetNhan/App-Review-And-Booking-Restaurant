@@ -4,18 +4,21 @@ import StepIndicator from 'react-native-step-indicator';
 import ViewPager from '@react-native-community/viewpager';
 import { colorMain } from '../../config';
 import { AccountModel } from '../../models/account';
+import Confirm from '../containers/confirm';
+import ScanScreen from './activity';
 
 export default class Index extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        currentPage: 0,
+                        currentPage: null,
                         labels: null,
                         account: null,
                         isLoading: true,
                         idOrder: props.idOrder,
                         detailOrder: null,
-                        messages: null
+                        messages: null,
+                        checkCancel: false
                 };
         }
 
@@ -42,11 +45,13 @@ export default class Index extends Component {
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.detailOrder !== undefined && nextProps.detailOrder !== prevState.detailOrder) {
-                        prevState.detailOrder = nextProps.detailOrder
+                        prevState.detailOrder = nextProps.detailOrder;
                         if (prevState.detailOrder.status === 'waiting') {
                                 prevState.currentPage = 0;
-                        }
-                        else if (prevState.detailOrder.status === 'activity') {
+                        } else if (prevState.detailOrder.status === 'cancel') {
+                                prevState.currentPage = 0;
+                                prevState.checkCancel = true;
+                        } else if (prevState.detailOrder.status === 'activity') {
                                 prevState.currentPage = 1;
                         }
                         else if (prevState.detailOrder.status === 'complete') {
@@ -54,62 +59,85 @@ export default class Index extends Component {
                         }
                 }
                 if (nextProps.messages !== undefined && nextProps.messages !== prevState.messages) {
-                        prevState.messages = nextProps.messages
+                        prevState.messages = nextProps.messages;
                         ToastAndroid(nextProps.messages, ToastAndroid.SHORT);
                 }
                 if (nextProps.isLoading !== undefined && nextProps.isLoading !== prevState.isLoading) {
-                        prevState.isLoading = nextProps.isLoading
+                        prevState.isLoading = nextProps.isLoading;
                 }
                 return null;
         }
 
-
-        onStepPress = position => {
-                this.setState({ currentPage: position })
-                this.viewPager.setPage(position)
+        componentWillUnmount () {
+                this.props.onResetPropsStepIndicator();
         }
         render () {
                 if (this.state.isLoading) {
                         return (
-                                <Modal
-                                        animationType='slide'
-                                        visible={this.state.isLoading}
-                                >
-                                        <View style={styles.loading}>
-                                                <ActivityIndicator animating={true} size={80} color={colorMain} />
-                                        </View>
-                                </Modal>
+                                <View style={styles.loading}>
+                                        <ActivityIndicator animating={true} size={80} color={colorMain} />
+                                </View>
                         );
                 } else {
                         return (
-                                <View style={styles.container}>
-                                        <StepIndicator
-                                                customStyles={customStyles}
-                                                stepCount={3}
-                                                onPress={this.onStepPress}
-                                                currentPosition={this.state.currentPage}
-                                                labels={this.state.labels}
-                                        />
-                                        <ViewPager
-                                                ref={viewPager => {
-                                                        this.viewPager = viewPager;
-                                                }}
-                                                style={styles.viewPager}
-                                                initialPage={this.state.currentPage}
-                                                onPageSelected={(event) => {
-                                                        this.setState({ currentPage: event.nativeEvent.position });
-                                                }}
-                                        >
-                                                <View key="1">
-                                                        <Text>First page</Text>
-                                                </View>
-                                                <View key="2">
-                                                        <Text>Second page</Text>
-                                                </View>
-                                                <View key="3">
-                                                        <Text>3 page</Text>
-                                                </View>
-                                        </ViewPager>
+                                <View style={{
+                                        flex: 1
+                                }}>
+                                        {
+                                                this.state.currentPage === null ? null :
+                                                        <View style={styles.container}>
+                                                                {
+                                                                        this.state.checkCancel ?
+                                                                                <View style={styles.container}>
+                                                                                        <Text style={styles.textNotification}>đơn hàng đã hủy</Text>
+                                                                                        <View style={styles.container}>
+                                                                                                {
+                                                                                                        this.state.account === null ? null :
+                                                                                                                this.state.detailOrder === null ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                                                                                                        <ActivityIndicator animating={true} size={80} color={colorMain} />
+                                                                                                                </View> : <Confirm
+                                                                                                                                item={this.state.detailOrder}
+                                                                                                                                account={this.state.account}
+                                                                                                                        />
+                                                                                                }
+
+                                                                                        </View>
+                                                                                </View>
+                                                                                :
+                                                                                <View style={styles.container}>
+                                                                                        <StepIndicator
+                                                                                                customStyles={customStyles}
+                                                                                                stepCount={3}
+                                                                                                currentPosition={this.state.currentPage}
+                                                                                                labels={this.state.labels}
+                                                                                        />
+                                                                                        <ViewPager
+                                                                                                style={styles.viewPager}
+                                                                                                initialPage={this.state.currentPage}
+                                                                                        >
+                                                                                                <View key="1">
+                                                                                                        {
+                                                                                                                this.state.account === null ? null :
+                                                                                                                        this.state.detailOrder === null ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                                                                                                                <ActivityIndicator animating={true} size={80} color={colorMain} />
+                                                                                                                        </View> : <Confirm
+                                                                                                                                        item={this.state.detailOrder}
+                                                                                                                                        account={this.state.account}
+                                                                                                                                />
+                                                                                                        }
+
+                                                                                                </View>
+                                                                                                <View key="2">
+                                                                                                        <ScanScreen />
+                                                                                                </View>
+                                                                                                <View key="3">
+                                                                                                        <Text>3 page</Text>
+                                                                                                </View>
+                                                                                        </ViewPager>
+                                                                                </View>
+                                                                }
+                                                        </View>
+                                        }
                                 </View>
                         );
                 }
@@ -118,7 +146,7 @@ export default class Index extends Component {
 
 const styles = StyleSheet.create({
         container: {
-                flex: 1
+                flex: 1,
         },
         viewPager: {
                 flex: 1
@@ -127,6 +155,14 @@ const styles = StyleSheet.create({
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center'
+        },
+        textNotification: {
+                width: '100%',
+                textAlign: 'center',
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 30,
+                color: colorMain,
+                textTransform: 'capitalize'
         }
 });
 

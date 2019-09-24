@@ -2,7 +2,7 @@ import Realm from 'realm';
 
 const Account = 'Account';
 const AccountSchema = {
-        name: 'Account',
+        name: Account,
         primaryKey: 'id',
         properties: {
                 id: 'string',
@@ -63,7 +63,7 @@ FetchInfoAccountFromDatabaseLocal = async () => {
                         phone: null,
                         avatar: null
                 };
-                if (account.length == 1) {
+                if (account.length === 1) {
                         for (item of account) {
                                 result.id = item.id;
                                 result.authorities = item.authorities;
@@ -87,8 +87,8 @@ DeleteAccountInfoFromDatabaseLocal = async () => {
         try {
                 const realm = await Realm.open({ schema: [AccountSchema] });
                 const account = await realm.objects(Account);
-                await realm.write(async () => {
-                        await realm.delete(account);
+                realm.write(() => {
+                        realm.delete(account);
                 });
                 realm.close();
         } catch (error) {

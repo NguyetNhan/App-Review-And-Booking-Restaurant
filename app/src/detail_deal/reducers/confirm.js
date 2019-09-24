@@ -1,28 +1,29 @@
 import {
-        FETCH_DETAIL_ORDER_FAILED,
-        FETCH_DETAIL_ORDER_SUCCEEDED,
-        RESET_PROPS_STEP_INDICATOR
+        CONFIRM_ORDER_FAILED,
+        CONFIRM_ORDER_SUCCEEDED,
+        RESET_PROPS_CONFIRM
 } from '../actions/types';
 
-const StepIndicator = (state = null, action) => {
+const ConfirmReducers = (state = null, action) => {
         switch (action.type) {
-                case FETCH_DETAIL_ORDER_SUCCEEDED:
+                case CONFIRM_ORDER_SUCCEEDED:
                         return {
-                                FetchSucceeded: {
+                                confirmSucceeded: {
                                         data: action.data
                                 }
                         };
-                case FETCH_DETAIL_ORDER_FAILED:
+                case CONFIRM_ORDER_FAILED:
                         return {
-                                FetchFailed: {
+                                confirmFailed: {
                                         messages: action.messages
                                 }
                         };
-                case RESET_PROPS_STEP_INDICATOR:
+                case RESET_PROPS_CONFIRM:
                         return {
                                 ResetProps: {
                                         isLoading: false,
-                                        detailOrder: null,
+                                        messageConfirmSucceeded: undefined,
+                                        message: undefined
                                 }
                         };
                 default:
@@ -30,4 +31,4 @@ const StepIndicator = (state = null, action) => {
         }
 };
 
-export default StepIndicator;
+export default ConfirmReducers;

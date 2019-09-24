@@ -4,7 +4,9 @@ import {
         FETCH_LIST_MENU_ORDER_SUCCEEDED,
         ADD_ORDER,
         ADD_ORDER_FAILED,
-        ADD_ORDER_SUCCEEDED
+        ADD_ORDER_SUCCEEDED,
+        ON_CHANGE_PAGE,
+        RESET_PROPS
 } from './action_types';
 
 export const onFetchListMenu = (data) => {
@@ -46,5 +48,18 @@ export const onAddOrderFailed = (messages) => {
         return {
                 type: ADD_ORDER_FAILED,
                 messages
+        };
+};
+
+export const onChangePage = (status) => {
+        return {
+                type: ON_CHANGE_PAGE,
+                status
+        };
+};
+
+export const onResetProps = () => {
+        return {
+                type: RESET_PROPS,
         };
 };

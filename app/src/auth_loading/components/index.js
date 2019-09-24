@@ -42,7 +42,7 @@ export default class AuthLoading extends Component {
                                         password: response.data.password,
                                         name: response.data.name,
                                         phone: response.data.phone,
-                                        avatar: null
+                                        avatar: response.data.avatar
                                 };
                                 AccountModel.AddInfoAccountFromDatabaseLocal(accountNew);
                                 this.setState({

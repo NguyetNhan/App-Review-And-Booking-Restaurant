@@ -20,7 +20,7 @@ import { WatchFetchNotificationFromAPI } from '../notification/sagas';
 import { WatchFetchListMenuForOrderFromAPI, WatchAddOrderIntoDatabase } from '../order/sagas';
 import { WatchFetchNearbyLocationRestaurantFromAPI } from '../map/sagas';
 import { WatchFetchListOrderFromAPI } from '../deal/sagas';
-import { watchFetchDetailOrderFromAPI } from '../detail_deal/sagas';
+import { watchFetchDetailOrderFromAPI, watchConfirmOrderFromAPI } from '../detail_deal/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -44,6 +44,7 @@ export default function* RootSaga () {
                 WatchFetchNearbyLocationRestaurantForHomeFromAPI(),
                 WatchAddOrderIntoDatabase(),
                 WatchFetchListOrderFromAPI(),
-                watchFetchDetailOrderFromAPI()
+                watchFetchDetailOrderFromAPI(),
+                watchConfirmOrderFromAPI()
         ]);
 }

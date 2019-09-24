@@ -15,6 +15,23 @@ fetchDetailOrder = async (idOrder) => {
         }
 };
 
+confirmOrder = async (data) => {
+        try {
+                const response = await fetch(`${urlServer}/order/confirm-order/idOrder/${data.idOrder}/status/${data.status}`, {
+                        method: 'PUT',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        },
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                console.log('error: ', error);
+
+        }
+};
+
 export const API = {
-        fetchDetailOrder
+        fetchDetailOrder,
+        confirmOrder
 };

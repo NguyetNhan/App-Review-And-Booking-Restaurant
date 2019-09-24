@@ -9,7 +9,7 @@ function* FetchListMenuForOrderFromAPI (action) {
                 if (results.error) {
                         yield put(onFetchListMenuFailed(results.message));
                 } else {
-                        yield put(onFetchListMenuSucceeded(results.data));
+                        yield put(onFetchListMenuSucceeded(results));
                 }
         } catch (error) {
                 yield put(onFetchListMenuFailed(error.message));

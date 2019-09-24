@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { urlServer, background } from '../../config';
+import { urlServer, background, colorMain } from '../../config';
 import { AccountModel } from '../../models/account';
 import ItemListOrderAdminRestaurant from './item_list_order_admin_restaurant';
 import ItemListOrderClient from './item_list_order_client';
@@ -15,7 +15,9 @@ export default class Deal extends Component {
                         page: 1,
                         total_page: null,
                         isRefresh: false,
-                        isLoadMore: false
+                        isLoadMore: false,
+                        filter: 'null',
+                        visibleModalFilter: false
                 };
                 this._onClickOrder = this._onClickOrder.bind(this);
         }
@@ -32,6 +34,7 @@ export default class Deal extends Component {
                                 data: {
                                         idAdmin: account.id,
                                         page: 1,
+                                        filter: this.state.filter
                                 },
                                 type: 'admin-restaurant'
                         });
@@ -44,6 +47,7 @@ export default class Deal extends Component {
                                 data: {
                                         idClient: account.id,
                                         page: 1,
+                                        filter: this.state.filter
                                 },
                                 type: 'client'
                         });
@@ -82,19 +86,20 @@ export default class Deal extends Component {
                 });
         }
 
-        _onRefreshListOrder () {
+        _onRefreshListOrder (filter) {
                 this.setState({
                         page: 1,
                         listOrder: [],
                         isLoading: true,
-                        isRefresh: true
+                        isRefresh: true,
                 });
                 const authorities = this.state.account.authorities;
                 if (authorities === 'admin-restaurant') {
                         this.props.onFetchListOrder({
                                 data: {
                                         idAdmin: this.state.account.id,
-                                        page: 1
+                                        page: 1,
+                                        filter: filter
                                 },
                                 type: 'admin-restaurant'
                         });
@@ -103,6 +108,7 @@ export default class Deal extends Component {
                                 data: {
                                         idClient: this.state.account.id,
                                         page: 1,
+                                        filter: filter
                                 },
                                 type: 'client'
                         });
@@ -118,7 +124,8 @@ export default class Deal extends Component {
                                 this.props.onFetchListOrder({
                                         data: {
                                                 idAdmin: this.state.account.id,
-                                                page: page + 1
+                                                page: page + 1,
+                                                filter: this.state.filter
                                         },
                                         type: 'admin-restaurant'
                                 });
@@ -126,7 +133,8 @@ export default class Deal extends Component {
                                 this.props.onFetchListOrder({
                                         data: {
                                                 idClient: this.state.account.id,
-                                                page: page + 1
+                                                page: page + 1,
+                                                filter: this.state.filter
                                         },
                                         type: 'client'
                                 });
@@ -136,6 +144,20 @@ export default class Deal extends Component {
                                 isLoadMore: true
                         });
                 }
+        }
+
+        _onCloseModalFilter (filter) {
+                this.setState({
+                        visibleModalFilter: !this.state.visibleModalFilter,
+                        filter: filter
+                });
+                this._onRefreshListOrder(filter);
+        }
+
+        _onOpenModalFilter () {
+                this.setState({
+                        visibleModalFilter: !this.state.visibleModalFilter,
+                });
         }
 
         componentWillUnmount () {
@@ -153,7 +175,11 @@ export default class Deal extends Component {
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
                                         <Text style={styles.textHeader}>đơn hàng</Text>
-                                        <View />
+                                        <TouchableOpacity onPress={() => {
+                                                this._onOpenModalFilter();
+                                        }}>
+                                                <Icon name='filter' size={25} color='black' />
+                                        </TouchableOpacity>
                                 </View>
                                 <View style={styles.content}>
                                         <FlatList
@@ -162,7 +188,7 @@ export default class Deal extends Component {
                                                 keyExtractor={(item, index) => index.toString()}
                                                 refreshing={this.state.isLoading}
                                                 onRefresh={() => {
-                                                        this._onRefreshListOrder();
+                                                        this._onRefreshListOrder(this.state.filter);
                                                 }}
                                                 onEndReached={() => {
                                                         this._onLoadMoreListOrder();
@@ -188,6 +214,53 @@ export default class Deal extends Component {
                                                 }}
                                         />
                                 </View>
+                                <Modal
+                                        visible={this.state.visibleModalFilter}
+                                        animationType='slide'
+                                        transparent
+                                        onRequestClose={() => {
+                                                this._onCloseModalFilter('null');
+                                        }}
+                                >
+                                        <View style={styles.modalStatus}>
+                                                <Text style={styles.textTitleStatus}>lọc</Text>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this._onCloseModalFilter('waiting');
+                                                        }}
+                                                >
+                                                        <Text style={styles.textStatus}>chưa xác nhận</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this._onCloseModalFilter('activity');
+                                                        }}
+                                                >
+                                                        <Text style={styles.textStatus}>đang thực hiện</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this._onCloseModalFilter('complete');
+                                                        }}
+                                                >
+                                                        <Text style={styles.textStatus}>hoàn thành</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this._onCloseModalFilter('cancel');
+                                                        }}
+                                                >
+                                                        <Text style={styles.textStatus}>không chấp nhận</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this._onCloseModalFilter('null');
+                                                        }}
+                                                >
+                                                        <Text style={styles.textCancel}>quay lại</Text>
+                                                </TouchableOpacity>
+                                        </View>
+                                </Modal>
                         </View>
                 );
         }
@@ -214,5 +287,32 @@ const styles = StyleSheet.create({
         content: {
                 flex: 1,
                 backgroundColor: background
+        },
+        modalStatus: {
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.9)',
+                alignItems: 'center',
+                justifyContent: 'center'
+        },
+        textTitleStatus: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 30,
+                marginVertical: 10,
+                color: colorMain,
+                textTransform: 'uppercase'
+        },
+        textStatus: {
+                textTransform: 'capitalize',
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 20,
+                marginVertical: 10,
+                color: 'white'
+        },
+        textCancel: {
+                textTransform: 'capitalize',
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 20,
+                color: 'red',
+                marginVertical: 10
         }
 });

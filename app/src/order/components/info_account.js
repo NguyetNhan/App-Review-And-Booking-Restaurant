@@ -1,26 +1,19 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { AccountModel } from '../../models/account';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colorMain } from '../../config';
+import { AccountModel } from '../../models/account';
 
 export default class InfoAccount extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
                         account: null,
-                        editName: false,
-                        editEmail: false,
-                        editPhone: false,
-                        name: '',
-                        email: '',
-                        phone: ''
+                        name: null,
+                        email: null,
+                        phone: null,
                 };
 
-        }
-
-        componentDidMount () {
-                this._fetchInfoAccount();
         }
 
         async _fetchInfoAccount () {
@@ -31,6 +24,25 @@ export default class InfoAccount extends Component {
                         email: account.email,
                         phone: (account.phone).toString()
                 });
+        }
+
+
+        componentDidMount () {
+                this._fetchInfoAccount();
+        }
+
+        static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.changePage !== undefined) {
+                        if (nextProps.changePage == 'settling') {
+                                nextProps._setInfoAccount({
+                                        name: prevState.name,
+                                        email: prevState.email,
+                                        phone: prevState.phone,
+                                        idClient: prevState.account.id,
+                                });
+                        }
+                }
+                return null;
         }
 
         _onClickAgree () {
@@ -46,109 +58,58 @@ export default class InfoAccount extends Component {
         render () {
                 return (
                         <View style={styles.container}>
-                                {
-                                        this.state.account !== null ?
-                                                <View style={styles.content}>
-                                                        <Text style={styles.textHeader}>xác nhận thông tin cá nhân</Text>
-                                                        <Text style={styles.textTitle}>Họ và tên</Text>
-                                                        {
-                                                                this.state.editName ?
-                                                                        <TextInput
-                                                                                style={styles.textInput}
-                                                                                onChangeText={(text) => {
-                                                                                        this.setState({
-                                                                                                name: text
-                                                                                        });
-                                                                                }}
-                                                                                value={this.state.name}
-                                                                        /> :
-                                                                        <View style={styles.containerValue}>
-                                                                                <Text style={styles.textValue}>{this.state.account.name}</Text>
-                                                                                <TouchableOpacity
-                                                                                        onPress={() => {
-                                                                                                this.setState({
-                                                                                                        editName: !this.state.editName
-                                                                                                });
-                                                                                        }}
-                                                                                >
-                                                                                        <Icon name='edit' size={20} color={colorMain} />
-                                                                                </TouchableOpacity>
-                                                                        </View>
-                                                        }
-
-                                                        <Text style={styles.textTitle}>email</Text>
-                                                        {
-                                                                this.state.editEmail ?
-                                                                        <TextInput
-                                                                                style={styles.textInput}
-                                                                                onChangeText={(text) => {
-                                                                                        this.setState({
-                                                                                                email: text
-                                                                                        });
-                                                                                }}
-                                                                                value={this.state.email}
-                                                                                keyboardType='email-address'
-                                                                        /> :
-                                                                        <View style={styles.containerValue}>
-                                                                                <Text style={styles.textValue}>{this.state.account.email}</Text>
-                                                                                <TouchableOpacity
-                                                                                        onPress={() => {
-                                                                                                this.setState({
-                                                                                                        editEmail: !this.state.editEmail
-                                                                                                });
-                                                                                        }}
-                                                                                >
-                                                                                        <Icon name='edit' size={20} color={colorMain} />
-                                                                                </TouchableOpacity>
-                                                                        </View>
-                                                        }
-
-                                                        <Text style={styles.textTitle}>số điện thoại</Text>
-                                                        {
-                                                                this.state.editPhone ?
-                                                                        <TextInput
-                                                                                style={styles.textInput}
-                                                                                onChangeText={(text) => {
-                                                                                        this.setState({
-                                                                                                phone: text
-                                                                                        });
-                                                                                }}
-                                                                                value={this.state.phone}
-                                                                                keyboardType='numeric'
-                                                                        /> :
-                                                                        <View style={styles.containerValue}>
-                                                                                <Text style={styles.textValue}>{this.state.account.phone}</Text>
-                                                                                <TouchableOpacity
-                                                                                        onPress={() => {
-                                                                                                this.setState({
-                                                                                                        editPhone: !this.state.editPhone
-                                                                                                });
-                                                                                        }}
-                                                                                >
-                                                                                        <Icon name='edit' size={20} color={colorMain} />
-                                                                                </TouchableOpacity>
-                                                                        </View>
-                                                        }
-                                                        <TouchableOpacity
-                                                                style={styles.buttonOk}
-                                                                onPress={() => {
-                                                                        this._onClickAgree();
-                                                                }}
-                                                        >
-                                                                <Text style={styles.textButton}>chấp nhận</Text>
-                                                        </TouchableOpacity>
-                                                        <TouchableOpacity
-                                                                style={styles.buttonCancel}
-                                                                onPress={() => {
-                                                                        this.props._onClickCloseModalInfoAccount();
-                                                                }}
-                                                        >
-                                                                <Text style={styles.textButton}>hủy bỏ</Text>
-                                                        </TouchableOpacity>
-                                                </View>
-                                                : null
-                                }
+                                <View style={styles.content}>
+                                        <Text style={styles.textTitle}>Họ và tên</Text>
+                                        <TextInput
+                                                style={styles.textInput}
+                                                onChangeText={(text) => {
+                                                        this.setState({
+                                                                name: text
+                                                        });
+                                                }}
+                                                value={this.state.name}
+                                        />
+                                        <Text style={styles.textTitle}>email</Text>
+                                        <TextInput
+                                                style={styles.textInput}
+                                                onChangeText={(text) => {
+                                                        this.setState({
+                                                                email: text
+                                                        });
+                                                }}
+                                                value={this.state.email}
+                                                keyboardType='email-address'
+                                        />
+                                        <Text style={styles.textTitle}>số điện thoại</Text>
+                                        <TextInput
+                                                style={styles.textInput}
+                                                onChangeText={(text) => {
+                                                        this.setState({
+                                                                phone: text
+                                                        });
+                                                }}
+                                                value={this.state.phone}
+                                                keyboardType='numeric'
+                                        />
+                                </View>
+                                <View style={styles.containerButtonNavigator}>
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props._onClickButtonPrevious();
+                                                }}
+                                                style={styles.button}>
+                                                <Text style={styles.textButton}>quay lại</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props._onComplete();
+                                                }}
+                                                style={styles.buttonDat}>
+                                                <Text style={styles.textButton}>đặt</Text>
+                                        </TouchableOpacity>
+                                </View>
                         </View>
+
                 );
         }
 }
@@ -156,45 +117,22 @@ export default class InfoAccount extends Component {
 const styles = StyleSheet.create({
         container: {
                 flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(0,0,0,0.3)',
-
-        },
-        textHeader: {
-                fontFamily: 'UVN-Baisau-Bold',
-                marginBottom: 10,
-                fontSize: 18,
-                textTransform: 'capitalize',
-                textAlign: 'center',
-                color: colorMain
+                marginTop: 10
         },
         content: {
-                width: 280,
-                backgroundColor: 'white',
-                alignItems: 'center',
-                borderRadius: 5,
-                padding: 20
+                flex: 1,
+                paddingHorizontal: 20
         },
         textTitle: {
                 fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'capitalize'
-        },
-        textValue: {
-                fontFamily: 'OpenSans-Bold',
-                textAlign: 'center',
-                flex: 1
-        },
-        containerValue: {
-                flexDirection: 'row',
-                height: 40,
-                alignItems: 'center',
-                justifyContent: 'space-between'
+                textTransform: 'capitalize',
+                marginTop: 10
         },
         textInput: {
-                borderBottomWidth: 1,
-                width: 200,
-                fontFamily: 'OpenSans-Regular'
+                fontFamily: 'OpenSans-Regular',
+                borderWidth: 1,
+                borderRadius: 10,
+                borderColor: 'gray'
         },
         buttonOk: {
                 width: 80,
@@ -213,9 +151,31 @@ const styles = StyleSheet.create({
                 backgroundColor: 'red',
                 borderRadius: 10
         },
+        containerButtonNavigator: {
+                flexDirection: 'row',
+                marginHorizontal: 20,
+                marginBottom: 30,
+                justifyContent: 'space-between'
+        },
+        button: {
+                width: 70,
+                height: 45,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colorMain,
+                borderRadius: 10,
+        },
         textButton: {
                 color: 'white',
-                textTransform: 'capitalize',
                 fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'uppercase'
+        },
+        buttonDat: {
+                width: 70,
+                height: 45,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'orange',
+                borderRadius: 10,
         }
 });

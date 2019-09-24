@@ -1,55 +1,46 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, FlatList, Modal, Image, TextInput, TouchableOpacity, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar, ActivityIndicator, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { AccountModel } from '../../models/account';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { urlServer, colorMain, background } from '../../config';
-import ItemMenu from './item_menu';
-import ListFoodSelect from './list_food_select';
-import { convertVND } from '../../functions/convert';
-import InfoAccount from './info_account';
+import InfoAccount from '../containers/info_account';
+import StepIndicator from 'react-native-step-indicator';
+import ViewPager from '@react-native-community/viewpager';
+import FormChonLich from '../containers/form_chon_lich';
+import ListFood from '../containers/list_menu';
+import ModalComplete from './modal_complete';
 
 export default class Order extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
                         idRestaurant: props.navigation.getParam('idRestaurantForOrder', null),
-                        date: new Date(),
-                        modeDate: 'date',
-                        modeTime: 'time',
-                        showTime: false,
-                        showDate: false,
-                        amount: '1',
-                        note: '',
-                        visibleListMenu: false,
-                        listMenu: [],
                         listFoodSelect: [],
-                        totalMoney: 0,
-                        visibleInfoAccount: false,
                         isLoading: false,
                         resultOrder: null,
                         currentPage: 0,
-                        labels: null,
+                        labels: ['Chọn Lịch', 'Chọn Món', 'Thông Tin'],
+                        customerName: null,
+                        customerEmail: null,
+                        customerPhone: null,
+                        totalMoney: null,
+                        receptionTime: null,
+                        note: null,
+                        amountPerson: null,
+                        idClient: null,
+                        visibleModalComplete: false,
+                        complete: null
                 };
-                this._onClickCloseListMenu = this._onClickCloseListMenu.bind(this);
-                this._onCheckFood = this._onCheckFood.bind(this);
-                this._onClickCloseModalInfoAccount = this._onClickCloseModalInfoAccount.bind(this);
                 this._onActionOrder = this._onActionOrder.bind(this);
-        }
-
-
-        componentDidMount () {
-                this.props.onFetchListMenu(this.state.idRestaurant);
+                this._onClickButtonNext = this._onClickButtonNext.bind(this);
+                this._onClickButtonPrevious = this._onClickButtonPrevious.bind(this);
+                this._setChonLich = this._setChonLich.bind(this);
+                this._setInfoAccount = this._setInfoAccount.bind(this);
+                this._setListFoodSelected = this._setListFoodSelected.bind(this);
+                this._onComplete = this._onComplete.bind(this);
+                this._onCloseModalComplete = this._onCloseModalComplete.bind(this);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined) {
-                        var list = nextProps.listMenu;
-                        for (item of list) {
-                                item.isSelected = false;
-                        }
-                        prevState.listMenu = list;
-                }
                 if (nextProps.isLoading !== prevState.isLoading) {
                         prevState.isLoading = nextProps.isLoading;
                 }
@@ -59,64 +50,6 @@ export default class Order extends Component {
                 }
                 return null;
         }
-
-
-        _onClickShowDatePicker () {
-                this.setState({
-                        showDate: !this.state.showDate,
-                });
-        }
-
-        _onClickShowTimePicker () {
-                this.setState({
-                        showTime: !this.state.showTime,
-                });
-        }
-
-        _setDate (event, date) {
-                if (event.type === 'set') {
-                        this.setState({
-                                showDate: !this.state.showDate,
-                                date: date
-                        });
-                } else if (event.type === 'dismissed') {
-                        this.setState({
-                                showDate: !this.state.showDate,
-                                date: this.state.date
-                        });
-                }
-        }
-
-        _setTime (event, time) {
-                if (event.type === 'set') {
-                        this.setState({
-                                showTime: !this.state.showTime,
-                                date: time
-                        });
-                } else if (event.type === 'dismissed') {
-                        this.setState({
-                                showTime: !this.state.showTime,
-                                date: this.state.date
-                        });
-                }
-        }
-
-        _onClickOpenListMenu () {
-                this.setState({
-                        visibleListMenu: !this.state.visibleListMenu
-                });
-        }
-
-        _onClickCloseListMenu () {
-                this.setState({
-                        visibleListMenu: !this.state.visibleListMenu
-                });
-        }
-
-        _onCheckFood (index) {
-                this.state.listMenu[index].isSelected = !this.state.listMenu[index].isSelected;
-        }
-
         _onClickCompleteSelect () {
                 var listMenu = this.state.listMenu;
                 var listSelect = [];
@@ -133,310 +66,178 @@ export default class Order extends Component {
                 });
         }
 
-        _onClickButtonOrder () {
+        _setListFoodSelected (data) {
                 this.setState({
-                        visibleInfoAccount: !this.state.visibleInfoAccount
+                        listFoodSelect: data.list,
+                        totalMoney: data.totalMoney
                 });
         }
 
-        _onClickCloseModalInfoAccount () {
+        _setInfoAccount (info) {
                 this.setState({
-                        visibleInfoAccount: !this.state.visibleInfoAccount
+                        customerName: info.name,
+                        customerEmail: info.email,
+                        customerPhone: info.phone,
+                        idClient: info.idClient
+                });
+        }
+        _setChonLich (data) {
+                this.setState({
+                        receptionTime: data.receptionTime,
+                        note: data.note,
+                        amountPerson: data.amountPerson,
                 });
         }
 
-        _onActionOrder (infoAccount) {
-                var listIdFood = [];
-                for (item of this.state.listFoodSelect) {
-                        listIdFood.push(item._id);
-                }
-                var data = {
-                        idClient: infoAccount.id,
+        _onComplete () {
+                const data = {
+                        idClient: this.state.idClient,
                         idRestaurant: this.state.idRestaurant,
-                        customerName: infoAccount.name,
-                        customerEmail: infoAccount.email,
-                        customerPhone: Number.parseInt(infoAccount.phone),
-                        amountPerson: Number.parseInt(this.state.amount),
-                        food: listIdFood,
-                        receptionTime: this.state.date,
+                        customerName: this.state.customerName,
+                        customerEmail: this.state.customerEmail,
+                        customerPhone: Number.parseInt(this.state.customerPhone),
+                        amountPerson: Number.parseInt(this.state.amountPerson),
+                        food: this.state.listFoodSelect,
+                        receptionTime: this.state.receptionTime,
                         totalMoney: Number.parseFloat(this.state.totalMoney),
                         note: this.state.note,
                 };
+                this.setState({
+                        visibleModalComplete: !this.state.visibleModalComplete,
+                        complete: data
+                });
+        }
+
+        _onCloseModalComplete () {
+                this.setState({
+                        visibleModalComplete: !this.state.visibleModalComplete
+                });
+        }
+
+        _onActionOrder (data) {
                 this.props.onAddOrder(data);
-                this._onClickCloseModalInfoAccount();
                 this.setState({
                         isLoading: true
                 });
         }
 
+        _onClickButtonNext () {
+                const page = Number.parseInt(this.state.currentPage);
+                this.setState({
+                        currentPage: page + 1
+                });
+                this.viewPager.setPage(page + 1);
+        }
+
+        _onClickButtonPrevious () {
+                const page = Number.parseInt(this.state.currentPage);
+                this.setState({
+                        currentPage: page - 1
+                });
+                this.viewPager.setPage(page - 1);
+        }
+
+        _onListenChangePage (event) {
+                this.props.onChangePage(event);
+        }
+
+        componentWillUnmount () {
+                this.props.onResetProps();
+        }
 
         render () {
-                const date = this.state.date;
-                const convertTime = `${date.getHours()}h ${date.getMinutes()}''`;
-                const convertDate = `${date.getDate()} / ${date.getMonth() + 1} / ${date.getFullYear()}`;
-                return (
-                        <View style={styles.container}>
-                                <StatusBar
-                                        backgroundColor='white'
-                                        barStyle='dark-content'
-                                />
-                                <View style={styles.containerHeader}>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.goBack();
-                                        }}>
-                                                <Icon name='arrow-left' size={25} color='black' />
-                                        </TouchableOpacity>
-                                        <Text style={styles.textHeader}>đặt chỗ</Text>
-                                        <View />
+                if (this.state.isLoading) {
+                        return (
+                                <View style={{
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: 'rgba(0,0,0,0.5)'
+                                }}>
+                                        <ActivityIndicator animating={true} size={100} color={colorMain} />
                                 </View>
-                                <View style={styles.content}>
-                                        <View style={styles.form}>
-                                                <Text style={styles.title}>giờ</Text>
-                                                <TouchableOpacity
-                                                        onPress={() => {
-                                                                this._onClickShowTimePicker();
-                                                        }}
-                                                >
-                                                        <View style={styles.containerTime}>
-                                                                <Text style={styles.textTime} >{convertTime}</Text>
-                                                        </View>
-                                                </TouchableOpacity>
-                                                <Text style={styles.title}>ngày</Text>
-                                                <TouchableOpacity
-                                                        onPress={() => {
-                                                                this._onClickShowDatePicker();
-                                                        }}
-                                                >
-                                                        <View style={styles.containerTime}>
-                                                                <Text style={styles.textTime} >{convertDate}</Text>
-                                                        </View>
-                                                </TouchableOpacity>
-                                                <Text style={styles.title}>số lượng người</Text>
-                                                <TextInput
-                                                        style={styles.textInput}
-                                                        value={this.state.amount}
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        amount: text
-                                                                });
-                                                        }}
-                                                        keyboardType='numeric'
-                                                />
-                                                <Text style={styles.title}>ghi chú</Text>
-                                                <TextInput
-                                                        style={styles.textInput}
-                                                        value={this.state.note}
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        note: text
-                                                                });
-                                                        }}
-                                                />
-                                                <Text style={styles.title}>thực đơn</Text>
-                                        </View>
-                                        <View>
-                                                {
-                                                        this.state.listFoodSelect.length === 0 ?
-                                                                <View style={styles.containerButton}>
-                                                                        <TouchableOpacity style={styles.buttonSelectMenu}
-                                                                                onPress={() => {
-                                                                                        this._onClickOpenListMenu();
-                                                                                }}
-                                                                        >
-                                                                                <Text
-                                                                                        style={styles.textButtonSelectMenu}
-                                                                                >chọn</Text>
-                                                                        </TouchableOpacity>
-                                                                </View> :
-                                                                <View style={styles.containerListSelectMenu}>
-                                                                        <ScrollView
-                                                                                horizontal={true}
-                                                                                showsHorizontalScrollIndicator={false}
-                                                                        >
-                                                                                <FlatList
-                                                                                        data={this.state.listFoodSelect}
-                                                                                        extraData={this.state}
-                                                                                        keyExtractor={(item, index) => item._id}
-                                                                                        horizontal={true}
-                                                                                        showsHorizontalScrollIndicator={false}
-                                                                                        renderItem={(item) => {
-                                                                                                return (
-                                                                                                        <ListFoodSelect
-                                                                                                                item={item.item}
-                                                                                                        />
-                                                                                                );
-                                                                                        }}
-                                                                                />
-                                                                                <TouchableOpacity
-                                                                                        style={styles.buttonAddFood}
-                                                                                        onPress={() => {
-                                                                                                this._onClickOpenListMenu();
-                                                                                        }}>
-                                                                                        <Icon name='plus' size={50} color={colorMain} />
-                                                                                </TouchableOpacity>
-                                                                        </ScrollView>
-                                                                        <View style={styles.containerTotalMoney}>
-                                                                                <Text style={styles.textTitleTotal}>tổng chi phí</Text>
-                                                                                <Text style={styles.textTotal}>{convertVND(this.state.totalMoney)} VND</Text>
-                                                                        </View>
-                                                                        <TouchableOpacity style={styles.buttonOrder}
-                                                                                onPress={() => {
-                                                                                        this._onClickButtonOrder();
-                                                                                }}
-                                                                        >
-                                                                                <Text style={styles.textButtonOrder}>đặt</Text>
-                                                                        </TouchableOpacity>
-                                                                </View>
-                                                }
-                                        </View>
-
-                                        {
-                                                this.state.showTime ?
-                                                        <DateTimePicker
-                                                                value={this.state.date}
-                                                                mode={this.state.modeTime}
-                                                                is24Hour={true}
-                                                                display="clock"
-                                                                onChange={(event, text) => {
-                                                                        this._setTime(event, text);
-                                                                }}
-                                                        /> : null
-                                        }
-                                        {
-                                                this.state.showDate ?
-                                                        <DateTimePicker
-                                                                value={this.state.date}
-                                                                mode={this.state.modeDate}
-                                                                display="spinner"
-                                                                onChange={(event, text) => {
-                                                                        this._setDate(event, text);
-                                                                }}
-                                                        /> : null
-                                        }
-                                </View>
-                                <Modal
-                                        visible={this.state.visibleListMenu}
-                                        animationType='slide'
-                                        transparent={false}
-                                        onRequestClose={() => {
-                                                this._onClickCloseListMenu();
-                                        }}
-                                >
-                                        <View style={styles.containerModalListMenu}>
-                                                <View style={styles.containerHeader}>
-                                                        <TouchableOpacity onPress={() => {
-                                                                this._onClickCloseListMenu();
-                                                        }}>
-                                                                <Icon name='arrow-left' size={25} color='black' />
-                                                        </TouchableOpacity>
-                                                        <Text style={styles.textHeader}>MENU</Text>
-                                                        <TouchableOpacity
-                                                                style={styles.buttonComplete}
-                                                                onPress={() => {
-                                                                        this._onClickCompleteSelect();
-                                                                        this._onClickCloseListMenu();
-                                                                }}>
-                                                                <Text style={styles.textButtonComplete}>ok</Text>
-                                                        </TouchableOpacity>
-                                                </View>
-                                                <FlatList
-                                                        data={this.state.listMenu}
-                                                        extraData={this.state}
-                                                        keyExtractor={(item, index) => index.toString()}
-                                                        renderItem={(item) => {
-                                                                return (
-                                                                        <ItemMenu
-                                                                                name={item.item.name}
-                                                                                image={item.item.image}
-                                                                                introduce={item.item.introduce}
-                                                                                price={item.item.price}
-                                                                                isSelected={this.state.listMenu[item.index].isSelected}
-                                                                                _onCheckFood={this._onCheckFood}
-                                                                                index={item.index}
-                                                                        />
-                                                                );
-                                                        }}
-                                                />
-                                        </View>
-                                </Modal>
-                                <Modal
-                                        visible={this.state.visibleInfoAccount}
-                                        animationType='slide'
-                                        transparent
-                                        onRequestClose={() => {
-                                                this._onClickCloseModalInfoAccount();
-                                        }}
-                                >
-                                        <InfoAccount
-                                                _onClickCloseModalInfoAccount={this._onClickCloseModalInfoAccount}
-                                                _onActionOrder={this._onActionOrder}
+                        );
+                } else {
+                        return (
+                                <View style={styles.container}>
+                                        <StatusBar
+                                                backgroundColor='white'
+                                                barStyle='dark-content'
                                         />
-                                </Modal>
-                                <Modal
-                                        visible={this.state.isLoading}
-                                        animationType='slide'
-                                        transparent
-                                >
-                                        <View style={{
-                                                flex: 1,
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                backgroundColor: 'rgba(0,0,0,0.5)'
-                                        }}>
-                                                <ActivityIndicator animating={true} size={100} color={colorMain} />
+                                        <View style={styles.containerHeader}>
+                                                <TouchableOpacity onPress={() => {
+                                                        this.props.navigation.goBack();
+                                                }}>
+                                                        <Icon name='arrow-left' size={25} color='black' />
+                                                </TouchableOpacity>
+                                                <Text style={styles.textHeader}>đặt chỗ</Text>
+                                                <View />
                                         </View>
-                                </Modal>
-                        </View>
-                );
+                                        <StepIndicator
+                                                customStyles={customStyles}
+                                                stepCount={3}
+                                                currentPosition={this.state.currentPage}
+                                                labels={this.state.labels}
+                                        />
+                                        <ViewPager
+                                                ref={viewPager => {
+                                                        this.viewPager = viewPager;
+                                                }}
+                                                style={styles.viewPager}
+                                                initialPage={this.state.currentPage}
+                                                onPageSelected={(event) => {
+                                                        this.setState({ currentPage: event.nativeEvent.position });
+                                                }}
+                                                onPageScrollStateChanged={(event) => {
+                                                        this._onListenChangePage(event.nativeEvent.pageScrollState);
+                                                }}
+                                        >
+                                                <View key="1">
+                                                        <FormChonLich
+                                                                _onClickButtonNext={this._onClickButtonNext}
+                                                                _setChonLich={this._setChonLich}
+                                                        />
+                                                </View>
+                                                <View key="2">
+                                                        <ListFood
+                                                                _onClickButtonNext={this._onClickButtonNext}
+                                                                _onClickButtonPrevious={this._onClickButtonPrevious}
+                                                                idRestaurant={this.state.idRestaurant}
+                                                                _setListFoodSelected={this._setListFoodSelected}
+                                                        />
+                                                </View>
+                                                <View key="3">
+                                                        <InfoAccount
+
+                                                                _onClickButtonPrevious={this._onClickButtonPrevious}
+                                                                _setInfoAccount={this._setInfoAccount}
+                                                                _onComplete={this._onComplete}
+                                                        />
+                                                </View>
+                                        </ViewPager>
+                                        <Modal
+                                                visible={this.state.visibleModalComplete}
+                                                animationType='slide'
+                                                onRequestClose={() => {
+                                                        this._onCloseModalComplete();
+                                                }}
+                                        >
+                                                <ModalComplete
+                                                        complete={this.state.complete}
+                                                        _onCloseModalComplete={this._onCloseModalComplete}
+                                                        _onActionOrder={this._onActionOrder}
+                                                />
+                                        </Modal>
+                                </View>
+                        );
+                }
+
         }
 }
 
 const styles = StyleSheet.create({
         container: {
                 flex: 1,
-        },
-        title: {
-                fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'capitalize',
-                marginTop: 10
-        },
-        textInput: {
-                borderBottomWidth: 1,
-                fontFamily: 'OpenSans-Regular',
-                textAlign: 'center'
-        },
-        containerTime: {
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(0,0,0,0.1)',
-                borderRadius: 10
-        },
-        textTime: {
-                fontFamily: 'UVN-Baisau-Regular',
-                fontSize: 20,
-        },
-        buttonSelectMenu: {
-                width: 100,
-                height: 50,
-                backgroundColor: colorMain,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 10
-        },
-        textButtonSelectMenu: {
-                fontFamily: 'UVN-Baisau-Regular',
-                color: 'white',
-                textTransform: 'uppercase'
-        },
-        containerButton: {
-                alignItems: 'center'
-        },
-        content: {
-                flex: 1,
-        },
-        form: {
-                padding: 20,
         },
         containerHeader: {
                 width: '100%',
@@ -451,66 +252,31 @@ const styles = StyleSheet.create({
                 fontSize: 20,
                 textTransform: 'capitalize'
         },
-        containerModalListMenu: {
-                flex: 1,
-                backgroundColor: background
-        },
-        containerFlatList: {
+        viewPager: {
                 flex: 1
         },
-        textButtonComplete: {
-                fontFamily: 'UVN-Baisau-Regular',
-                fontSize: 15,
-                color: 'white',
-                textTransform: 'uppercase'
-        },
-        buttonComplete: {
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 40,
-                height: 35,
-                backgroundColor: colorMain,
-                borderRadius: 15
-        },
-        buttonAddFood: {
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginHorizontal: 5,
-        },
-        containerListSelectMenu: {
-                alignItems: 'center'
-        },
-        textTotal: {
-                fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 25,
-                color: 'white'
-        },
-        textTitleTotal: {
-                fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'capitalize',
-                marginTop: 10,
-                fontSize: 18,
-                color: 'white'
-        },
-        containerTotalMoney: {
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginVertical: 10,
-                backgroundColor: '#FF6600',
-                height: 100,
-                borderRadius: 15,
-                paddingHorizontal: 20
-        },
-        textButtonOrder: {
-                fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'uppercase',
-                color: 'white'
-        },
-        buttonOrder: {
-                backgroundColor: colorMain,
-                paddingHorizontal: 20,
-                paddingVertical: 10,
-                borderRadius: 15,
-                marginTop: 10
-        }
 });
+
+const customStyles = {
+        stepIndicatorSize: 25,
+        currentStepIndicatorSize: 30,
+        separatorStrokeWidth: 2,
+        currentStepStrokeWidth: 3,
+        stepStrokeCurrentColor: colorMain,
+        stepStrokeWidth: 3,
+        stepStrokeFinishedColor: colorMain,
+        stepStrokeUnFinishedColor: '#aaaaaa',
+        separatorFinishedColor: colorMain,
+        separatorUnFinishedColor: '#aaaaaa',
+        stepIndicatorFinishedColor: colorMain,
+        stepIndicatorUnFinishedColor: '#ffffff',
+        stepIndicatorCurrentColor: '#ffffff',
+        stepIndicatorLabelFontSize: 13,
+        currentStepIndicatorLabelFontSize: 13,
+        stepIndicatorLabelCurrentColor: colorMain,
+        stepIndicatorLabelFinishedColor: '#ffffff',
+        stepIndicatorLabelUnFinishedColor: '#aaaaaa',
+        labelColor: '#999999',
+        labelSize: 13,
+        currentStepLabelColor: colorMain
+};
