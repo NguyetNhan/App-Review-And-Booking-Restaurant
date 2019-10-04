@@ -18,12 +18,14 @@ import RegisterRestaurant from './client/register_restaurant/containers';
 import ConfirmRestaurant from './admin/confirm_restaurant/containers';
 import Overview from './detail_restaurant/overview/containers';
 import Menu from './detail_restaurant/menu/containers';
-import Review from './detail_restaurant/review/components';
+import Review from './detail_restaurant/review/containers';
 import Chat from './chat/components';
 import Order from './order/containers';
 import Map from './map/containers';
 import Deal from './deal/containers';
 import DetailDeal from './detail_deal/containers';
+import ScanQrOrder from './admin_restaurant/scan_qr_order/containers';
+import AddReview from './client/add_review/containers';
 
 
 const RouteBottomTabConfig = {
@@ -47,7 +49,7 @@ const RouteBottomTabConfig = {
 const BottomTabNavigatorConfig = {
         initialRouteName: 'Home',
         activeColor: colorMain,
-        inactiveColor: 'gray',
+        inactiveColor: 'black',
         barStyle: { backgroundColor: 'white' },
         order: ['Home', 'Chat', 'Map', 'Notification', 'Follow']
 };
@@ -208,6 +210,14 @@ const MainNavigatorClient = createStackNavigator(
                                 header: null,
                         },
                 },
+                AddReview: {
+                        screen: AddReview,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+
+
         }, {
         initialRouteName: 'DrawerNavigatorClient'
 }
@@ -287,6 +297,14 @@ class DrawerContentAdminRestaurant extends Component {
                                                 <Text style={styleDrawerAdminRestaurant.textAction} >Đơn hàng</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props.navigation.closeDrawer();
+                                                        this.props.navigation.navigate('ScanQrOrder');
+                                                }}
+                                        >
+                                                <Text style={styleDrawerAdminRestaurant.textAction} >quét mã đơn hàng</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
                                                 onPress={async () => {
                                                         await AccountModel.DeleteAccountInfoFromDatabaseLocal();
                                                         this.props.navigation.navigate('Auth');
@@ -351,6 +369,12 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                 },
                 DetailDeal: {
                         screen: DetailDeal,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                ScanQrOrder: {
+                        screen: ScanQrOrder,
                         navigationOptions: {
                                 header: null,
                         },

@@ -1,51 +1,112 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, FlatList, ScrollView, Alert, ActivityIndicator, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { urlServer, colorMain } from '../../../config';
+import Star from 'react-native-vector-icons/MaterialCommunityIcons';
+import { urlServer, colorMain, background } from '../../../config';
+const { width, height } = Dimensions.get('window');
+import { convertVND } from '../../../functions/convert';
+import { API } from '../../review/sagas/API';
+import ItemReview from './item_list_review_detail_menu';
+import ModalListReview from './modal_list_review';
 export default class DetailMenu extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        name: props.nameSelect,
-                        image: props.imageSelect,
-                        introduce: props.introduceSelect,
-                        price: props.priceSelect,
-                        listReview: [0, 2, 4, 6, 4]
+                        item: props.item,
+                        name: props.item.name,
+                        image: props.item.image,
+                        introduce: props.item.introduce,
+                        price: props.item.price,
+                        score: props.scoreSelected,
+                        listReview: [],
+                        visibleModalListReview: false
                 };
+                this.onOpenModalListReview = this.onOpenModalListReview.bind(this);
+                this.onCloseModalListReview = this.onCloseModalListReview.bind(this);
         }
 
-        convertVND (data) {
-                const string = data.toString();
-                const length = string.length;
-                var convert = '';
-                var count = 1;
-                for (i = length - 1; i >= 0; i--) {
-                        if (count == 3 && i != 0) {
-                                let char = string.charAt(i);
-                                convert = '.'.concat(char, convert);
-                                count = 1;
+        async fetchListReview () {
+                try {
+                        const result = await API.fetchListReview({
+                                idRestaurant: this.state.item._id,
+                                page: 1
+                        });
+                        if (result.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        result.message,
+                                        [
+                                                { text: 'OK', },
+                                        ],
+                                        { cancelable: false },
+                                );
                         } else {
-                                let char = string.charAt(i);
-                                convert = char.concat('', convert);
-                                count = count + 1;
+                                this.setState({
+                                        listReview: result.data
+                                });
                         }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK', },
+                                ],
+                                { cancelable: false },
+                        );
                 }
-                return convert;
         }
+        componentDidMount () {
+                this.fetchListReview();
+        }
+
+        onCloseModalListReview () {
+                this.setState({
+                        visibleModalListReview: !this.state.visibleModalListReview
+                });
+        }
+
+        onOpenModalListReview () {
+                this.setState({
+                        visibleModalListReview: !this.state.visibleModalListReview
+                });
+        }
+
+
         render () {
-                const screenWidth = Dimensions.get('window').width;
+                const score = this.state.score;
+                var listStar = [];
+                for (let i = 1; i < 6; i++) {
+                        var j = i + 1;
+                        if (i < score && score < j) {
+                                listStar.push({
+                                        index: i,
+                                        value: 1
+                                });
+                                listStar.push({
+                                        index: i + 1,
+                                        value: 0
+                                });
+                                i++;
+                        }
+                        else if (i <= score)
+                                listStar.push({
+                                        index: i,
+                                        value: 1
+                                });
+                        else if (i > score)
+                                listStar.push({
+                                        index: i,
+                                        value: -1
+                                });
+                }
                 return (
                         <View style={styles.container}>
                                 <ScrollView>
-                                        <View >
+                                        <View style={styles.containerImage}>
                                                 <Image
                                                         source={{ uri: `${urlServer}${this.state.image}` }}
-                                                        style={{
-                                                                width: screenWidth,
-                                                                height: screenWidth - 35,
-                                                                borderBottomLeftRadius: 30,
-                                                                borderBottomRightRadius: 30
-                                                        }}
+                                                        style={styles.image}
                                                 />
                                                 <TouchableOpacity
                                                         style={styles.buttonBack}
@@ -57,19 +118,34 @@ export default class DetailMenu extends Component {
                                         </View>
                                         <View style={styles.content}>
                                                 <Text style={styles.name}>{this.state.name}</Text>
+                                                <View style={styles.containerStar}>
+                                                        {
+                                                                this.state.score === null ?
+                                                                        <ActivityIndicator animating={true} size={15} color={colorMain} />
+                                                                        :
+                                                                        listStar.map(item => {
+                                                                                if (item.value === 1)
+                                                                                        return (<Star key={item.index.toString()} name='star' size={30} color={colorMain} />);
+                                                                                else if (item.value === 0)
+                                                                                        return (<Star key={item.index.toString()} name='star-half' size={30} color={colorMain} />);
+                                                                                else if (item.value === -1)
+                                                                                        return (<Star key={item.index.toString()} name='star-outline' size={30} color={colorMain} />);
+                                                                        })
+                                                        }
+                                                </View>
                                                 <View style={{
                                                         flexDirection: 'row',
                                                         marginBottom: 20,
                                                         alignItems: 'center'
                                                 }}>
                                                         <Text style={styles.title}>Giá: </Text>
-                                                        <Text style={styles.price}>{this.convertVND(this.state.price)} VND</Text>
+                                                        <Text style={styles.price}>{convertVND(this.state.price)} VND</Text>
                                                 </View>
                                                 <Text style={styles.title}>Mô Tả</Text>
                                                 <Text style={styles.introduce}>{this.state.introduce}</Text>
                                                 <Text style={styles.title}>Đánh giá</Text>
                                         </View>
-                                        <View>
+                                        <View style={styles.containerFlatList}>
                                                 <FlatList
                                                         data={this.state.listReview}
                                                         extraData={this.state}
@@ -77,50 +153,44 @@ export default class DetailMenu extends Component {
                                                         horizontal={true}
                                                         showsHorizontalScrollIndicator={false}
                                                         renderItem={(item) => {
-                                                                const length = this.state.listReview.length;
-                                                                if (item.index === (length - 1)) {
-                                                                        return (
-                                                                                <TouchableOpacity
-                                                                                        style={{
-                                                                                                margin: 5,
-                                                                                                alignItems: 'center',
-                                                                                                justifyContent: 'center'
-                                                                                        }}
-                                                                                        onPress={() => {
-                                                                                                this.props._onClickCloseDetailMenu();
-                                                                                        }}>
-                                                                                        <Icon name='pluscircleo' size={80} color={colorMain} />
-                                                                                </TouchableOpacity>
-                                                                        );
-                                                                } else {
-                                                                        return (
-                                                                                <Image
-                                                                                        source={{ uri: `${urlServer}${this.state.image}` }}
-                                                                                        style={{
-                                                                                                width: 100,
-                                                                                                height: 100,
-                                                                                                borderRadius: 10,
-                                                                                                margin: 5
-                                                                                        }}
-                                                                                />
-                                                                        );
-                                                                }
+                                                                return (
+                                                                        <ItemReview
+                                                                                item={item.item}
+                                                                        />
+                                                                );
                                                         }}
                                                 />
                                         </View>
                                         <View style={{
-                                                width: screenWidth,
+                                                width: width,
                                                 alignItems: 'center'
                                         }}>
-                                                <Text style={{
-                                                        color: colorMain,
-                                                        textTransform: 'capitalize',
-                                                        borderBottomWidth: 1,
-                                                        borderBottomColor: colorMain,
-                                                        fontFamily: 'UVN-Baisau-Bold',
-                                                }}>tất cả</Text>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this.onOpenModalListReview();
+                                                        }}
+                                                >
+                                                        <Text style={{
+                                                                color: colorMain,
+                                                                textTransform: 'capitalize',
+                                                                borderBottomColor: colorMain,
+                                                                fontFamily: 'UVN-Baisau-Regular',
+                                                                fontSize: 12
+                                                        }}>tất cả</Text>
+                                                </TouchableOpacity>
                                         </View>
                                 </ScrollView>
+                                <Modal
+                                        visible={this.state.visibleModalListReview}
+                                        animationType='slide'
+                                        onRequestClose={() => {
+                                                this.onCloseModalListReview();
+                                        }}
+                                >
+                                        <ModalListReview
+                                                itemFood={this.state.item}
+                                        />
+                                </Modal>
                         </View>
                 );
         }
@@ -128,41 +198,57 @@ export default class DetailMenu extends Component {
 
 const styles = StyleSheet.create({
         container: {
-                flex: 1
+                flex: 1,
+                backgroundColor: background
         },
         buttonBack: {
                 position: 'absolute',
                 top: 20,
                 left: 20,
-                backgroundColor: 'rgba(0,0,0,0.3)',
                 width: 35,
                 height: 35,
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: 17
         },
+        containerImage: {
+                alignItems: 'center',
+                height: 250,
+                justifyContent: 'center'
+        },
+        image: {
+                width: 180,
+                height: 180,
+                borderRadius: 90
+        },
         content: {
                 alignItems: 'center',
-                margin: 20
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 30,
-                marginBottom: 10
+                fontSize: 20,
+        },
+        containerStar: {
+                flexDirection: 'row'
         },
         price: {
                 fontFamily: 'UVN-Baisau-Bold',
-                color: colorMain,
-                fontSize: 20,
+                color: 'red',
+                fontSize: 12,
         },
         introduce: {
                 fontFamily: 'UVN-Baisau-Regular',
-                fontSize: 18,
+                fontSize: 16,
                 marginBottom: 20
         },
         title: {
-                fontFamily: 'OpenSans-Regular',
-                fontSize: 16,
+                fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 12,
                 textTransform: 'capitalize'
+        },
+        containerFlatList: {
+                alignItems: 'center',
+                marginVertical: 5
         }
+
 });

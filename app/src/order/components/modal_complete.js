@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, FlatList, Alert } from 'react-native';
 import { urlServer, colorMain } from '../../config';
 import ItemListModalComplete from './item_list_modal_complete';
 import { convertVND } from '../../functions/convert';
@@ -20,6 +20,55 @@ export default class Complete extends Component {
                         totalMoney: props.complete.totalMoney,
                         note: props.complete.note,
                 };
+        }
+
+        onClickButtonAgree () {
+                if (this.state.food.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa chọn món ăn ! Vui lòng chọn món ăn',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props._onCloseModalComplete();
+                } else if (this.state.customerName.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa nhập tên của mình !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props._onCloseModalComplete();
+                } else if (this.state.customerEmail.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa nhập email của mình !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props._onCloseModalComplete();
+                } else if (this.state.customerPhone.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa nhập số điện thoại của mình !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props._onCloseModalComplete();
+                }
+                else {
+                        this.props._onActionOrder(this.state.complete);
+                        this.props._onCloseModalComplete();
+                }
+
         }
 
         render () {
@@ -113,8 +162,7 @@ export default class Complete extends Component {
                                                 <View style={styles.containerButton}>
                                                         <TouchableOpacity
                                                                 onPress={() => {
-                                                                        this.props._onActionOrder(this.state.complete);
-                                                                        this.props._onCloseModalComplete();
+                                                                        this.onClickButtonAgree();
                                                                 }}
                                                                 style={styles.buttonAgree}>
                                                                 <Text style={styles.textButton}>chấp nhận</Text>

@@ -1,4 +1,9 @@
-import { REGISTER_RESTAURANT, REGISTER_RESTAURANT_RESULT } from './action_types';
+import {
+        REGISTER_RESTAURANT,
+        REGISTER_RESTAURANT_FAILED,
+        REGISTER_RESTAURANT_SUCCEEDED,
+        RESET_PROPS_REGISTER
+} from './action_types';
 
 
 export const onRegisterRestaurant = (data) => {
@@ -9,9 +14,23 @@ export const onRegisterRestaurant = (data) => {
 };
 
 
-export const onRegisterRestaurantResults = (data) => {
+export const onRegisterRestaurantFailed = (message) => {
         return {
-                type: REGISTER_RESTAURANT_RESULT,
-                data
+                type: REGISTER_RESTAURANT_FAILED,
+                message
+        };
+};
+
+export const onRegisterRestaurantSucceeded = (data, message) => {
+        return {
+                type: REGISTER_RESTAURANT_SUCCEEDED,
+                data,
+                message
+        };
+};
+
+export const onResetProps = () => {
+        return {
+                type: RESET_PROPS_REGISTER
         };
 };

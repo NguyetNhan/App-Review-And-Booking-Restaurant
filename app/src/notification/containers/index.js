@@ -1,22 +1,25 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onFetchNotification } from '../actions';
+import { onFetchNotification, onResetProps } from '../actions';
 
 const mapStateToProps = (state) => {
-        const fetchSucceeded = state.NotificationReducers.FetchSucceeded;
-        const fetchFailed = state.NotificationReducers.FetchFailed;
-        if (fetchSucceeded !== undefined) {
-                return {
-                        listNotification: fetchSucceeded.data.data,
-                        isLoading: false,
-                        page: fetchSucceeded.data.page,
-                        total_page: fetchSucceeded.data.total_page
-                };
-        } else if (fetchFailed !== undefined) {
-                return {
-                        messages: fetchFailed.messages,
-                        isLoading: false
-                };
+        const notificationReducers = state.NotificationReducers;
+        if (notificationReducers !== null) {
+                if (notificationReducers.FetchSucceeded !== undefined) {
+                        return {
+                                listNotification: notificationReducers.FetchSucceeded.data.data,
+                                isLoading: false,
+                                page: notificationReducers.FetchSucceeded.data.page,
+                                total_page: notificationReducers.FetchSucceeded.data.total_page
+                        };
+                } else if (notificationReducers.FetchFailed !== undefined) {
+                        return {
+                                messages: notificationReducers.FetchFailed.messages,
+                                isLoading: false
+                        };
+                } else if (notificationReducers.resetProps !== undefined) {
+                        return notificationReducers.resetProps;
+                }
         } else {
                 return {
                         isLoading: false
@@ -24,11 +27,15 @@ const mapStateToProps = (state) => {
         }
 
 
+
 };
 const mapDispatchToProps = (dispatch) => {
         return {
                 onFetchNotification: (data) => {
                         dispatch(onFetchNotification(data));
+                },
+                onResetProps: () => {
+                        dispatch(onResetProps());
                 },
         };
 };

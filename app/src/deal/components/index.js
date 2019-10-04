@@ -60,18 +60,19 @@ export default class Deal extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && prevState.isRefresh && !prevState.isLoadMore) {
-                        prevState.isRefresh = false;
-                } else if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
+                if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listOrder = nextProps.listOrder;
-                } else if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && prevState.isLoadMore) {
+                } else if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+                        prevState.listOrder = nextProps.listOrder;
+                        prevState.isRefresh = false;
+                } else if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listOrder = prevState.listOrder.concat(nextProps.listOrder);
                         prevState.isLoadMore = false;
                 }
-                if (nextProps.page !== prevState.page && nextProps.page !== undefined) {
+                if (nextProps.page !== prevState.page && nextProps.page !== undefined && !prevState.isLoading) {
                         prevState.page = nextProps.page;
                 }
-                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined) {
+                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page;
                 }
                 if (nextProps.isLoading !== prevState.isLoading) {
@@ -82,8 +83,13 @@ export default class Deal extends Component {
 
         _onClickOrder (idOrder) {
                 this.props.navigation.navigate('DetailDeal', {
-                        idOrder: idOrder
+                        idOrder: idOrder,
+                        callback: this._onCallbackRefresh.bind(this)
                 });
+        }
+
+        _onCallbackRefresh () {
+                this._onRefreshListOrder('null');
         }
 
         _onRefreshListOrder (filter) {
@@ -226,6 +232,13 @@ export default class Deal extends Component {
                                                 <Text style={styles.textTitleStatus}>lọc</Text>
                                                 <TouchableOpacity
                                                         onPress={() => {
+                                                                this._onCloseModalFilter('null');
+                                                        }}
+                                                >
+                                                        <Text style={styles.textStatus}>tất cả</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                        onPress={() => {
                                                                 this._onCloseModalFilter('waiting');
                                                         }}
                                                 >
@@ -254,7 +267,9 @@ export default class Deal extends Component {
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                         onPress={() => {
-                                                                this._onCloseModalFilter('null');
+                                                                this.setState({
+                                                                        visibleModalFilter: !this.state.visibleModalFilter,
+                                                                });
                                                         }}
                                                 >
                                                         <Text style={styles.textCancel}>quay lại</Text>
@@ -281,7 +296,7 @@ const styles = StyleSheet.create({
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20,
+                fontSize: 18,
                 textTransform: 'capitalize'
         },
         content: {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Modal, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Modal, ScrollView, Alert } from 'react-native';
 import { urlServer, colorMain, background } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -8,7 +8,7 @@ import IconFontisto from 'react-native-vector-icons/Fontisto';
 import Carousel from 'react-native-snap-carousel';
 import { AccountModel } from '../../../models/account';
 import MapDirections from './map';
-
+import Star from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default class OverView extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -29,33 +29,35 @@ export default class OverView extends Component {
                         phone: '',
                         address: '',
                         introduce: '',
-                        messages: '',
                         numberOfLines: 4,
                         showButtonXemThem: true,
-                        idRestaurant: null,
+                        idConfig: null,
                         screenGoBack: null,
-                        visibleModalMap: false
+                        visibleModalMap: false,
+                        score: null,
+                        isCheckedFollow: false
                 }
-                this._onGetInfoAccount();
                 this._onClickCloseModalMap = this._onClickCloseModalMap.bind(this);
         }
 
         async _onGetInfoAccount () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        account: account,
-                        authorities: account.authorities
-                })
-        }
-
-        componentDidMount () {
                 const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
                 const screenGoBack = this.props.navigation.getParam('GoBack');
                 this.setState({
-                        idRestaurant: id,
+                        account: account,
+                        authorities: account.authorities,
+                        idConfig: id,
                         screenGoBack: screenGoBack
                 });
                 this.props.onFetchDetailRestaurant(id.idRestaurant);
+                this.props.onFetchScoreReview(id.idRestaurant);
+                this.props.onCheckFollowRestaurant(id.idRestaurant, account.id);
+
+        }
+
+        componentDidMount () {
+                this._onGetInfoAccount();
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -68,9 +70,26 @@ export default class OverView extends Component {
                         prevState.address = nextProps.restaurant.address
                         prevState.introduce = nextProps.restaurant.introduce
                 }
-                if (nextProps.messages !== prevState.messages && nextProps.messages !== undefined) {
-                        prevState.messages = nextProps.messages
-                        alert(nextProps.messages)
+                if (nextProps.message !== undefined) {
+                        Alert.alert(
+                                'Thông Báo',
+                                nextProps.message,
+                                [
+                                        {
+                                                text: 'OK',
+                                                onPress: () => {
+                                                        this.props.onResetPropsMessage();
+                                                }
+                                        },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+                if (nextProps.isCheckedFollow !== prevState.isCheckedFollow && nextProps.isCheckedFollow !== undefined) {
+                        prevState.isCheckedFollow = nextProps.isCheckedFollow
+                }
+                if (nextProps.score !== prevState.score && nextProps.score !== undefined) {
+                        prevState.score = nextProps.score
                 }
                 return null;
         }
@@ -78,7 +97,7 @@ export default class OverView extends Component {
 
         _onClickButtonOrder () {
                 this.props.navigation.navigate('Order', {
-                        idRestaurantForOrder: this.state.idRestaurant.idRestaurant
+                        idRestaurantForOrder: this.state.idConfig.idRestaurant
                 });
         }
 
@@ -94,8 +113,45 @@ export default class OverView extends Component {
                 })
         }
 
+        onClickButtonFollow () {
+                this.setState({
+                        isCheckedFollow: !this.state.isCheckedFollow
+                });
+                this.props.onFollowedAndUnFollowedRestaurant(this.state.idConfig.idRestaurant, this.state.account.id);
+        }
+
+        componentWillUnmount () {
+                this.props.onResetProps();
+        }
+
         render () {
                 const screenWidth = Dimensions.get('window').width;
+                const score = this.state.score;
+                var listStar = [];
+                for (let i = 1; i < 6; i++) {
+                        var j = i + 1;
+                        if (i < score && score < j) {
+                                listStar.push({
+                                        index: i,
+                                        value: 1
+                                })
+                                listStar.push({
+                                        index: i + 1,
+                                        value: 0
+                                })
+                                i++;
+                        }
+                        else if (i <= score)
+                                listStar.push({
+                                        index: i,
+                                        value: 1
+                                })
+                        else if (i > score)
+                                listStar.push({
+                                        index: i,
+                                        value: -1
+                                })
+                }
                 return (
                         <View style={styles.container}>
                                 <StatusBar
@@ -116,7 +172,6 @@ export default class OverView extends Component {
                                                         data={this.state.imageRestaurant}
                                                         renderItem={(item) => {
                                                                 return (
-
                                                                         <View style={{
                                                                                 borderRadius: 50
                                                                         }}>
@@ -137,45 +192,42 @@ export default class OverView extends Component {
                                                         sliderHeight={300}
                                                         firstItem={0}
                                                         itemWidth={250}
-                                                        // loop={true}
-                                                        // loopClonesPerSide={2}
-                                                        // autoplay={true}
-                                                        // autoplayDelay={500}
-                                                        // autoplayInterval={3000}
                                                         onSnapToItem={(index) => this.setState({ indexSliderImage: index })}
                                                         inactiveSlideScale={0.94}
                                                         inactiveSlideOpacity={0.3}
                                                 />
-                                                <View style={styles.containerTextDanhGia}>
-                                                        <Text style={{
-                                                                color: 'white',
-                                                                fontFamily: 'UVN-Baisau-Bold',
-                                                                fontSize: 18
-                                                        }}>9,2</Text>
-                                                </View>
                                         </View>
-
                                         <View style={styles.content}>
-                                                <Text style={styles.textTitleRestaurant}
-                                                        numberOfLines={1}
-                                                >{this.state.name}</Text>
+                                                <View>
+                                                        <Text style={styles.textTitleRestaurant}
+                                                                numberOfLines={1}
+                                                        >{this.state.name}</Text>
+                                                        <View style={styles.containerStar}>
+                                                                {
+                                                                        this.state.score === null ? null :
+                                                                                listStar.map(item => {
+                                                                                        if (item.value === 1)
+                                                                                                return (<Star key={item.index.toString()} name='star' size={20} color={colorMain} />);
+                                                                                        else if (item.value === 0)
+                                                                                                return (<Star key={item.index.toString()} name='star-half' size={20} color={colorMain} />);
+                                                                                        else if (item.value === -1)
+                                                                                                return (<Star key={item.index.toString()} name='star-outline' size={20} color={colorMain} />);
+                                                                                })
+                                                                }
+                                                        </View>
+                                                </View>
                                                 <View style={{
                                                         flexDirection: 'row',
                                                         alignItems: 'center',
                                                         justifyContent: 'space-between'
                                                 }}>
                                                         <Text style={styles.textTypeRestaurant}>{this.state.type}</Text>
-
                                                         <View style={{
                                                                 flexDirection: 'row',
                                                                 alignItems: 'center',
                                                         }}>
-                                                                <IconFontAwesome name='phone' size={20} color={colorMain} />
-                                                                <Text style={{
-                                                                        fontFamily: 'UVN-Baisau-Regular',
-                                                                        marginVertical: 10,
-                                                                        marginLeft: 10
-                                                                }}>{this.state.phone}</Text>
+                                                                <IconFontAwesome name='phone' size={18} color={colorMain} />
+                                                                <Text style={styles.textPhone}>{this.state.phone}</Text>
                                                         </View>
                                                 </View>
 
@@ -226,32 +278,55 @@ export default class OverView extends Component {
                                                 }
 
                                         </View>
-                                        <View style={styles.containerButton}>
-                                                <TouchableOpacity style={styles.button}
-                                                        onPress={() => {
-                                                                this._onClickOpenModalMap();
-                                                        }}
-                                                >
-                                                        <IconFontisto name='navigate' size={20} color={colorMain} />
-                                                        <Text style={styles.textNavigation}>chỉ đường</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity style={styles.button}>
-                                                        <Icon name='customerservice' size={20} color={colorMain} />
-                                                        <Text style={styles.textNavigation}>Tư Vấn</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity style={styles.button}
-                                                        onPress={() => {
-                                                                this._onClickButtonOrder();
-                                                        }}
-                                                >
-                                                        <IconFontAwesome name='edit' size={20} color={colorMain} />
-                                                        <Text style={styles.textNavigation}>Đặt Chỗ</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity style={styles.button}>
-                                                        <IconSimpleLineIcons name='pin' size={20} color={colorMain} />
-                                                        <Text style={styles.textNavigation}>Theo Dõi</Text>
-                                                </TouchableOpacity>
-                                        </View>
+                                        {
+                                                this.state.authorities === null ? null :
+                                                        this.state.authorities === 'admin-restaurant' ? null :
+                                                                this.state.authorities === 'admin' ? null :
+                                                                        this.state.authorities === 'client' ?
+                                                                                <View style={styles.containerButton}>
+                                                                                        <TouchableOpacity style={styles.button}
+                                                                                                onPress={() => {
+                                                                                                        this._onClickOpenModalMap();
+                                                                                                }}
+                                                                                        >
+                                                                                                <IconFontisto name='navigate' size={20} color={colorMain} />
+                                                                                                <Text style={styles.textNavigation}>chỉ đường</Text>
+                                                                                        </TouchableOpacity>
+                                                                                        <TouchableOpacity style={styles.button}>
+                                                                                                <Icon name='customerservice' size={20} color={colorMain} />
+                                                                                                <Text style={styles.textNavigation}>Tư Vấn</Text>
+                                                                                        </TouchableOpacity>
+                                                                                        <TouchableOpacity style={styles.button}
+                                                                                                onPress={() => {
+                                                                                                        this._onClickButtonOrder();
+                                                                                                }}
+                                                                                        >
+                                                                                                <IconFontAwesome name='edit' size={20} color={colorMain} />
+                                                                                                <Text style={styles.textNavigation}>Đặt Chỗ</Text>
+                                                                                        </TouchableOpacity>
+                                                                                        {
+                                                                                                this.state.isCheckedFollow ?
+                                                                                                        <TouchableOpacity
+                                                                                                                onPress={() => {
+                                                                                                                        this.onClickButtonFollow();
+                                                                                                                }}
+                                                                                                                style={styles.button}>
+                                                                                                                <IconFontisto name='heart' size={20} color={colorMain} />
+                                                                                                                <Text style={styles.textNavigation}>Bỏ Theo Dõi</Text>
+                                                                                                        </TouchableOpacity> :
+                                                                                                        <TouchableOpacity
+                                                                                                                onPress={() => {
+                                                                                                                        this.onClickButtonFollow();
+                                                                                                                }}
+                                                                                                                style={styles.button}>
+                                                                                                                <IconFontisto name='heart-alt' size={20} color={colorMain} />
+                                                                                                                <Text style={styles.textNavigation}>Theo Dõi</Text>
+                                                                                                        </TouchableOpacity>
+                                                                                        }
+
+                                                                                </View>
+                                                                                : null
+                                        }
                                 </ScrollView>
                                 <Modal
                                         visible={this.state.visibleModalMap}
@@ -292,6 +367,9 @@ const styles = StyleSheet.create({
                 flexDirection: 'row',
                 alignItems: 'center'
         },
+        containerStar: {
+                flexDirection: 'row'
+        },
         flatList: {
                 marginBottom: 20
         },
@@ -308,49 +386,49 @@ const styles = StyleSheet.create({
         textTypeRestaurant: {
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'uppercase',
+                fontSize: 12,
         },
         textStatus: {
                 fontFamily: 'UVN-Baisau-Regular',
                 color: colorMain,
-                textTransform: 'capitalize'
+                textTransform: 'capitalize',
+                fontSize: 12,
         },
         textTime: {
                 fontFamily: 'UVN-Baisau-Regular',
                 color: 'black',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                fontSize: 12,
         },
         textAddress: {
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
-                flex: 1
+                flex: 1,
+                fontSize: 12,
         },
-        containerTextDanhGia: {
-                width: 50,
-                height: 50,
-                borderRadius: 25,
-                backgroundColor: colorMain,
-                position: 'absolute',
-                bottom: -25,
-                right: 30,
-                alignItems: 'center',
-                justifyContent: 'center'
+        textPhone: {
+                fontFamily: 'UVN-Baisau-Regular',
+                marginVertical: 10,
+                marginLeft: 10,
+                fontSize: 12,
         },
         textIntroduce: {
                 fontFamily: 'UVN-Baisau-Regular',
-                marginVertical: 20
+                marginVertical: 20, fontSize: 12,
         },
         button: {
                 backgroundColor: 'white',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 60,
-                height: 60,
+                width: 70,
+                height: 70,
                 marginHorizontal: 10
         },
         textNavigation: {
                 fontFamily: 'UVN-Baisau-Regular',
                 marginTop: 5,
                 fontSize: 12,
-                textTransform: 'capitalize'
+                textTransform: 'capitalize',
+                textAlign: 'center'
         }
 });

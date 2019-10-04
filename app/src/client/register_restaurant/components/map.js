@@ -59,14 +59,14 @@ export default class SelectPlaceOnMap extends Component {
                                         <TouchableOpacity onPress={() => {
                                                 this.props._onClickCloseModalMap();
                                         }} >
-                                                <Icon name='down' size={30} color='black' />
+                                                <Icon name='down' size={25} color='black' />
                                         </TouchableOpacity>
                                         <Text style={styles.titleHeader}>Bản Đồ</Text>
                                         <TouchableOpacity onPress={() => {
                                                 this.props._onClickComplete(this.state.marker);
                                                 this.props._onClickCloseModalMap();
                                         }}  >
-                                                <Icon name='check' size={30} color='black' />
+                                                <Icon name='check' size={25} color='black' />
                                         </TouchableOpacity>
                                 </View>
                                 <View style={styles.containerMap}>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         titleHeader: {
                 fontFamily: 'UVN-Baisau-Regular',
                 color: 'black',
-                fontSize: 30,
+                fontSize: 18,
                 textTransform: 'capitalize'
         },
         containerMap: {

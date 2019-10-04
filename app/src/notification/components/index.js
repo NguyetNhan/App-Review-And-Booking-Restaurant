@@ -49,24 +49,25 @@ export default class Notification extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && prevState.isRefresh && !prevState.isLoadMore) {
-                        prevState.isRefresh = false;
-                } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
+                if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listNotification = nextProps.listNotification;
-                } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && prevState.isLoadMore) {
+                } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+                        prevState.listNotification = nextProps.listNotification;
+                        prevState.isRefresh = false;
+                } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listNotification = prevState.listNotification.concat(nextProps.listNotification);
                         prevState.isLoadMore = false;
                 }
                 if (nextProps.isLoading !== prevState.isLoading) {
                         prevState.isLoading = nextProps.isLoading
                 }
-                if (nextProps.messages !== undefined) {
+                if (nextProps.messages !== undefined && !prevState.isLoading) {
                         ToastAndroid(nextProps.messages, ToastAndroid.LONG)
                 }
-                if (nextProps.page !== prevState.page) {
+                if (nextProps.page !== prevState.page && nextProps.page !== undefined && !prevState.isLoading) {
                         prevState.page = nextProps.page
                 }
-                if (nextProps.total_page !== prevState.total_page) {
+                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page
                 }
                 return null;
@@ -94,26 +95,33 @@ export default class Notification extends Component {
                                 idAccount: this.state.account.id,
                                 page: page + 1,
                         };
-                        this.props.onFetchNotification(data);
                         this.setState({
                                 isLoading: true,
                                 isLoadMore: true
                         })
+                        this.props.onFetchNotification(data);
                 }
         }
 
-        _onClickItem (data) {
-                const authorities = this.state.account.authorities;
-                if (data.type === 'register_restaurant') {
-                        if (authorities === 'admin') {
-                                this.props.navigation.navigate('ConfirmRestaurant')
+        _onClickItem (item) {
+                if (item.item.type === 'order') {
+                        this.props.navigation.navigate('DetailDeal', {
+                                idOrder: item.item.idOrder
+                        })
+                } else if (item.item.type === 'review') {
+                        var data = {
+                                idRestaurant: item.item.idRestaurant,
+                                idAdmin: this.state.account.id
                         }
+                        this.props.navigation.navigate('DetailRestaurant', {
+                                IdConfigDetailRestaurant: data,
+                                GoBack: 'Notification'
+                        });
                 }
-                else if (data.type === 'order') {
-                        if (authorities === 'admin-restaurant') {
-                                console.log(data);
-                        }
-                }
+        }
+
+        componentWillUnmount () {
+                this.props.onResetProps();
         }
 
         render () {
@@ -128,14 +136,7 @@ export default class Notification extends Component {
                                                 <Icon name='menu' size={25} color='black' />
                                         </TouchableOpacity>
                                         <Text style={styles.textHeader}>Thông Báo</Text>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.navigate('Search', {
-                                                        Condition: {
-                                                                type: 'restaurant',
-                                                                address: 'Hồ Chí Minh'
-                                                        }
-                                                });
-                                        }}>
+                                        <TouchableOpacity >
                                                 <Icon name='user' size={25} color='black' />
                                         </TouchableOpacity>
                                 </View>
@@ -155,6 +156,7 @@ export default class Notification extends Component {
                                                 renderItem={(item) => {
                                                         return (
                                                                 <ItemListNotification
+                                                                        item={item.item}
                                                                         title={item.item.title}
                                                                         content={item.item.content}
                                                                         image={item.item.image}
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20
+                fontSize: 18
         },
         content: {
                 flex: 1,

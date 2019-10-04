@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Dimensions, Alert } from 'react-native';
 import { colorMain } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 export default class AddMenu extends Component {
         constructor (props) {
                 super(props);
@@ -28,8 +29,46 @@ export default class AddMenu extends Component {
                         price: this.state.price,
                         image: this.state.uriImageSelect
                 };
-                this.props.onClickCompleteAddMenu(data);
-                this.props.onClickCloseAddMenu();
+                if (data.name.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Tên không được để trống !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (data.moTa.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Mô tả không được để trống !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (data.price.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Giá không được để trống !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (data.image.length === 0) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa chọn ảnh minh họa !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else {
+                        this.props.onClickCompleteAddMenu(data);
+                        this.props.onClickCloseAddMenu();
+                }
         }
 
         render () {
@@ -90,7 +129,7 @@ export default class AddMenu extends Component {
                                                 <TouchableOpacity onPress={() => {
                                                         this.props.onClickOpenSelectImage();
                                                 }}>
-                                                        <Icon name='pluscircleo' size={30} color={colorMain} />
+                                                        <EvilIcons name='camera' size={50} color={colorMain} />
                                                 </TouchableOpacity>
                                         </View>
                                         {

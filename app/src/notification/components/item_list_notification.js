@@ -6,6 +6,7 @@ export default class ItemListNotification extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
+                        item: props.item,
                         title: props.title,
                         content: props.content,
                         image: props.image,
@@ -20,29 +21,32 @@ export default class ItemListNotification extends Component {
 
         render () {
                 const date = new Date(this.state.time);
-                const formatDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}h${date.getMinutes()}`;
+                const formatDate = `${date.getHours()}h${date.getMinutes()}   ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
                 return (
                         <TouchableOpacity onPress={() => {
                                 this.props._onClickItem({
-                                        type: this.state.type,
-                                        idRestaurant: this.state.idRestaurant,
-                                        idOrder: this.state.idOrder
+                                        item: this.state.item
                                 });
                         }}>
                                 <View style={styles.container}>
-                                        <Image
-                                                source={{ uri: `${urlServer}${this.state.image}` }}
-                                                style={styles.image}
-                                        />
+                                        {
+                                                this.state.image === null ?
+                                                        <Image
+                                                                source={require('../../assets/images/avatar_user.png')}
+                                                                style={styles.image}
+                                                        />
+                                                        :
+                                                        <Image
+                                                                source={{ uri: `${urlServer}${this.state.image}` }}
+                                                                style={styles.image}
+                                                        />
+                                        }
                                         <View style={styles.containerText}>
                                                 <Text style={styles.textTitle}
-                                                        numberOfLines={1}
                                                 >{this.state.title}</Text>
                                                 <Text style={styles.textContent}
-                                                        numberOfLines={2}
                                                 >{this.state.content}</Text>
                                                 <Text style={styles.textTime}
-                                                        numberOfLines={1}
                                                 >{formatDate}</Text>
                                         </View>
                                 </View>
@@ -74,6 +78,7 @@ const styles = StyleSheet.create({
         },
         textContent: {
                 fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 12,
         },
         textTime: {
                 fontFamily: 'UVN-Baisau-Regular',

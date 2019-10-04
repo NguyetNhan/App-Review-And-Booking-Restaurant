@@ -1,22 +1,22 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onRegisterRestaurant } from '../actions';
-import { ToastAndroid } from 'react-native';
+import { onRegisterRestaurant, onResetProps } from '../actions';
 
 const mapStateToProps = (state) => {
-        const resultsRegister = state.RegisterRestaurantReducers.RegisterRestaurant;
-        if (resultsRegister !== undefined) {
-                if (resultsRegister.data.error) {
-                        ToastAndroid.show(resultsRegister.data.message, ToastAndroid.LONG);
-                        return {
-                                isLoading: false
-                        };
-                } else {
-                        alert(resultsRegister.data.message);
+        const resultsRegister = state.RegisterRestaurantReducers;
+        if (resultsRegister !== null) {
+                if (resultsRegister.registerSucceeded !== undefined) {
                         return {
                                 isLoading: false,
-                                changeScreen: true
+                                message: resultsRegister.registerSucceeded.message,
                         };
+                } else if (resultsRegister.registerFailed !== undefined) {
+                        return {
+                                isLoading: false,
+                                message: resultsRegister.registerFailed.message,
+                        };
+                } else if (resultsRegister.resetProps !== undefined) {
+                        return resultsRegister.resetProps;
                 }
         } else {
                 return {
@@ -28,6 +28,9 @@ const mapDispatchToProps = (dispatch) => {
         return {
                 onRegisterRestaurant: (data) => {
                         dispatch(onRegisterRestaurant(data));
+                },
+                onResetProps: () => {
+                        dispatch(onResetProps());
                 }
         };
 };

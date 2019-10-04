@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20,
+                fontSize: 18,
                 textTransform: 'capitalize'
         },
         containerMap: {

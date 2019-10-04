@@ -42,7 +42,6 @@ AddInfoAccountFromDatabaseLocal = async (data) => {
                                         avatar: data.avatar
                                 });
                         }
-
                 });
                 realm.close();
         } catch (error) {
@@ -76,7 +75,7 @@ FetchInfoAccountFromDatabaseLocal = async () => {
                 } else {
                         result = null;
                 }
-                realm.close();
+                //  realm.close();
                 return result;
         } catch (error) {
                 console.log('FetchInfoAccountFromDatabaseLocal error: ', error);

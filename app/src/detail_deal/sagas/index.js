@@ -44,3 +44,4 @@ function* confirmOrderFromAPI (action) {
 export function* watchConfirmOrderFromAPI () {
         yield takeLatest(CONFIRM_ORDER, confirmOrderFromAPI);
 }
+

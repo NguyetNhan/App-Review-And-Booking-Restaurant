@@ -1,6 +1,10 @@
 import { connect } from 'react-redux';
 import Component from '../components/confirm';
-import { onConfirmOrder, onResetPropsConfirm } from '../actions';
+import {
+        onConfirmOrder,
+        onResetPropsMessage,
+        onResetPropsConfirm
+} from '../actions';
 
 const mapStateToProps = (state) => {
         const confirmReducers = state.DetailDealReducers.ConfirmReducers;
@@ -8,15 +12,17 @@ const mapStateToProps = (state) => {
                 if (confirmReducers.confirmSucceeded !== undefined) {
                         return {
                                 isLoading: false,
-                                messageConfirmSucceeded: confirmReducers.confirmSucceeded.data.messages
+                                messageSucceeded: confirmReducers.confirmSucceeded.data.messages
                         };
                 } else if (confirmReducers.confirmFailed !== undefined) {
                         return {
                                 isLoading: false,
-                                message: confirmReducers.confirmFailed.messages
+                                messageSucceeded: confirmReducers.confirmFailed.messages
                         };
                 } else if (confirmReducers.ResetProps !== undefined) {
                         return confirmReducers.ResetProps;
+                } else if (confirmReducers.resetPropsMessage !== undefined) {
+                        return confirmReducers.resetPropsMessage;
                 }
         } else {
                 return {
@@ -33,7 +39,10 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onResetPropsConfirm: () => {
                         dispatch(onResetPropsConfirm());
-                }
+                },
+                onResetPropsMessage: () => {
+                        dispatch(onResetPropsMessage());
+                },
         };
 };
 

@@ -1,45 +1,91 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { urlServer, colorMain } from '../../../config';
+import { convertVND } from '../../../functions/convert';
+import Star from 'react-native-vector-icons/MaterialCommunityIcons';
+import { API } from '../../overview/sagas/API';
 
 export default class ItemListMenu extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        name: props.name,
-                        image: props.image,
-                        price: props.price,
-                        introduce: props.introduce
+                        item: props.item,
+                        id: props.item._id,
+                        name: props.item.name,
+                        image: props.item.image,
+                        price: props.item.price,
+                        introduce: props.item.introduce,
+                        score: null,
                 };
         }
 
-        convertVND (data) {
-                const string = data.toString();
-                const length = string.length;
-                var convert = '';
-                var count = 1;
-                for (i = length - 1; i >= 0; i--) {
-                        if (count == 3 && i != 0) {
-                                let char = string.charAt(i);
-                                convert = '.'.concat(char, convert);
-                                count = 1;
+        async fetchMediumScore () {
+                try {
+                        const result = await API.fetchScoreReview(this.state.id);
+                        if (result.error) {
+                                Alert.alert(
+                                        'Thông Báo',
+                                        result.message,
+                                        [
+                                                { text: 'OK', },
+                                        ],
+                                        { cancelable: false },
+                                );
                         } else {
-                                let char = string.charAt(i);
-                                convert = char.concat('', convert);
-                                count = count + 1;
+                                this.setState({
+                                        score: result.mediumScore
+                                });
                         }
+
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo',
+                                error.message,
+                                [
+                                        { text: 'OK', },
+                                ],
+                                { cancelable: false },
+                        );
                 }
-                return convert;
         }
 
+        componentDidMount () {
+                this.fetchMediumScore();
+        }
+
+
         render () {
+                const score = this.state.score;
+                var listStar = [];
+                for (let i = 1; i < 6; i++) {
+                        var j = i + 1;
+                        if (i < score && score < j) {
+                                listStar.push({
+                                        index: i,
+                                        value: 1
+                                });
+                                listStar.push({
+                                        index: i + 1,
+                                        value: 0
+                                });
+                                i++;
+                        }
+                        else if (i <= score)
+                                listStar.push({
+                                        index: i,
+                                        value: 1
+                                });
+                        else if (i > score)
+                                listStar.push({
+                                        index: i,
+                                        value: -1
+                                });
+                }
                 return (
                         <TouchableOpacity onPress={() => {
                                 this.props._onClickOpenDetailMenu({
-                                        nameSelect: this.state.name,
-                                        imageSelect: this.state.image,
-                                        introduceSelect: this.state.introduce,
-                                        priceSelect: this.state.price
+                                        item: this.state.item,
+                                        score: this.state.score
                                 });
                         }}>
                                 <View style={styles.container}>
@@ -52,9 +98,24 @@ export default class ItemListMenu extends Component {
                                                         numberOfLines={1}
                                                         ellipsizeMode='tail'
                                                 >{this.state.name}</Text>
+                                                <View style={styles.containerStar}>
+                                                        {
+                                                                this.state.score === null ?
+                                                                        <ActivityIndicator animating={true} size={15} color={colorMain} />
+                                                                        :
+                                                                        listStar.map(item => {
+                                                                                if (item.value === 1)
+                                                                                        return (<Star key={item.index.toString()} name='star' size={12} color={colorMain} />);
+                                                                                else if (item.value === 0)
+                                                                                        return (<Star key={item.index.toString()} name='star-half' size={12} color={colorMain} />);
+                                                                                else if (item.value === -1)
+                                                                                        return (<Star key={item.index.toString()} name='star-outline' size={12} color={colorMain} />);
+                                                                        })
+                                                        }
+                                                </View>
                                                 <Text style={styles.price}
                                                         numberOfLines={1}
-                                                        ellipsizeMode='tail'>{this.convertVND(this.state.price)} VND</Text>
+                                                        ellipsizeMode='tail'>{convertVND(this.state.price)} VND</Text>
                                                 <Text style={styles.introduce}
                                                         numberOfLines={2}
                                                         ellipsizeMode='tail'
@@ -75,8 +136,8 @@ const styles = StyleSheet.create({
                 alignItems: 'center'
         },
         image: {
-                width: 120,
-                height: 120
+                width: 100,
+                height: 100
         },
         content: {
                 flex: 1,
@@ -84,13 +145,18 @@ const styles = StyleSheet.create({
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20
+                fontSize: 14
         },
         price: {
                 fontFamily: 'UVN-Baisau-Bold',
-                color: colorMain
+                fontSize: 10,
+                color: 'red'
         },
         introduce: {
-                fontFamily: 'UVN-Baisau-Regular'
-        }
+                fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 10
+        },
+        containerStar: {
+                flexDirection: 'row'
+        },
 });

@@ -1,22 +1,11 @@
-import { SEARCH_RESTAURANT_FAILED, SEARCH_RESTAURANT_SUCCEEDED } from '../actions/action_types';
+import { combineReducers } from 'redux';
+import MainReducers from './main';
+import ModalListSearchReducers from './modal_list_search';
 
-const SearchReducers = (state = [], action) => {
-        switch (action.type) {
-                case SEARCH_RESTAURANT_SUCCEEDED:
-                        return {
-                                SearchSucceeded: {
-                                        data: action.data
-                                }
-                        };
-                case SEARCH_RESTAURANT_FAILED:
-                        return {
-                                SearchFailed: {
-                                        data: action.data
-                                }
-                        };
-                default:
-                        return state;
-        }
-};
+
+const SearchReducers = combineReducers({
+        MainReducers,
+        ModalListSearchReducers
+});
 
 export default SearchReducers;

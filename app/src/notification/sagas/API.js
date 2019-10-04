@@ -11,7 +11,10 @@ fetchNotificationFromAPI = async (data) => {
                 }).then(data => data.json());
                 return response;
         } catch (error) {
-                console.log('fetchNotificationFromAPI error : ', error);
+                return {
+                        error: true,
+                        messages: error.message,
+                };
         }
 };
 

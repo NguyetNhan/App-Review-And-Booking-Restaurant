@@ -13,14 +13,35 @@ import {
         WatchFetchListCoffeeFromAPI,
         WatchFetchNearbyLocationRestaurantForHomeFromAPI
 } from '../home/sagas';
-import { WatchSearchRestaurantFromAPI } from '../search/sagas';
-import { WatchFetchDetailRestaurantFormAPI } from '../detail_restaurant/overview/sagas';
+import {
+        watchSearchFollowTypeFromAPI,
+        watchSearchRestaurantAndClientFromAPI
+} from '../search/sagas';
+import {
+        watchFetchDetailRestaurantFormAPI,
+        watchFetchScoreReviewFromAPI,
+        watchChangeFollowRestaurant,
+        watchCheckFollowRestaurantFromAPI
+} from '../detail_restaurant/overview/sagas';
 import { WatchAddMenuOnAPI, WatchFetchMenuFromAPI } from '../detail_restaurant/menu/sagas';
 import { WatchFetchNotificationFromAPI } from '../notification/sagas';
 import { WatchFetchListMenuForOrderFromAPI, WatchAddOrderIntoDatabase } from '../order/sagas';
 import { WatchFetchNearbyLocationRestaurantFromAPI } from '../map/sagas';
 import { WatchFetchListOrderFromAPI } from '../deal/sagas';
-import { watchFetchDetailOrderFromAPI, watchConfirmOrderFromAPI } from '../detail_deal/sagas';
+import {
+        watchFetchDetailOrderFromAPI,
+        watchConfirmOrderFromAPI
+} from '../detail_deal/sagas';
+import { watchConfirmOrderForAdminRestaurant } from '../admin_restaurant/scan_qr_order/sagas';
+import {
+        watchFetchListReviewFromAPI
+} from '../detail_restaurant/review/sagas';
+import {
+        watchAddReviewRestaurant,
+        watchUpdateReviewRestaurant,
+        watchCheckHasReview,
+        watchFetchDetailData
+} from '../client/add_review/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -32,8 +53,7 @@ export default function* RootSaga () {
                 WatchConfirmRestaurantAgreeFromAPI(),
                 WatchConfirmRestaurantCancelFromAPI(),
                 WatchFetchListRestaurantFromAPI(),
-                WatchSearchRestaurantFromAPI(),
-                WatchFetchDetailRestaurantFormAPI(),
+                watchFetchDetailRestaurantFormAPI(),
                 WatchAddMenuOnAPI(),
                 WatchFetchMenuFromAPI(),
                 WatchFetchListCoffeeFromAPI(),
@@ -45,6 +65,17 @@ export default function* RootSaga () {
                 WatchAddOrderIntoDatabase(),
                 WatchFetchListOrderFromAPI(),
                 watchFetchDetailOrderFromAPI(),
-                watchConfirmOrderFromAPI()
+                watchConfirmOrderFromAPI(),
+                watchConfirmOrderForAdminRestaurant(),
+                watchAddReviewRestaurant(),
+                watchFetchListReviewFromAPI(),
+                watchFetchScoreReviewFromAPI(),
+                watchChangeFollowRestaurant(),
+                watchCheckFollowRestaurantFromAPI(),
+                watchUpdateReviewRestaurant(),
+                watchCheckHasReview(),
+                watchFetchDetailData(),
+                watchSearchFollowTypeFromAPI(),
+                watchSearchRestaurantAndClientFromAPI()
         ]);
 }

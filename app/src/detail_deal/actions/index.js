@@ -6,6 +6,7 @@ import {
         CONFIRM_ORDER_FAILED,
         CONFIRM_ORDER_SUCCEEDED,
         RESET_PROPS_CONFIRM,
+        RESET_PROPS_MESSAGE_CONFIRM,
         RESET_PROPS_STEP_INDICATOR
 } from './types';
 
@@ -60,5 +61,11 @@ export const onResetPropsStepIndicator = () => {
 export const onResetPropsConfirm = () => {
         return {
                 type: RESET_PROPS_CONFIRM,
+        };
+};
+
+export const onResetPropsMessage = () => {
+        return {
+                type: RESET_PROPS_MESSAGE_CONFIRM,
         };
 };

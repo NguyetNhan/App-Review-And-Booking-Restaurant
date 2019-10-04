@@ -1,42 +1,56 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, FlatList, StatusBar, Dimensions, Picker, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, StatusBar, Dimensions, Picker, TextInput, TouchableOpacity, Image, Alert, ScrollView, Modal, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import { colorMain, urlServer, background } from '../../config';
+const { width, height } = Dimensions.get('window');
+import ModalListSearch from '../containers/modal_list_search';
 export default class Search extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
                         textSearch: '',
-                        type: 'bar',
-                        address: 'Hồ Chí Minh',
                         listRestaurant: [],
+                        listClient: [],
+                        isLoading: false,
+                        countItem: null,
+                        visibleModalListSearch: false,
+                        type: ''
                 };
+                this.onCloseModalListSearch = this.onCloseModalListSearch.bind(this);
+                this.onOpenModalListSearch = this.onOpenModalListSearch.bind(this);
+                this._onClickItemRestaurant = this._onClickItemRestaurant.bind(this);
         }
 
-        componentDidMount () {
-                const condition = this.props.navigation.getParam('Condition');
-                this.setState({
-                        type: condition.type,
-                        address: condition.address
-                });
-                const data = {
-                        content: this.state.textSearch,
-                        type: condition.type,
-                        address: condition.address
-                };
-                this.props.onSearchRestaurant(data);
-        }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listRestaurant !== prevState.listRestaurant) {
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
+                        prevState.isLoading = nextProps.isLoading;
+                }
+                if (nextProps.listClient !== prevState.listClient && nextProps.listClient !== undefined) {
+                        prevState.listClient = nextProps.listClient;
+                }
+                if (nextProps.listRestaurant !== prevState.listRestaurant && nextProps.listRestaurant !== undefined) {
                         prevState.listRestaurant = nextProps.listRestaurant;
+                }
+                if (nextProps.countItem !== prevState.countItem && nextProps.countItem !== undefined) {
+                        prevState.countItem = nextProps.countItem;
+                }
+                if (nextProps.message !== undefined) {
+                        Alert.alert(
+                                'Thông Báo Lỗi ',
+                                nextProps.message,
+                                [
+                                        { text: 'OK', onPress: () => nextProps.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
                 }
                 return null;
         }
 
 
-        _onClickItemFlatList (idRestaurant, idAdmin) {
+        _onClickItemRestaurant (idRestaurant, idAdmin) {
                 var data = {
                         idRestaurant: idRestaurant,
                         idAdmin: idAdmin
@@ -47,9 +61,33 @@ export default class Search extends Component {
                 });
         }
 
+        onSearch () {
+                this.setState({
+                        isLoading: !this.state.isLoading
+                });
+                const text = this.state.textSearch;
+                if ((text.trim()).length !== 0) {
+                        this.props.onSearchRestaurantAndClient(this.state.textSearch);
+                }
+        }
+
+        onOpenModalListSearch (type) {
+                this.setState({
+                        visibleModalListSearch: !this.state.visibleModalListSearch,
+                        type: type
+                });
+        }
+        onCloseModalListSearch () {
+                this.setState({
+                        visibleModalListSearch: !this.state.visibleModalListSearch
+                });
+        }
+
+        componentWillUnmount () {
+                this.props.onResetProps();
+        }
 
         render () {
-                const screenWidth = Dimensions.get('window').width;
                 return (
                         <View style={styles.container}>
                                 <StatusBar
@@ -62,103 +100,140 @@ export default class Search extends Component {
                                         }}>
                                                 <Icon name='arrow-left' size={25} color='black' />
                                         </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Tìm Kiếm</Text>
-                                        <View />
-                                </View>
-                                <View style={styles.header}>
                                         <TextInput
-                                                style={styles.textInputSearch}
-                                                placeholder='Tìm kiếm nhà hàng, bar, coffee & trà'
-                                                numberOfLines={1}
+                                                style={styles.textInput}
+                                                placeholder='Tìm Kiếm'
+                                                autoFocus={true}
                                                 onChangeText={(text) => {
                                                         this.setState({
-                                                                textSearch: text,
-
+                                                                textSearch: text
                                                         });
-                                                        const data = {
-                                                                content: text,
-                                                                type: this.state.type,
-                                                                address: this.state.address
-                                                        };
-                                                        this.props.onSearchRestaurant(data);
+                                                        this.onSearch();
                                                 }}
                                         />
-                                        <View style={styles.containerTextAddress}>
-                                                <Text style={styles.textHintAddress}>Địa điểm</Text>
-                                                <Picker
-                                                        selectedValue={this.state.address}
-                                                        style={styles.picker}
-                                                        onValueChange={(itemValue, itemIndex) => {
-                                                                this.setState({
-                                                                        address: itemValue,
-                                                                });
-                                                                const data = {
-                                                                        content: this.state.textSearch,
-                                                                        address: itemValue,
-                                                                        type: this.state.type,
-                                                                };
-                                                                this.props.onSearchRestaurant(data);
-                                                        }}>
-                                                        <Picker.Item label="Hồ Chí Minh" value="Hồ Chí Minh" />
-                                                        <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                                        <Picker.Item label="Đà Nẵng" value="Đà Nẵng" />
-                                                </Picker>
-                                        </View>
-                                        <View style={styles.containerTextAddress}>
-                                                <Text style={styles.textHintAddress}>Loại</Text>
-                                                <Picker
-                                                        selectedValue={this.state.address}
-                                                        style={styles.picker}
-                                                        onValueChange={(itemValue, itemIndex) => {
-                                                                this.setState({ address: itemValue });
-                                                                const data = {
-                                                                        content: this.state.textSearch,
-                                                                        type: itemValue,
-                                                                        address: this.state.address
-                                                                };
-                                                                this.props.onSearchRestaurant(data);
-                                                        }}>
-                                                        <Picker.Item label="Nhà Hàng" value="restaurant" />
-                                                        <Picker.Item label="Coffee & Trà" value="coffee" />
-                                                        <Picker.Item label="Bar" value="bar" />
-                                                </Picker>
-                                        </View>
                                 </View>
-                                <View style={styles.containerContent}>
-                                        <FlatList
-                                                data={this.state.listRestaurant}
-                                                extraData={this.state}
-                                                keyExtractor={(item, index) => index.toString()}
-                                                showsVerticalScrollIndicator={false}
-                                                renderItem={(item) => {
-                                                        return (
-                                                                <TouchableOpacity style={styles.containerItemList}
-                                                                        onPress={() => {
-                                                                                this._onClickItemFlatList(item.item._id, item.item.idAdmin);
-                                                                        }}>
-                                                                        <View>
-                                                                                <Image
-                                                                                        source={{ uri: `${urlServer}${item.item.imageRestaurant[0]}` }}
-                                                                                        style={styles.image}
-                                                                                />
-                                                                                <View style={styles.containerDanhGia}>
-                                                                                        <Text style={styles.textDanhGia}>9,2</Text>
+                                <View style={styles.content}>
+                                        {
+                                                this.state.isLoading ?
+                                                        <View style={styles.containerLoading}>
+                                                                <ActivityIndicator animating={true} size={30} color={colorMain} />
+                                                        </View>
+                                                        :
+                                                        <ScrollView>
+                                                                {
+                                                                        this.state.countItem === null ? null :
+                                                                                <View style={styles.containerCountItem}>
+                                                                                        <Text style={styles.textTitle}>có {this.state.countItem.client + this.state.countItem.restaurant} kết quả tìm kiếm</Text>
                                                                                 </View>
-                                                                        </View>
-                                                                        <View style={styles.containerInfo}>
-                                                                                <Text style={styles.textNameRestaurant}>{item.item.name}</Text>
-                                                                                <Text style={styles.textTypeRestaurant}>{item.item.type}</Text>
-                                                                                <Text
-                                                                                        style={styles.textAddress}
-                                                                                        numberOfLines={1}
-                                                                                        ellipsizeMode='tail'
-                                                                                >{item.item.address}</Text>
-                                                                        </View>
-                                                                </TouchableOpacity>
-                                                        );
-                                                }}
-                                        />
+                                                                }
+                                                                {
+                                                                        this.state.listRestaurant.length === 0 ? null
+                                                                                :
+                                                                                <View>
+                                                                                        <Text style={styles.textTitle}>*địa điểm</Text>
+                                                                                        <View style={styles.containerList}>
+                                                                                                {
+                                                                                                        this.state.listRestaurant.map(item => {
+                                                                                                                return (
+                                                                                                                        <TouchableOpacity key={item._id}
+                                                                                                                                onPress={() => {
+                                                                                                                                        this._onClickItemRestaurant(item._id, item.idAdmin);
+                                                                                                                                }}
+                                                                                                                        >
+                                                                                                                                <View style={styles.containerItem}
+                                                                                                                                >
+                                                                                                                                        <Image
+                                                                                                                                                source={{ uri: `${urlServer}${item.imageRestaurant[0]}` }}
+                                                                                                                                                style={styles.image}
+                                                                                                                                        />
+                                                                                                                                        <View style={styles.containerName}>
+                                                                                                                                                <Text style={styles.name}>{item.name}</Text>
+                                                                                                                                                <Text style={styles.address}>{item.address}</Text>
+                                                                                                                                        </View>
+                                                                                                                                </View>
+                                                                                                                        </TouchableOpacity>
+                                                                                                                );
+                                                                                                        })
+                                                                                                }
+                                                                                                {
+                                                                                                        this.state.listRestaurant.length === 5 ?
+                                                                                                                <View style={styles.containerButtonAll}>
+                                                                                                                        <TouchableOpacity
+                                                                                                                                onPress={() => {
+                                                                                                                                        this.onOpenModalListSearch('restaurant');
+                                                                                                                                }}
+                                                                                                                        >
+                                                                                                                                <Text style={styles.textButtonAll}>tất cả</Text>
+                                                                                                                        </TouchableOpacity>
+                                                                                                                </View> : null
+                                                                                                }
+
+                                                                                        </View>
+                                                                                </View>
+                                                                }
+                                                                {
+                                                                        this.state.listClient.length === 0 ? null
+                                                                                :
+                                                                                <View>
+                                                                                        <Text style={styles.textTitle}>*mọi người</Text>
+                                                                                        <View style={styles.containerList}>
+                                                                                                {
+                                                                                                        this.state.listClient.map(item => {
+                                                                                                                return (
+                                                                                                                        <View key={item._id}
+                                                                                                                                style={styles.containerItem}
+                                                                                                                        >
+                                                                                                                                {
+                                                                                                                                        item.avatar === null ?
+                                                                                                                                                <Image
+                                                                                                                                                        source={require('../../assets/images/avatar_user.png')}
+                                                                                                                                                        style={styles.image}
+                                                                                                                                                /> :
+                                                                                                                                                <Image
+                                                                                                                                                        source={{ uri: `${urlServer}${item.avatar}` }}
+                                                                                                                                                        style={styles.image}
+                                                                                                                                                />
+                                                                                                                                }
+                                                                                                                                <View style={styles.containerName}>
+                                                                                                                                        <Text style={styles.name}>{item.name}</Text>
+                                                                                                                                        <Text style={styles.address}>{item.email}</Text>
+                                                                                                                                </View>
+                                                                                                                        </View>
+                                                                                                                );
+                                                                                                        })
+                                                                                                }
+                                                                                                {
+                                                                                                        this.state.listClient.length === 5 ?
+                                                                                                                <View style={styles.containerButtonAll}>
+                                                                                                                        <TouchableOpacity
+                                                                                                                                onPress={() => {
+                                                                                                                                        this.onOpenModalListSearch('client');
+                                                                                                                                }}
+                                                                                                                        >
+                                                                                                                                <Text style={styles.textButtonAll}>tất cả</Text>
+                                                                                                                        </TouchableOpacity>
+                                                                                                                </View> : null
+                                                                                                }
+                                                                                        </View>
+                                                                                </View>
+                                                                }
+                                                        </ScrollView>
+                                        }
                                 </View>
+                                <Modal
+                                        visible={this.state.visibleModalListSearch}
+                                        animationType='slide'
+                                        onRequestClose={() => {
+                                                this.onCloseModalListSearch();
+                                        }}
+                                >
+                                        <ModalListSearch
+                                                onCloseModalListSearch={this.onCloseModalListSearch}
+                                                type={this.state.type}
+                                                contentSearch={this.state.textSearch}
+                                                _onClickItemRestaurant={this._onClickItemRestaurant}
+                                        />
+                                </Modal>
                         </View>
                 );
         }
@@ -169,96 +244,71 @@ const styles = StyleSheet.create({
                 flex: 1,
                 backgroundColor: background
         },
+        containerLoading: {
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center'
+        },
+        containerCountItem: {
+                alignItems: 'center'
+        },
         containerHeader: {
                 width: '100%',
-                height: 50,
+                height: 60,
                 flexDirection: 'row',
-                justifyContent: 'space-between',
                 backgroundColor: 'white',
                 alignItems: 'center',
                 paddingHorizontal: 20
         },
-        textHeader: {
-                fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20,
-                textTransform: 'capitalize'
-        },
-        header: {
-                height: 150,
-                width: '100%',
-                paddingHorizontal: 20,
-                backgroundColor: 'white'
-        },
-        containerTextAddress: {
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-        },
-        containerContent: {
+        textInput: {
+                fontFamily: 'UVN-Baisau-Regular',
                 flex: 1,
-                paddingHorizontal: 20,
-                paddingVertical: 10
+                backgroundColor: background,
+                borderRadius: 30,
+                marginLeft: 10,
+                paddingHorizontal: 10
         },
-        textInputSearch: {
-                width: '100%',
-                height: 50,
-                borderBottomWidth: 1,
-                borderBottomColor: 'gray',
-                textAlign: 'center',
+        content: {
+                flex: 1
+        },
+        textTitle: {
                 fontFamily: 'UVN-Baisau-Regular',
-                fontSize: 18
+                textTransform: 'capitalize',
+                marginLeft: 20,
+                marginTop: 10,
+                fontSize: 12
         },
-        textHintAddress: {
-                color: 'gray',
-                fontFamily: 'UVN-Baisau-Regular',
-        },
-        picker: {
-                marginLeft: 5,
-                width: 250
-        },
-        containerItemList: {
-                flexDirection: 'row',
+        containerList: {
                 backgroundColor: 'white',
-                marginVertical: 10
+        },
+        containerItem: {
+                flexDirection: 'row',
+                paddingHorizontal: 20,
+                paddingVertical: 5
         },
         image: {
-                width: 120,
-                height: 120
+                width: 30,
+                height: 30,
+                borderRadius: 15
         },
-        containerDanhGia: {
-                position: 'absolute',
-                top: 40,
-                right: -20,
-                backgroundColor: colorMain,
-                width: 40,
-                height: 40,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 20
-        },
-        textDanhGia: {
-                color: 'white',
-                fontFamily: 'UVN-Baisau-Bold'
-        },
-        containerInfo: {
-                padding: 20,
-                paddingLeft: 25,
-                justifyContent: 'space-between'
-        },
-        textNameRestaurant: {
+        name: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 16
+                textTransform: 'capitalize',
         },
-        textTypeRestaurant: {
+        address: {
                 fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'capitalize'
+                fontSize: 12
         },
-        textPhone: {
-                fontFamily: 'UVN-Baisau-Regular',
-                marginLeft: 5
+        containerName: {
+                marginLeft: 10
         },
-        textAddress: {
-                fontFamily: 'UVN-Baisau-Regular',
-                width: 150
+        textButtonAll: {
+                fontFamily: 'UVN-Baisau-Bold',
+                textTransform: 'capitalize',
+                color: colorMain
+        },
+        containerButtonAll: {
+                alignItems: 'center',
+                marginVertical: 5
         }
 });

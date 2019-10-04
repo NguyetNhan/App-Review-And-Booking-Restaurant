@@ -12,6 +12,9 @@ import OrderReducers from '../order/reducers';
 import MapReducers from '../map/reducers';
 import DealReducers from '../deal/reducers';
 import DetailDealReducers from '../detail_deal/reducers';
+import ScanQrOrderReducers from '../admin_restaurant/scan_qr_order/reducers';
+import ReviewReducers from '../detail_restaurant/review/reducers';
+import AddReviewReducers from '../client/add_review/reducers/add_review_reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -26,7 +29,10 @@ const RootReducer = combineReducers({
         OrderReducers,
         MapReducers,
         DealReducers,
-        DetailDealReducers
+        DetailDealReducers,
+        ScanQrOrderReducers,
+        ReviewReducers,
+        AddReviewReducers
 });
 
 export default RootReducer;

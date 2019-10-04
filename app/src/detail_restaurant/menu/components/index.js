@@ -24,7 +24,7 @@ export default class Menu extends Component {
                         visibleAddMenu: false,
                         visibleSelectImage: false,
                         uriImageSelect: null,
-                        visibleLoading: false,
+                        isLoading: false,
                         idRestaurant: null,
                         listMenu: [],
                         refreshing: false,
@@ -32,10 +32,12 @@ export default class Menu extends Component {
                         idAdmin: null,
                         showEdit: false,
                         visibleDetailMenu: false,
-                        nameSelect: '',
-                        imageSelect: '',
-                        introduceSelect: '',
-                        priceSelect: '',
+                        nameSelected: '',
+                        imageSelected: '',
+                        introduceSelected: '',
+                        priceSelected: '',
+                        itemSelected: null,
+                        scoreSelected: null,
                         page: 1,
                         total_page: null,
                         isRefresh: false,
@@ -77,17 +79,15 @@ export default class Menu extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.visibleLoading) {
-                        prevState.visibleLoading = nextProps.isLoading
+                if (nextProps.isLoading !== prevState.isLoading) {
+                        prevState.isLoading = nextProps.isLoading
                 }
-                /*   if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined) {
-                          prevState.listMenu = nextProps.listMenu
-                  } */
-                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && prevState.isRefresh && !prevState.isLoadMore) {
-                        prevState.isRefresh = false;
-                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
+                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listMenu = nextProps.listMenu;
-                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && prevState.isLoadMore) {
+                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+                        prevState.listMenu = nextProps.listMenu;
+                        prevState.isRefresh = false;
+                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listMenu = prevState.listMenu.concat(nextProps.listMenu);
                         prevState.isLoadMore = false;
                 }
@@ -147,7 +147,7 @@ export default class Menu extends Component {
         }
         _onClickCompleteAddMenu (data) {
                 this.setState({
-                        visibleLoading: !this.state.visibleLoading
+                        isLoading: !this.state.isLoading
                 })
                 data.idRestaurant = this.state.idRestaurant;
                 this.props.onAddMenu(data);
@@ -159,11 +159,9 @@ export default class Menu extends Component {
         }
         _onClickOpenDetailMenu (data) {
                 this.setState({
-                        visibleDetailMenu: !this.state.visibleDetailMenu,
-                        nameSelect: data.nameSelect,
-                        imageSelect: data.imageSelect,
-                        introduceSelect: data.introduceSelect,
-                        priceSelect: data.priceSelect
+                        itemSelected: data.item,
+                        scoreSelected: data.score,
+                        visibleDetailMenu: !this.state.visibleDetailMenu
                 });
         }
 
@@ -180,6 +178,7 @@ export default class Menu extends Component {
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
+                                        <Text style={styles.textHeader}>Thực Đơn</Text>
                                         {
                                                 this.state.showEdit ? <TouchableOpacity onPress={() => {
                                                         this.setState({
@@ -187,7 +186,9 @@ export default class Menu extends Component {
                                                         })
                                                 }}>
                                                         <Icon name='pluscircle' size={30} color={colorMain} />
-                                                </TouchableOpacity> : null
+                                                </TouchableOpacity> : <View style={{
+                                                        width: 25
+                                                }} />
                                         }
                                 </View>
                                 <View style={styles.content}>
@@ -207,10 +208,7 @@ export default class Menu extends Component {
                                                 renderItem={(item) => {
                                                         return (
                                                                 <ItemListMenu
-                                                                        name={item.item.name}
-                                                                        image={item.item.image}
-                                                                        introduce={item.item.introduce}
-                                                                        price={item.item.price}
+                                                                        item={item.item}
                                                                         _onClickOpenDetailMenu={this._onClickOpenDetailMenu}
                                                                 />
                                                         );
@@ -246,7 +244,7 @@ export default class Menu extends Component {
                                         />
                                 </Modal>
                                 <Modal
-                                        visible={this.state.visibleLoading}
+                                        visible={this.state.isLoading}
                                         transparent={true}
                                         animationType='slide'
                                 >
@@ -269,10 +267,8 @@ export default class Menu extends Component {
                                 >
                                         <DetailMenu
                                                 _onClickCloseDetailMenu={this._onClickCloseDetailMenu}
-                                                nameSelect={this.state.nameSelect}
-                                                introduceSelect={this.state.introduceSelect}
-                                                imageSelect={this.state.imageSelect}
-                                                priceSelect={this.state.priceSelect}
+                                                item={this.state.itemSelected}
+                                                scoreSelected={this.state.scoreSelected}
                                         />
                                 </Modal>
                         </View >
@@ -291,6 +287,11 @@ const styles = StyleSheet.create({
                 paddingHorizontal: 20,
                 flexDirection: 'row',
                 alignItems: 'center'
+        },
+        textHeader: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 18,
+                textTransform: 'capitalize'
         },
         content: {
                 flex: 1,

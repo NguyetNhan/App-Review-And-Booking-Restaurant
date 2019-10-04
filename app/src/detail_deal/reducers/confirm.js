@@ -1,6 +1,7 @@
 import {
         CONFIRM_ORDER_FAILED,
         CONFIRM_ORDER_SUCCEEDED,
+        RESET_PROPS_MESSAGE_CONFIRM,
         RESET_PROPS_CONFIRM
 } from '../actions/types';
 
@@ -24,6 +25,14 @@ const ConfirmReducers = (state = null, action) => {
                                         isLoading: false,
                                         messageConfirmSucceeded: undefined,
                                         message: undefined
+                                }
+                        };
+
+                case RESET_PROPS_MESSAGE_CONFIRM:
+                        return {
+                                resetPropsMessage: {
+                                        messageFailed: undefined,
+                                        messageSucceeded: undefined,
                                 }
                         };
                 default:

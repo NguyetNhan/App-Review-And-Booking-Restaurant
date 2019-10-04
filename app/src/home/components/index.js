@@ -49,7 +49,7 @@ export default class Home extends Component {
                                 }
                         ],
                 }
-                this.requestLocationPermission();
+                //    this.requestLocationPermission();
                 this._onClickItemFlatList = this._onClickItemFlatList.bind(this);
                 this._onClickModalRestaurant = this._onClickModalRestaurant.bind(this);
                 this._onClickModalCoffee = this._onClickModalCoffee.bind(this);
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20
+                fontSize: 18
         },
         selectIconType: {
                 flexDirection: 'row',

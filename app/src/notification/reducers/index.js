@@ -1,7 +1,7 @@
-import { FETCH_NOTIFICATION_FAILED, FETCH_NOTIFICATION_SUCCEEDED } from '../actions/action_types';
+import { FETCH_NOTIFICATION_FAILED, FETCH_NOTIFICATION_SUCCEEDED, RESET_PROPS_NOTIFICATION } from '../actions/action_types';
 
 
-const NotificationReducers = (state = [], action) => {
+const NotificationReducers = (state = null, action) => {
         switch (action.type) {
                 case FETCH_NOTIFICATION_SUCCEEDED:
                         return {
@@ -13,6 +13,14 @@ const NotificationReducers = (state = [], action) => {
                         return {
                                 FetchFailed: {
                                         messages: action.messages
+                                }
+                        };
+                case RESET_PROPS_NOTIFICATION:
+                        return {
+                                resetProps: {
+                                        messages: undefined,
+                                        listNotification: undefined,
+                                        isLoading: false
                                 }
                         };
                 default:

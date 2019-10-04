@@ -55,7 +55,6 @@ export default class Item extends Component {
                                                                 source={{ uri: `${urlServer}${this.state.restaurant.imageRestaurant[0]}` }}
                                                         /> : null
                                                 }
-
                                                 <Text
                                                         numberOfLines={1}
                                                         ellipsizeMode='tail'
@@ -141,6 +140,6 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
                 color: colorMain,
-                fontSize: 15,
+                fontSize: 12,
         },
 });

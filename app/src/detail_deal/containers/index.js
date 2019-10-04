@@ -9,6 +9,18 @@ export default class DetailDeal extends Component {
                 this.state = {
                         idOrder: props.navigation.getParam('idOrder', null)
                 };
+                this._onCallback = this._onCallback.bind(this);
+                this._onClickChangeScreenRestaurant = this._onClickChangeScreenRestaurant.bind(this);
+        }
+
+        _onCallback () {
+                this.props.navigation.state.params.callback();
+        }
+
+        _onClickChangeScreenRestaurant (order) {
+                this.props.navigation.navigate('AddReview', {
+                        order: order
+                });
         }
 
         render () {
@@ -23,11 +35,15 @@ export default class DetailDeal extends Component {
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
                                         <Text style={styles.textHeader}>chi tiết đơn hàng</Text>
-                                        <View />
+                                        <View style={{
+                                                width: 25
+                                        }} />
                                 </View>
                                 <View style={styles.content}>
                                         <StepIndicator
                                                 idOrder={this.state.idOrder}
+                                                _onCallback={this._onCallback}
+                                                _onClickChangeScreenRestaurant={this._onClickChangeScreenRestaurant}
                                         />
                                 </View>
                         </View>
@@ -50,7 +66,7 @@ const styles = StyleSheet.create({
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20,
+                fontSize: 18,
                 textTransform: 'capitalize'
         },
         content: {

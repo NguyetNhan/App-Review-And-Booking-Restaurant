@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Picker, View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, PermissionsAndroid, Image, Modal, FlatList, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
+import { Alert, Picker, View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, PermissionsAndroid, Image, Modal, FlatList, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import Geolocation from '@react-native-community/geolocation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
@@ -45,11 +45,18 @@ export default class RegisterRestaurant extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.isLoading) {
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
                         prevState.isLoading = nextProps.isLoading;
                 }
-                if (nextProps.changeScreen !== prevState.changeScreen && nextProps.changeScreen !== undefined) {
-                        // nextProps.navigation.navigate('AppAdminRestaurant');
+                if (nextProps.message !== undefined) {
+                        Alert.alert(
+                                'Thông Báo',
+                                nextProps.message,
+                                [
+                                        { text: 'OK', onPress: () => nextProps.onResetProps() },
+                                ],
+                                { cancelable: false },
+                        );
                 }
                 return null;
         }
@@ -76,14 +83,28 @@ export default class RegisterRestaurant extends Component {
                                                 }
                                         });
                                 }, (error) => {
-                                        console.log('error: ', error);
+                                        Alert.alert(
+                                                'Thông Báo',
+                                                error.message,
+                                                [
+                                                        { text: 'OK' },
+                                                ],
+                                                { cancelable: false },
+                                        );
                                 }, {
                                         enableHighAccuracy: true,
                                         timeout: 20000,
                                         maximumAge: 1000
                                 });
                         } else {
-                                alert('Chức năng này không được bạn cho phép sử dụng !');
+                                Alert.alert(
+                                        'Thông Báo',
+                                        'Chức năng này không được bạn cho phép sử dụng !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
                         }
                 } catch (err) {
                         console.warn(err);
@@ -97,7 +118,14 @@ export default class RegisterRestaurant extends Component {
                         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                                 this._handleButtonPress();
                         } else {
-                                console.log('Data permission denied');
+                                Alert.alert(
+                                        'Thông Báo',
+                                        'Bạn không thể sử dụng chức năng này !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
                         }
                 } catch (err) {
                         console.warn(err);
@@ -163,18 +191,17 @@ export default class RegisterRestaurant extends Component {
         }
 
         onClickButtonRegister () {
-                this.setState({
-                        isLoading: !this.state.isLoading
-                });
                 const listImage = this.state.selectImage;
                 var image = [];
-                for (var item of listImage) {
-                        var format = {
-                                uri: item.node.image.uri,
-                                name: item.node.image.filename,
-                                type: item.node.type
-                        };
-                        image.push(format);
+                if (listImage !== null) {
+                        for (var item of listImage) {
+                                var format = {
+                                        uri: item.node.image.uri,
+                                        name: item.node.image.filename,
+                                        type: item.node.type
+                                };
+                                image.push(format);
+                        }
                 }
                 const data = {
                         name: this.state.name,
@@ -189,7 +216,75 @@ export default class RegisterRestaurant extends Component {
                                 longitude: this.state.marker.longitude,
                         }
                 };
-                this.props.onRegisterRestaurant(data);
+                if (data.name.length === 0) {
+                        Alert.alert(
+                                'Thông Báo',
+                                'Tên không được để trống',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (data.introduce.length === 0) {
+                        Alert.alert(
+                                'Thông Báo',
+                                'Mô tả không được để trống',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (this.state.textTinh.length === 0) {
+                        Alert.alert(
+                                'Thông Báo',
+                                'Tỉnh không được để trống',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (this.state.textQuan.length === 0) {
+                        Alert.alert(
+                                'Thông Báo',
+                                'Quận  không được để trống',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (this.state.address.length === 0) {
+                        Alert.alert(
+                                'Thông Báo',
+                                'Địa chỉ không được để trống',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (data.image.length === 0) {
+                        Alert.alert(
+                                'Thông Báo',
+                                'Bạn chưa chọn hình giới thiệu',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else if (data.phone.length === 0) {
+                        Alert.alert(
+                                'Thông Báo',
+                                'Số điện thoại không được để trống',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                } else {
+                        this.setState({
+                                isLoading: !this.state.isLoading
+                        });
+                        this.props.onRegisterRestaurant(data);
+                }
         }
 
         _onClickOpenModalMap () {
@@ -220,8 +315,19 @@ export default class RegisterRestaurant extends Component {
                                 },
                         });
                 } catch (error) {
-                        console.log('error: ', error);
+                        Alert.alert(
+                                'Thông Báo',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
                 }
+        }
+
+        componentWillUnmount () {
+                this.props.onResetProps();
         }
 
         render () {
@@ -279,7 +385,6 @@ export default class RegisterRestaurant extends Component {
                                                         }>
                                                         <Picker.Item label="Nhà hàng" value="restaurant" />
                                                         <Picker.Item label="Coffee" value="coffee" />
-                                                        <Picker.Item label="Bar" value="bar" />
                                                 </Picker>
                                                 <View style={{
                                                         height: 1,
@@ -490,9 +595,9 @@ export default class RegisterRestaurant extends Component {
                                                                         visibleModalSelectImage: !this.state.visibleModalSelectImage
                                                                 });
                                                         }} >
-                                                                <Icon name='down' size={30} color='black' />
+                                                                <Icon name='down' size={25} color='black' />
                                                         </TouchableOpacity>
-                                                        <Text style={styles.titleHeader}>Image</Text>
+                                                        <Text style={styles.titleHeader}>Ảnh</Text>
                                                         <TouchableOpacity
                                                                 onPress={() => {
                                                                         this.setState({
@@ -500,7 +605,7 @@ export default class RegisterRestaurant extends Component {
                                                                         });
                                                                         this.onClickCompleteSelectImage();
                                                                 }} >
-                                                                <Icon name='check' size={30} color='black' />
+                                                                <Icon name='check' size={25} color='black' />
                                                         </TouchableOpacity>
                                                 </View>
                                                 <FlatList
@@ -548,20 +653,7 @@ export default class RegisterRestaurant extends Component {
                                                 />
                                         </View>
                                 </Modal>
-                                <Modal
-                                        transparent={true}
-                                        animationType='slide'
-                                        visible={this.state.isLoading}
-                                >
-                                        <View style={{
-                                                flex: 1,
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                backgroundColor: 'rgba(0,0,0,0.5)'
-                                        }}>
-                                                <ActivityIndicator animating={true} size={100} color={colorMain} />
-                                        </View>
-                                </Modal>
+
                                 <Modal
                                         transparent={false}
                                         animationType='slide'
@@ -576,6 +668,19 @@ export default class RegisterRestaurant extends Component {
                                                 _marker={this.state.marker}
                                                 _region={this.state.region}
                                         />
+                                </Modal>
+                                <Modal
+                                        animationType='slide'
+                                        visible={this.state.isLoading}
+                                >
+                                        <View style={{
+                                                flex: 1,
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: 'rgba(0,0,0,0.9)'
+                                        }}>
+                                                <ActivityIndicator animating={true} size={100} color={colorMain} />
+                                        </View>
                                 </Modal>
                         </View>
                 );
@@ -621,12 +726,12 @@ const styles = StyleSheet.create({
                 alignItems: 'center',
                 borderBottomWidth: 1,
                 borderBottomColor: 'rgba(0,0,0,0.3)',
-                marginHorizontal: 5
+                marginHorizontal: 20
         },
         titleHeader: {
                 fontFamily: 'UVN-Baisau-Regular',
                 color: 'black',
-                fontSize: 30,
+                fontSize: 18,
         },
         buttonRegister: {
                 width: 150,
@@ -664,7 +769,7 @@ const styles = StyleSheet.create({
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20,
+                fontSize: 18,
                 marginLeft: 10
         },
         map: {

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, FlatList, ActivityIndicator } from 'react-native';
-import { urlServer, colorMain } from '../../config';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, FlatList, ActivityIndicator } from 'react-native';
+import { urlServer, colorMain, background } from '../../config';
 import { convertVND } from '../../functions/convert';
 import ItemListMenu from '../../order/components/item_list_modal_complete';
-import { AccountModel } from '../../models/account';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ModalQrClient from './modal_qr_client';
 
 export default class Confirm extends Component {
         constructor (props) {
@@ -22,11 +23,36 @@ export default class Confirm extends Component {
                         totalMoney: props.item.totalMoney,
                         note: props.item.note,
                         isLoading: false,
+                        visibleModalQrClient: false,
                 };
+                this._onCloseModalQrClient = this._onCloseModalQrClient.bind(this);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.messageSucceeded !== undefined && !prevState.isLoading && !prevState.refreshing) {
+                        Alert.alert(
+                                'Thông Báo',
+                                nextProps.messageSucceeded,
+                                [
+                                        {
+                                                text: 'OK',
+                                        },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+                if (nextProps.messageFailed !== undefined && !prevState.isLoading && !prevState.refreshing) {
+                        Alert.alert(
+                                'Thông Báo',
+                                nextProps.messageFailed,
+                                [
+                                        { text: 'OK', onPress: () => nextProps.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
+                }
                 if (nextProps.messageConfirmSucceeded !== undefined) {
+                        nextProps._onCallback();
                         alert(nextProps.messageConfirmSucceeded);
                 }
                 if (nextProps.isLoading !== undefined && nextProps.isLoading !== prevState.isLoading) {
@@ -45,7 +71,8 @@ export default class Confirm extends Component {
                 });
                 const data = {
                         idOrder: this.state.item._id,
-                        status: 'activity'
+                        status: 'activity',
+                        idAccount: this.state.account.id
                 };
                 this.props.onConfirmOrder(data);
         }
@@ -56,10 +83,27 @@ export default class Confirm extends Component {
                 });
                 const data = {
                         idOrder: this.state.item._id,
-                        status: 'cancel'
+                        status: 'cancel',
+                        idAccount: this.state.account.id
                 };
                 this.props.onConfirmOrder(data);
         }
+        _onOpenModalQrClient () {
+                this.setState({
+                        visibleModalQrClient: !this.state.visibleModalQrClient
+                });
+        }
+
+        _onCloseModalQrClient () {
+                this.setState({
+                        visibleModalQrClient: !this.state.visibleModalQrClient
+                });
+        }
+
+        onClickReview () {
+                this.props._onChangeScreenRestaurant(this.state.item);
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsConfirm();
         }
@@ -77,118 +121,183 @@ export default class Confirm extends Component {
                 } else {
                         return (
                                 <View style={styles.container}>
-                                        <ScrollView style={{
-                                                flex: 1
-                                        }} >
-                                                <View style={styles.content}>
-                                                        <Text style={styles.textTitle}>thông tin cá nhân</Text>
-                                                        <View style={styles.containerValue}>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>Họ và tên: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {this.state.customerName}
-                                                                        </Text>
-                                                                </View>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>số điện thoại: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {this.state.customerPhone}
-                                                                        </Text>
-                                                                </View>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>địa chỉ email: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {this.state.customerEmail}
-                                                                        </Text>
-                                                                </View>
-                                                        </View>
-                                                        <Text style={styles.textTitle}>thông tin đặt chỗ</Text>
-                                                        <View style={styles.containerValue}>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>ngày nhận tiệc: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {convertDate}
-                                                                        </Text>
-                                                                </View>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>giờ nhận tiệc: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {convertTime}
-                                                                        </Text>
-                                                                </View>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>số lượng người: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {this.state.amountPerson}
-                                                                        </Text>
-                                                                </View>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>ghi chú: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {this.state.note}
-                                                                        </Text>
-                                                                </View>
-                                                        </View>
-                                                        <Text style={styles.textTitle}>thông tin thực đơn</Text>
-                                                        <View
-                                                                style={styles.flatList}
-                                                        >
-                                                                <FlatList
-                                                                        data={this.state.food}
-                                                                        extraData={this.state}
-                                                                        keyExtractor={(item, index) => index.toString()}
-                                                                        horizontal={true}
-                                                                        renderItem={(item) => {
-                                                                                return (
-                                                                                        <ItemListMenu
-                                                                                                item={item.item}
-                                                                                        />
-                                                                                );
-                                                                        }}
-                                                                />
-                                                        </View>
-                                                        <Text style={styles.textTitle}>thông tin thanh toán</Text>
-                                                        <View style={styles.containerValue}>
-                                                                <View style={styles.formatValue}>
-                                                                        <Text style={styles.textTitleValue}>Tổng tiền thanh toán: </Text>
-                                                                        <Text style={styles.textValue}>
-                                                                                {convertVND(this.state.totalMoney)} VND
-                                                                </Text>
-                                                                </View>
-                                                        </View>
-                                                        {
+                                        {
+                                                this.state.account === null ? null :
+                                                        this.state.item.status === 'waiting' ?
+                                                                this.state.account.authorities === 'admin-restaurant' ?
+                                                                        <View style={styles.containerButton}>
+                                                                                <TouchableOpacity
+                                                                                        onPress={() => {
+                                                                                                this._onConfirmAgree();
+                                                                                        }}
+                                                                                        style={styles.buttonChat}>
+                                                                                        <Text style={styles.textButtonAgree}>chấp nhận</Text>
+                                                                                </TouchableOpacity>
+                                                                                <TouchableOpacity
+                                                                                        onPress={() => {
+                                                                                                this._onConfirmCancel();
+                                                                                        }}
+                                                                                        style={styles.buttonConfirmCancelDeal}>
+                                                                                        <Text style={styles.textButtonCancel}>xác nhận hủy giao dịch</Text>
+                                                                                </TouchableOpacity>
+                                                                        </View>
+                                                                        :
+                                                                        this.state.account.authorities === 'client' ?
+                                                                                null
+                                                                                :
+                                                                                null
+                                                                :
                                                                 this.state.item.status === 'cancel' ? null :
-                                                                        this.state.item.status === 'activity' ? null :
-                                                                                this.state.item.status === 'complete' ? null :
-                                                                                        this.state.account === null ? null :
-                                                                                                this.state.account.authorities === 'admin-restaurant' ? <View style={styles.containerButton}>
+                                                                        this.state.item.status === 'review' ?
+                                                                                this.state.account.authorities === 'admin-restaurant' ? null :
+                                                                                        this.state.account.authorities === 'client' ?
+                                                                                                <View style={styles.containerButton}>
                                                                                                         <TouchableOpacity
                                                                                                                 onPress={() => {
-                                                                                                                        this._onConfirmAgree();
+                                                                                                                        this.onClickReview();
                                                                                                                 }}
-                                                                                                                style={styles.buttonAgree}>
-                                                                                                                <Text style={styles.textButton}>chấp nhận</Text>
+                                                                                                                style={styles.buttonReview}>
+                                                                                                                <View style={styles.containerTextButton}>
+                                                                                                                        <MaterialCommunityIcons name='star' size={25} color={colorMain} />
+                                                                                                                        <Text style={styles.textButtonRestaurant}>đánh giá</Text>
+                                                                                                                </View>
                                                                                                         </TouchableOpacity>
-                                                                                                        <TouchableOpacity
-                                                                                                                onPress={() => {
-                                                                                                                        this._onConfirmCancel();
-                                                                                                                }}
-                                                                                                                style={styles.buttonCancel}>
-                                                                                                                <Text style={styles.textButton}>hủy</Text>
-                                                                                                        </TouchableOpacity>
-                                                                                                </View> :
-                                                                                                        this.state.account.authorities === 'client' ? <View style={styles.containerButton}>
+                                                                                                </View>
+                                                                                                :
+                                                                                                null
+                                                                                :
+                                                                                this.state.item.status === 'complete' ? null
+                                                                                        :
+                                                                                        this.state.item.status === 'activity' ?
+                                                                                                this.state.account.authorities === 'admin-restaurant' ?
+                                                                                                        <View style={styles.containerButton}>
+                                                                                                                <TouchableOpacity style={styles.buttonChat}>
+                                                                                                                        <Text style={styles.textButtonAgree}>gửi tin nhắn</Text>
+                                                                                                                </TouchableOpacity>
                                                                                                                 <TouchableOpacity
                                                                                                                         onPress={() => {
                                                                                                                                 this._onConfirmCancel();
                                                                                                                         }}
-                                                                                                                        style={styles.buttonCancel}>
-                                                                                                                        <Text style={styles.textButton}>hủy</Text>
+                                                                                                                        style={styles.buttonConfirmCancelDeal}>
+                                                                                                                        <Text style={styles.textButtonCancel}>xác nhận hủy giao dịch</Text>
                                                                                                                 </TouchableOpacity>
-                                                                                                        </View> : null
-                                                        }
+                                                                                                        </View>
+                                                                                                        :
+                                                                                                        this.state.account.authorities === 'client' ?
+                                                                                                                <View style={styles.containerButton}>
+                                                                                                                        <TouchableOpacity style={styles.buttonQR}
+                                                                                                                                onPress={() => {
+                                                                                                                                        this._onOpenModalQrClient();
+                                                                                                                                }}
+                                                                                                                        >
+                                                                                                                                <View style={styles.containerTextButton}>
+                                                                                                                                        <MaterialCommunityIcons name='qrcode-scan' size={25} color={colorMain} />
+                                                                                                                                        <Text style={styles.textButtonQR}>Mã QR Xác Thực</Text>
+                                                                                                                                </View>
+                                                                                                                        </TouchableOpacity>
+                                                                                                                </View>
+                                                                                                                :
+                                                                                                                null
+                                                                                                :
+                                                                                                null
+                                        }
+                                        <View style={styles.content}>
+                                                <Text style={styles.textTitle}>thông tin cá nhân</Text>
+                                                <View style={styles.containerValue}>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>Họ và tên: </Text>
+                                                                <Text style={styles.textValue}>
+                                                                        {this.state.customerName}
+                                                                </Text>
+                                                        </View>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>số điện thoại: </Text>
+                                                                <Text style={styles.textValue}>
+                                                                        {this.state.customerPhone}
+                                                                </Text>
+                                                        </View>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>địa chỉ email: </Text>
+                                                                <Text style={styles.textValue}>
+                                                                        {this.state.customerEmail}
+                                                                </Text>
+                                                        </View>
                                                 </View>
-                                        </ScrollView>
+                                        </View>
+                                        <View style={styles.content}>
+                                                <Text style={styles.textTitle}>thông tin đặt chỗ</Text>
+                                                <View style={styles.containerValue}>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>ngày nhận tiệc: </Text>
+                                                                <Text style={styles.textValue}>
+                                                                        {convertDate}
+                                                                </Text>
+                                                        </View>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>giờ nhận tiệc: </Text>
+                                                                <Text style={styles.textValue}>
+                                                                        {convertTime}
+                                                                </Text>
+                                                        </View>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>số lượng người: </Text>
+                                                                <Text style={styles.textValue}>
+                                                                        {this.state.amountPerson}
+                                                                </Text>
+                                                        </View>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>ghi chú: </Text>
+                                                                <Text style={styles.textValue}>
+                                                                        {this.state.note}
+                                                                </Text>
+                                                        </View>
+                                                </View>
+                                        </View>
+                                        <View style={styles.content}>
+                                                <Text style={styles.textTitle}>thông tin thực đơn</Text>
+                                                <View
+                                                        style={styles.flatList}
+                                                >
+                                                        <FlatList
+                                                                data={this.state.food}
+                                                                extraData={this.state}
+                                                                keyExtractor={(item, index) => index.toString()}
+                                                                horizontal={true}
+                                                                showsHorizontalScrollIndicator={false}
+                                                                renderItem={(item) => {
+                                                                        return (
+                                                                                <ItemListMenu
+                                                                                        item={item.item}
+                                                                                />
+                                                                        );
+                                                                }}
+                                                        />
+                                                </View>
+                                        </View>
+                                        <View style={styles.content}>
+                                                <Text style={styles.textTitle}>thông tin thanh toán</Text>
+                                                <View style={styles.containerValue}>
+                                                        <View style={styles.formatValue}>
+                                                                <Text style={styles.textTitleValue}>Tổng tiền thanh toán: </Text>
+                                                                <Text style={styles.textValuePrice}>
+                                                                        {convertVND(this.state.totalMoney)} VND
+                                                                </Text>
+                                                        </View>
+                                                </View>
+                                        </View>
+                                        <Modal
+                                                visible={this.state.visibleModalQrClient}
+                                                animationType='slide'
+                                                onRequestClose={() => {
+                                                        this._onCloseModalQrClient();
+                                                }}
+                                        >
+                                                <ModalQrClient
+                                                        idOrder={this.state.item._id}
+                                                        _onCloseModalQrClient={this._onCloseModalQrClient}
+                                                />
+                                        </Modal>
+
                                 </View>
                         );
                 }
@@ -198,31 +307,36 @@ export default class Confirm extends Component {
 const styles = StyleSheet.create({
         container: {
                 flex: 1,
+                backgroundColor: background
         },
         content: {
-                flex: 1,
-                paddingHorizontal: 20
+                backgroundColor: 'white',
+                marginVertical: 5,
+                paddingVertical: 5
         },
         textTitle: {
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
-                marginTop: 15,
                 textAlign: 'center',
-                marginBottom: 5
         },
         containerValue: {
-                borderWidth: 1,
-                borderColor: colorMain,
-                borderRadius: 10,
                 padding: 10
         },
         textTitleValue: {
                 fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'capitalize'
+                textTransform: 'capitalize',
+                fontSize: 12,
         },
         textValue: {
                 fontFamily: 'UVN-Baisau-Bold',
                 flex: 1,
+                fontSize: 12,
+        },
+        textValuePrice: {
+                fontFamily: 'UVN-Baisau-Bold',
+                flex: 1,
+                fontSize: 12,
+                color: 'red'
         },
         formatValue: {
                 flexDirection: 'row',
@@ -230,38 +344,148 @@ const styles = StyleSheet.create({
                 marginVertical: 5
         },
         flatList: {
-                alignItems: 'center'
+                alignItems: 'center',
+                marginTop: 5
         },
         containerButton: {
                 width: '100%',
                 alignItems: 'center',
-                marginVertical: 20
+                marginVertical: 10,
+                justifyContent: 'space-around'
         },
         buttonAgree: {
-                width: 100,
-                height: 50,
+                width: 180,
+                height: 40,
+                borderRadius: 30,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: colorMain,
-                borderRadius: 15,
-                marginBottom: 10
+                paddingHorizontal: 15
         },
         buttonCancel: {
-                width: 100,
-                height: 50,
+                width: 180,
+                height: 40,
+                borderRadius: 30,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'red',
-                borderRadius: 15
+                paddingHorizontal: 15,
+                marginTop: 10
         },
         textButton: {
                 color: 'white',
-                fontFamily: 'UVN-Baisau-Regular',
-                textTransform: 'capitalize'
+                textTransform: 'capitalize',
+                fontFamily: 'UVN-Baisau-Bold',
+                textAlign: 'center',
+                fontSize: 12,
         },
         loading: {
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center'
         },
+        buttonChat: {
+                width: 180,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 15,
+                borderRadius: 15,
+                marginVertical: 5,
+                borderWidth: 1,
+                borderColor: colorMain,
+                backgroundColor: 'white'
+        },
+        buttonConfirmCancelDeal: {
+                width: 180,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 15,
+                marginTop: 10,
+                borderRadius: 15,
+                marginVertical: 5,
+                borderWidth: 1,
+                borderColor: 'red',
+                backgroundColor: 'white'
+        },
+        buttonRestaurant: {
+                width: 180,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 15,
+                borderRadius: 15,
+                marginVertical: 5,
+                borderWidth: 1,
+                borderColor: colorMain,
+                backgroundColor: 'white'
+        },
+        buttonQR: {
+                width: 180,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 15,
+                borderRadius: 15,
+                marginVertical: 5,
+                borderWidth: 1,
+                borderColor: colorMain,
+                backgroundColor: 'white'
+        },
+        textButtonRestaurant: {
+                color: colorMain,
+                fontFamily: 'UVN-Baisau-Bold',
+                textTransform: 'capitalize',
+                flex: 1,
+                textAlign: 'center',
+                fontSize: 12,
+        },
+        textButtonQR: {
+                color: colorMain,
+                fontFamily: 'UVN-Baisau-Bold',
+                flex: 1,
+                textAlign: 'center',
+                fontSize: 12,
+                textTransform: 'capitalize',
+        },
+        containerTextButton: {
+                flexDirection: 'row',
+                alignItems: 'center'
+        },
+        buttonRestaurantReview: {
+                width: 140,
+                height: 40,
+                borderRadius: 30,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colorMain,
+                paddingHorizontal: 15
+        },
+        buttonReview: {
+                width: 140,
+                height: 40,
+                borderRadius: 15,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 15,
+                marginVertical: 5,
+                borderWidth: 1,
+                borderColor: colorMain,
+                backgroundColor: 'white'
+        },
+        textButtonAgree: {
+                color: colorMain,
+                fontFamily: 'UVN-Baisau-Bold',
+                textAlign: 'center',
+                fontSize: 12,
+                textTransform: 'capitalize',
+        },
+        textButtonCancel: {
+                color: 'red',
+                fontFamily: 'UVN-Baisau-Bold',
+                textAlign: 'center',
+                fontSize: 12,
+                textTransform: 'capitalize',
+        }
 });
