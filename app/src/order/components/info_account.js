@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colorMain } from '../../config';
+import { colorMain, background } from '../../config';
 import { AccountModel } from '../../models/account';
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+
 
 export default class InfoAccount extends Component {
         constructor (props) {
@@ -12,18 +14,63 @@ export default class InfoAccount extends Component {
                         name: null,
                         email: null,
                         phone: null,
+                        discount: [
+                                {
+                                        label: '123',
+                                        value: 0,
+                                        type: 'score'
+                                }
+                        ],
+                        valueDiscount: null,
                 };
 
         }
 
         async _fetchInfoAccount () {
-                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        account: account,
-                        name: account.name,
-                        email: account.email,
-                        phone: (account.phone).toString()
-                });
+                try {
+                        const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                        } else {
+                                if (account.data.score <= 0) {
+                                        this.setState({
+                                                account: account.data,
+                                                name: account.data.name,
+                                                email: account.data.email,
+                                                phone: (account.data.phone).toString(),
+                                                discount: [],
+                                        });
+                                } else {
+                                        var listDiscount = this.state.discount;
+                                        listDiscount[0].label = `Sử dụng ${account.data.score} điểm tích lũy`;
+                                        listDiscount[0].value = account.data.score;
+                                        this.setState({
+                                                account: account.data,
+                                                name: account.data.name,
+                                                email: account.data.email,
+                                                phone: (account.data.phone).toString(),
+                                                discount: listDiscount,
+                                        });
+                                }
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+
         }
 
 
@@ -34,12 +81,28 @@ export default class InfoAccount extends Component {
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.changePage !== undefined) {
                         if (nextProps.changePage == 'settling') {
-                                nextProps._setInfoAccount({
-                                        name: prevState.name,
-                                        email: prevState.email,
-                                        phone: prevState.phone,
-                                        idClient: prevState.account.id,
-                                });
+                                if (prevState.valueDiscount !== null) {
+                                        nextProps._setInfoAccount({
+                                                name: prevState.name,
+                                                email: prevState.email,
+                                                phone: prevState.phone,
+                                                idClient: prevState.account.id,
+                                                discount: {
+                                                        name: prevState.discount[prevState.valueDiscount].label,
+                                                        score: prevState.discount[prevState.valueDiscount].value,
+                                                        type: prevState.discount[prevState.valueDiscount].type
+                                                },
+                                        });
+                                }
+                                else {
+                                        nextProps._setInfoAccount({
+                                                name: prevState.name,
+                                                email: prevState.email,
+                                                phone: prevState.phone,
+                                                idClient: prevState.account.id,
+                                                discount: null,
+                                        });
+                                }
                         }
                 }
                 return null;
@@ -54,7 +117,9 @@ export default class InfoAccount extends Component {
                 };
                 this.props._onActionOrder(info);
         }
-
+        componentWillUnmount () {
+                this.props.onResetPropsFormInfoAccount();
+        }
         render () {
                 return (
                         <View style={styles.container}>
@@ -91,7 +156,72 @@ export default class InfoAccount extends Component {
                                                 value={this.state.phone}
                                                 keyboardType='numeric'
                                         />
+                                        <Text style={styles.textTitle}>
+                                                chương trình khuyến mãi của bạn
+                                        </Text>
+                                        <View style={styles.containerDiscount}>
+                                                <RadioForm
+                                                        formHorizontal={false}
+                                                        animation={true}
+                                                >
+                                                        {this.state.discount.map((item, index) => {
+                                                                if (item.value === 0)
+                                                                        return null;
+                                                                else
+                                                                        return (
+                                                                                <RadioButton
+                                                                                        labelHorizontal={true}
+                                                                                        key={index}
+                                                                                >
+                                                                                        <RadioButtonInput
+                                                                                                obj={item}
+                                                                                                index={index}
+                                                                                                isSelected={this.state.valueDiscount === index}
+                                                                                                onPress={() => {
+                                                                                                        if (this.state.valueDiscount === index)
+                                                                                                                this.setState({
+                                                                                                                        valueDiscount: null
+                                                                                                                });
+                                                                                                        else
+                                                                                                                this.setState({
+                                                                                                                        valueDiscount: index
+                                                                                                                });
+                                                                                                }}
+                                                                                                borderWidth={2}
+                                                                                                buttonInnerColor={colorMain}
+                                                                                                buttonOuterColor={this.state.valueDiscount === index ? colorMain : '#000'}
+                                                                                                buttonSize={15}
+                                                                                                buttonOuterSize={25}
+                                                                                                buttonStyle={{}}
+                                                                                                buttonWrapStyle={{ marginLeft: 10 }}
+                                                                                        />
+                                                                                        <RadioButtonLabel
+                                                                                                obj={item}
+                                                                                                index={index}
+                                                                                                labelHorizontal={true}
+                                                                                                onPress={() => {
+                                                                                                        if (this.state.valueDiscount === index)
+                                                                                                                this.setState({
+                                                                                                                        valueDiscount: null
+                                                                                                                });
+                                                                                                        else
+                                                                                                                this.setState({
+                                                                                                                        valueDiscount: index
+                                                                                                                });
+                                                                                                }}
+                                                                                                labelStyle={styles.textLabelButtonRadio}
+                                                                                                labelWrapStyle={{
+                                                                                                }}
+                                                                                        />
+                                                                                </RadioButton>
+                                                                        );
+
+                                                        })}
+
+                                                </RadioForm>
+                                        </View>
                                 </View>
+
                                 <View style={styles.containerButtonNavigator}>
                                         <TouchableOpacity
                                                 onPress={() => {
@@ -102,7 +232,46 @@ export default class InfoAccount extends Component {
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                                 onPress={() => {
-                                                        this.props._onComplete();
+                                                        if (this.state.valueDiscount !== null) {
+                                                                this.props._setInfoAccount({
+                                                                        name: this.state.name,
+                                                                        email: this.state.email,
+                                                                        phone: this.state.phone,
+                                                                        idClient: this.state.account.id,
+                                                                        discount: {
+                                                                                name: this.state.discount[this.state.valueDiscount].label,
+                                                                                score: this.state.discount[this.state.valueDiscount].value,
+                                                                                type: this.state.discount[this.state.valueDiscount].type
+                                                                        },
+                                                                });
+                                                                this.props._onComplete({
+                                                                        name: this.state.name,
+                                                                        email: this.state.email,
+                                                                        phone: this.state.phone,
+                                                                        idClient: this.state.account.id,
+                                                                        discount: {
+                                                                                name: this.state.discount[this.state.valueDiscount].label,
+                                                                                score: this.state.discount[this.state.valueDiscount].value,
+                                                                                type: this.state.discount[this.state.valueDiscount].type
+                                                                        },
+                                                                });
+                                                        }
+                                                        else {
+                                                                this.props._setInfoAccount({
+                                                                        name: this.state.name,
+                                                                        email: this.state.email,
+                                                                        phone: this.state.phone,
+                                                                        idClient: this.state.account.id,
+                                                                        discount: null,
+                                                                });
+                                                                this.props._onComplete({
+                                                                        name: this.state.name,
+                                                                        email: this.state.email,
+                                                                        phone: this.state.phone,
+                                                                        idClient: this.state.account.id,
+                                                                        discount: null,
+                                                                });
+                                                        }
                                                 }}
                                                 style={styles.buttonDat}>
                                                 <Text style={styles.textButton}>đặt</Text>
@@ -131,8 +300,9 @@ const styles = StyleSheet.create({
         textInput: {
                 fontFamily: 'OpenSans-Regular',
                 borderWidth: 1,
-                borderRadius: 10,
-                borderColor: 'gray'
+                borderRadius: 15,
+                borderColor: 'gray',
+                paddingHorizontal: 10
         },
         buttonOk: {
                 width: 80,
@@ -150,6 +320,13 @@ const styles = StyleSheet.create({
                 justifyContent: 'center',
                 backgroundColor: 'red',
                 borderRadius: 10
+        },
+        containerDiscount: {
+                marginTop: 5
+        },
+        textLabelButtonRadio: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize'
         },
         containerButtonNavigator: {
                 flexDirection: 'row',

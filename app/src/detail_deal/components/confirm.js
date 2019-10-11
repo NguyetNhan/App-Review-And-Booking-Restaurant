@@ -21,6 +21,8 @@ export default class Confirm extends Component {
                         food: props.item.food,
                         receptionTime: props.item.receptionTime,
                         totalMoney: props.item.totalMoney,
+                        totalMoneyFood: props.item.totalMoneyFood,
+                        discount: props.item.discount,
                         note: props.item.note,
                         isLoading: false,
                         visibleModalQrClient: false,
@@ -29,7 +31,8 @@ export default class Confirm extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.messageSucceeded !== undefined && !prevState.isLoading && !prevState.refreshing) {
+                if (nextProps.messageSucceeded !== undefined && !prevState.isLoading) {
+                        nextProps._onCallback();
                         Alert.alert(
                                 'Thông Báo',
                                 nextProps.messageSucceeded,
@@ -41,7 +44,7 @@ export default class Confirm extends Component {
                                 { cancelable: false },
                         );
                 }
-                if (nextProps.messageFailed !== undefined && !prevState.isLoading && !prevState.refreshing) {
+                if (nextProps.messageFailed !== undefined && !prevState.isLoading) {
                         Alert.alert(
                                 'Thông Báo',
                                 nextProps.messageFailed,
@@ -51,15 +54,8 @@ export default class Confirm extends Component {
                                 { cancelable: false },
                         );
                 }
-                if (nextProps.messageConfirmSucceeded !== undefined) {
-                        nextProps._onCallback();
-                        alert(nextProps.messageConfirmSucceeded);
-                }
                 if (nextProps.isLoading !== undefined && nextProps.isLoading !== prevState.isLoading) {
                         prevState.isLoading = nextProps.isLoading;
-                }
-                if (nextProps.message !== undefined) {
-                        alert(nextProps.message);
                 }
                 return null;
         }
@@ -130,20 +126,28 @@ export default class Confirm extends Component {
                                                                                         onPress={() => {
                                                                                                 this._onConfirmAgree();
                                                                                         }}
-                                                                                        style={styles.buttonChat}>
+                                                                                        style={styles.buttonAgree}>
                                                                                         <Text style={styles.textButtonAgree}>chấp nhận</Text>
                                                                                 </TouchableOpacity>
                                                                                 <TouchableOpacity
                                                                                         onPress={() => {
                                                                                                 this._onConfirmCancel();
                                                                                         }}
-                                                                                        style={styles.buttonConfirmCancelDeal}>
-                                                                                        <Text style={styles.textButtonCancel}>xác nhận hủy giao dịch</Text>
+                                                                                        style={styles.buttonCancel}>
+                                                                                        <Text style={styles.textButtonCancel}>hủy giao dịch</Text>
                                                                                 </TouchableOpacity>
                                                                         </View>
                                                                         :
                                                                         this.state.account.authorities === 'client' ?
-                                                                                null
+                                                                                <View style={styles.containerButton}>
+                                                                                        <TouchableOpacity
+                                                                                                onPress={() => {
+                                                                                                        this._onConfirmCancel();
+                                                                                                }}
+                                                                                                style={styles.buttonCancelClient}>
+                                                                                                <Text style={styles.textButtonCancel}>hủy giao dịch</Text>
+                                                                                        </TouchableOpacity>
+                                                                                </View>
                                                                                 :
                                                                                 null
                                                                 :
@@ -171,15 +175,18 @@ export default class Confirm extends Component {
                                                                                         this.state.item.status === 'activity' ?
                                                                                                 this.state.account.authorities === 'admin-restaurant' ?
                                                                                                         <View style={styles.containerButton}>
-                                                                                                                <TouchableOpacity style={styles.buttonChat}>
+                                                                                                                <TouchableOpacity
+                                                                                                                        onPress={() => {
+                                                                                                                        }}
+                                                                                                                        style={styles.buttonAgree}>
                                                                                                                         <Text style={styles.textButtonAgree}>gửi tin nhắn</Text>
                                                                                                                 </TouchableOpacity>
                                                                                                                 <TouchableOpacity
                                                                                                                         onPress={() => {
                                                                                                                                 this._onConfirmCancel();
                                                                                                                         }}
-                                                                                                                        style={styles.buttonConfirmCancelDeal}>
-                                                                                                                        <Text style={styles.textButtonCancel}>xác nhận hủy giao dịch</Text>
+                                                                                                                        style={styles.buttonCancel}>
+                                                                                                                        <Text style={styles.textButtonCancel}>hủy giao dịch</Text>
                                                                                                                 </TouchableOpacity>
                                                                                                         </View>
                                                                                                         :
@@ -277,12 +284,19 @@ export default class Confirm extends Component {
                                         <View style={styles.content}>
                                                 <Text style={styles.textTitle}>thông tin thanh toán</Text>
                                                 <View style={styles.containerValue}>
-                                                        <View style={styles.formatValue}>
-                                                                <Text style={styles.textTitleValue}>Tổng tiền thanh toán: </Text>
-                                                                <Text style={styles.textValuePrice}>
-                                                                        {convertVND(this.state.totalMoney)} VND
-                                                                </Text>
-                                                        </View>
+                                                        {
+                                                                this.state.discount === null ? null :
+                                                                        this.state.discount.type === 'score' ?
+                                                                                <Text style={styles.textTitleValueMoney}>Sử dụng điểm tích lũy: <Text style={styles.textValuePriceMoney}>{convertVND(this.state.discount.score)} VND</Text></Text>
+                                                                                :
+                                                                                null
+                                                        }
+                                                        <Text style={styles.textTitleValueMoney}>Tổng tiền thực đơn: <Text style={styles.textValuePriceMoney}>
+                                                                {convertVND(this.state.totalMoneyFood)} VND
+                                                                </Text></Text>
+                                                        <Text style={styles.textTitleValueMoney}>Tổng tiền thanh toán: <Text style={styles.textValuePriceMoney}>
+                                                                {convertVND(this.state.totalMoney)} VND
+                                                                </Text></Text>
                                                 </View>
                                         </View>
                                         <Modal
@@ -338,6 +352,18 @@ const styles = StyleSheet.create({
                 fontSize: 12,
                 color: 'red'
         },
+        textTitleValueMoney: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize',
+                fontSize: 12,
+        },
+        textValuePriceMoney: {
+                fontFamily: 'UVN-Baisau-Bold',
+                flex: 1,
+                fontSize: 12,
+                color: 'red',
+                textTransform: 'uppercase'
+        },
         formatValue: {
                 flexDirection: 'row',
                 justifyContent: 'center',
@@ -351,26 +377,32 @@ const styles = StyleSheet.create({
                 width: '100%',
                 alignItems: 'center',
                 marginVertical: 10,
-                justifyContent: 'space-around'
+                flexDirection: 'row',
+                justifyContent: 'center'
         },
         buttonAgree: {
-                width: 180,
+                width: 120,
                 height: 40,
-                borderRadius: 30,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: colorMain,
-                paddingHorizontal: 15
+                paddingHorizontal: 15,
+                backgroundColor: 'white',
+                borderColor: colorMain,
+                borderWidth: 1,
+                borderBottomLeftRadius: 30,
+                borderTopLeftRadius: 30
         },
         buttonCancel: {
-                width: 180,
+                width: 120,
                 height: 40,
-                borderRadius: 30,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: 'red',
                 paddingHorizontal: 15,
-                marginTop: 10
+                backgroundColor: 'white',
+                borderColor: 'red',
+                borderWidth: 1,
+                borderBottomRightRadius: 30,
+                borderTopRightRadius: 30
         },
         textButton: {
                 color: 'white',
@@ -487,5 +519,16 @@ const styles = StyleSheet.create({
                 textAlign: 'center',
                 fontSize: 12,
                 textTransform: 'capitalize',
+        },
+        buttonCancelClient: {
+                width: 120,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 15,
+                backgroundColor: 'white',
+                borderColor: 'red',
+                borderWidth: 1,
+                borderRadius: 30
         }
 });

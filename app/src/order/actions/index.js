@@ -6,7 +6,11 @@ import {
         ADD_ORDER_FAILED,
         ADD_ORDER_SUCCEEDED,
         ON_CHANGE_PAGE,
-        RESET_PROPS
+        RESET_PROPS_MESSAGE_ORDER,
+        RESET_PROPS_FORM_INFO_ORDER,
+        RESET_PROPS_FORM_TIME_ORDER,
+        RESET_PROPS_FORM_MENU_ORDER,
+        RESET_PROPS_MAIN_ORDER
 } from './action_types';
 
 export const onFetchListMenu = (data) => {
@@ -37,10 +41,10 @@ export const onAddOrder = (data) => {
         };
 };
 
-export const onAddOrderSucceeded = (data) => {
+export const onAddOrderSucceeded = (messages) => {
         return {
                 type: ADD_ORDER_SUCCEEDED,
-                data
+                messages
         };
 };
 
@@ -58,8 +62,32 @@ export const onChangePage = (status) => {
         };
 };
 
-export const onResetProps = () => {
+export const onResetPropsMain = () => {
         return {
-                type: RESET_PROPS,
+                type: RESET_PROPS_MAIN_ORDER,
+        };
+};
+
+export const onResetPropsListMenu = () => {
+        return {
+                type: RESET_PROPS_FORM_MENU_ORDER,
+        };
+};
+
+export const onResetPropsFormChonLich = () => {
+        return {
+                type: RESET_PROPS_FORM_TIME_ORDER,
+        };
+};
+
+export const onResetPropsFormInfoAccount = () => {
+        return {
+                type: RESET_PROPS_FORM_INFO_ORDER,
+        };
+};
+
+export const onResetPropsMessage = () => {
+        return {
+                type: RESET_PROPS_MESSAGE_ORDER,
         };
 };

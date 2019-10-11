@@ -1,15 +1,12 @@
 import { put, takeLatest } from 'redux-saga/effects';
 import {
         FETCH_LIST_RESTAURANT,
-        FETCH_LIST_BAR,
         FETCH_LIST_COFFEE,
         FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME
 } from '../actions/action_types';
 import {
         onFetchListRestaurantFailed,
         onFetchListRestaurantSucceeded,
-        onFetchListBarFailed,
-        onFetchListBarSucceeded,
         onFetchListCoffeeFailed,
         onFetchListCoffeeSucceeded,
         onFetchNearbyLocationRestaurantFailed,
@@ -18,7 +15,7 @@ import {
 import { API } from './API';
 import { API as MapAPI } from '../../map/sagas/API';
 
-function* FetchListRestaurantFromAPI (action) {
+function* fetchListRestaurantFromAPI (action) {
         try {
                 const results = yield API.fetchListRestaurantFormAPI(action.data);
                 if (results.error) {
@@ -31,11 +28,11 @@ function* FetchListRestaurantFromAPI (action) {
         }
 }
 
-export function* WatchFetchListRestaurantFromAPI () {
-        yield takeLatest(FETCH_LIST_RESTAURANT, FetchListRestaurantFromAPI);
+export function* watchFetchListRestaurantFromAPI () {
+        yield takeLatest(FETCH_LIST_RESTAURANT, fetchListRestaurantFromAPI);
 }
 
-function* FetchListCoffeeFromAPI (action) {
+function* fetchListCoffeeFromAPI (action) {
         try {
                 const results = yield API.fetchListCoffeeFormAPI(action.data);
                 if (results.error) {
@@ -48,28 +45,11 @@ function* FetchListCoffeeFromAPI (action) {
         }
 }
 
-export function* WatchFetchListCoffeeFromAPI () {
-        yield takeLatest(FETCH_LIST_COFFEE, FetchListCoffeeFromAPI);
+export function* watchFetchListCoffeeFromAPI () {
+        yield takeLatest(FETCH_LIST_COFFEE, fetchListCoffeeFromAPI);
 }
 
-function* FetchListBarFromAPI (action) {
-        try {
-                const results = yield API.fetchListBarFormAPI(action.data);
-                if (results.error) {
-                        yield put(onFetchListBarFailed(results.message));
-                } else {
-                        yield put(onFetchListBarSucceeded(results));
-                }
-        } catch (error) {
-                yield put(onFetchListBarFailed(error.message));
-        }
-}
-
-export function* WatchFetchListBarFromAPI () {
-        yield takeLatest(FETCH_LIST_BAR, FetchListBarFromAPI);
-}
-
-function* FetchNearbyLocationRestaurantFromAPI (action) {
+function* fetchNearbyLocationRestaurantFromAPI (action) {
         try {
                 const results = yield MapAPI.FetchNearbyLocationRestaurant(action.position);
                 if (results.error) {
@@ -82,6 +62,6 @@ function* FetchNearbyLocationRestaurantFromAPI (action) {
         }
 }
 
-export function* WatchFetchNearbyLocationRestaurantForHomeFromAPI () {
-        yield takeLatest(FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME, FetchNearbyLocationRestaurantFromAPI);
+export function* watchFetchNearbyLocationRestaurantForHomeFromAPI () {
+        yield takeLatest(FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME, fetchNearbyLocationRestaurantFromAPI);
 }

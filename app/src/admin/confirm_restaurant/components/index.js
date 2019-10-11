@@ -172,22 +172,25 @@ export default class ConfirmRestaurant extends Component {
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.phoneSelect}</Text>
                                                                 <Text style={styles.textTitleFormConfirm}>Loại nhà hàng</Text>
                                                                 <Text style={styles.textInfoFormConfirm}>{this.state.type}</Text>
-                                                                <TouchableOpacity style={styles.buttonAgree}
-                                                                        onPress={() => {
-                                                                                this.onClickButtonAgree();
-                                                                                this.props.onFetchListConfirmRestaurant();
-                                                                        }}
-                                                                >
-                                                                        <Text style={styles.textButtonAgree}>Đồng ý</Text>
-                                                                </TouchableOpacity>
-                                                                <TouchableOpacity style={styles.buttonCancel}
-                                                                        onPress={() => {
-                                                                                this.onClickButtonCancel();
-                                                                                this.props.onFetchListConfirmRestaurant();
-                                                                        }}
-                                                                >
-                                                                        <Text style={styles.textButtonCancel}>Hủy</Text>
-                                                                </TouchableOpacity>
+                                                                <View style={styles.containerButton}>
+                                                                        <TouchableOpacity style={styles.buttonAgree}
+                                                                                onPress={() => {
+                                                                                        this.onClickButtonAgree();
+                                                                                        this.props.onFetchListConfirmRestaurant();
+                                                                                }}
+                                                                        >
+                                                                                <Text style={styles.textButtonAgree}>Đồng ý</Text>
+                                                                        </TouchableOpacity>
+                                                                        <TouchableOpacity style={styles.buttonCancel}
+                                                                                onPress={() => {
+                                                                                        this.onClickButtonCancel();
+                                                                                        this.props.onFetchListConfirmRestaurant();
+                                                                                }}
+                                                                        >
+                                                                                <Text style={styles.textButtonCancel}>Hủy</Text>
+                                                                        </TouchableOpacity>
+                                                                </View>
+
                                                         </View>
                                                 </View>
                                         </ScrollView>
@@ -282,10 +285,10 @@ const styles = StyleSheet.create({
                 backgroundColor: colorMain,
                 width: 100,
                 height: 40,
-                borderRadius: 50,
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginVertical: 15
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30
         },
         textButtonAgree: {
                 fontFamily: 'UVN-Baisau-Regular',
@@ -295,12 +298,16 @@ const styles = StyleSheet.create({
                 backgroundColor: 'red',
                 width: 100,
                 height: 40,
-                borderRadius: 50,
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30
         },
         textButtonCancel: {
                 fontFamily: 'UVN-Baisau-Regular',
                 color: 'white'
+        },
+        containerButton: {
+                flexDirection: 'row'
         }
 });

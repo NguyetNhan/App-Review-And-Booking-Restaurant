@@ -1,17 +1,21 @@
 import { API } from './API';
 import { put, takeLatest } from 'redux-saga/effects';
 import { SIGNUP } from '../actions/action_types';
-import { onSignupResults } from '../actions';
+import { onSignupFailed, onSignupSucceeded } from '../actions';
 
-function* SignupUser (action) {
+function* signupUser (action) {
         try {
                 const result = yield API.SignUp(action.data);
-                yield put(onSignupResults(result));
+                if (result.error) {
+                        yield put(onSignupFailed(result.message));
+                } else {
+                        yield put(onSignupSucceeded(result.message));
+                }
         } catch (error) {
-                console.log('error: ', error.message);
+                yield put(onSignupFailed(error.message));
         }
 }
 
-export function* WatchSignup () {
-        yield takeLatest(SIGNUP, SignupUser);
+export function* watchSignup () {
+        yield takeLatest(SIGNUP, signupUser);
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { urlServer, colorMain, background } from '../../config';
 
@@ -20,7 +20,7 @@ export default class FormChonLich extends Component {
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.changePage !== undefined) {
-                        if (nextProps.changePage == 'settling') {
+                        if (nextProps.changePage === 'settling') {
                                 nextProps._setChonLich({
                                         receptionTime: prevState.date,
                                         note: prevState.note,
@@ -46,10 +46,26 @@ export default class FormChonLich extends Component {
 
         _setDate (event, date) {
                 if (event.type === 'set') {
-                        this.setState({
-                                showDate: !this.state.showDate,
-                                date: date
-                        });
+                        const datenow = Date.now();
+                        if (date > datenow) {
+                                this.setState({
+                                        showDate: !this.state.showDate,
+                                        date: date
+                                });
+                        }
+                        else {
+                                this.setState({
+                                        showDate: !this.state.showDate,
+                                });
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Không được chọn ngày trước ngày hiện tại !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                        }
                 } else if (event.type === 'dismissed') {
                         this.setState({
                                 showDate: !this.state.showDate,
@@ -60,16 +76,36 @@ export default class FormChonLich extends Component {
 
         _setTime (event, time) {
                 if (event.type === 'set') {
-                        this.setState({
-                                showTime: !this.state.showTime,
-                                date: time
-                        });
+                        const datenow = Date.now();
+                        if (time > datenow) {
+                                this.setState({
+                                        showTime: !this.state.showTime,
+                                        date: time
+                                });
+                        }
+                        else {
+                                this.setState({
+                                        showTime: !this.state.showTime,
+                                });
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Không được chọn giờ trước giờ hiện tại !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                        }
                 } else if (event.type === 'dismissed') {
                         this.setState({
                                 showTime: !this.state.showTime,
                                 date: this.state.date
                         });
                 }
+        }
+
+        componentWillUnmount () {
+                this.props.onResetPropsFormChonLich();
         }
         render () {
                 const date = this.state.date;

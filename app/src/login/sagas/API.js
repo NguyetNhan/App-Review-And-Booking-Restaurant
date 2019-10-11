@@ -2,7 +2,7 @@ import { urlServer } from '../../config';
 
 const urlLogin = `${urlServer}/auth/login`;
 
-Login = async (data) => {
+login = async (data) => {
         try {
                 const response = await fetch(urlLogin, {
                         method: 'POST',
@@ -17,10 +17,13 @@ Login = async (data) => {
                 }).then(convertJson => convertJson.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error.message);
+                return {
+                        error: true,
+                        message: error.message
+                };
         }
 };
 
 export const API = {
-        Login
+        login
 };

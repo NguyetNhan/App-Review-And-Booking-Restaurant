@@ -58,7 +58,16 @@ export default class Item extends Component {
                                                 <Text
                                                         numberOfLines={1}
                                                         ellipsizeMode='tail'
-                                                        style={styles.valueStatus}>{this.state.item.status}</Text>
+                                                        style={styles.valueStatus}>{
+                                                                this.state.item.status === 'cancel' ?
+                                                                        'hủy' :
+                                                                        this.state.item.status === 'waiting' ?
+                                                                                'chờ' :
+                                                                                this.state.item.status === 'activity' ?
+                                                                                        'thực hiện' :
+                                                                                        this.state.item.status === 'complete' ?
+                                                                                                'hoàn thành' : 'hoàn thành'
+                                                        }</Text>
                                         </View>
 
                                         <View style={styles.content}>

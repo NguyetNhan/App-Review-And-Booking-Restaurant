@@ -11,7 +11,6 @@ export default class AddReview extends Component {
                         order: props.navigation.getParam('order', null),
                         account: null,
                         isLoading: true,
-                        visibleModalSelectImage: false,
                         listImageSelect: [],
                         restaurant: null,
                         listResultFoodFromAPi: null
@@ -20,10 +19,35 @@ export default class AddReview extends Component {
 
         async fetchInfoAccount () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        account: account,
-                        isLoading: false
-                });
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.props.navigation.navigate('Auth');
+                        } else {
+                                this.setState({
+                                        account: account.data,
+                                        isLoading: false
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
+                }
+
         }
 
         componentDidMount () {

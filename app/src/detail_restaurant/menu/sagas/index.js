@@ -9,10 +9,10 @@ function* AddMenuOnAPI (action) {
                 if (results.error) {
                         yield put(onAddMenuFailed(results.message));
                 } else {
-                        yield put(onAddMenuSucceeded(results));
+                        yield put(onAddMenuSucceeded(results.message));
                 }
         } catch (error) {
-                console.log('error: ', error);
+                yield put(onAddMenuFailed(error.message));
         }
 }
 
@@ -29,7 +29,7 @@ function* FetchMenuFromAPI (action) {
                         yield put(onFetchMenuSucceeded(results));
                 }
         } catch (error) {
-                console.log('error: ', error);
+                yield put(onFetchMenuFailed(error.message));
         }
 }
 

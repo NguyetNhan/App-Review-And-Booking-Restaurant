@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, ActivityIndicator, Alert, ToastAndroid } from 'react-native';
 import { AccountModel } from '../../models/account';
 import { urlServer } from '../../config';
-import { socket } from '../../socket';
 const urlLogin = `${urlServer}/auth/login`;
 
 export default class AuthLoading extends Component {
@@ -14,14 +13,11 @@ export default class AuthLoading extends Component {
                 };
         }
 
-        componentDidMount () {
-                this.getAccount();
-        }
-
         async getAccount () {
                 try {
                         const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                        if (account === null) {
+                        if (account.error) {
+                                ToastAndroid.show('Bạn chưa đăng nhập !', ToastAndroid.SHORT);
                                 this.props.navigation.navigate('Auth');
                         } else {
                                 const response = await fetch(urlLogin, {
@@ -31,39 +27,61 @@ export default class AuthLoading extends Component {
                                                 'Content-Type': 'application/json',
                                         },
                                         body: JSON.stringify({
-                                                email: account.email,
-                                                password: account.password,
+                                                email: account.data.email,
+                                                password: account.data.password,
                                         })
                                 }).then(convertJson => convertJson.json());
-                                var accountNew = {
-                                        id: response.data._id,
-                                        authorities: response.data.authorities,
-                                        email: response.data.email,
-                                        password: response.data.password,
-                                        name: response.data.name,
-                                        phone: response.data.phone,
-                                        avatar: response.data.avatar
-                                };
-                                AccountModel.AddInfoAccountFromDatabaseLocal(accountNew);
-                                this.setState({
-                                        account: accountNew
-                                });
-                                socket.emit('idAccount', accountNew.id);
-                                setTimeout(() => {
-                                        if (accountNew.authorities === 'client') {
-                                                this.props.navigation.navigate('Client');
-                                        } else if (accountNew.authorities === 'admin') {
-                                                this.props.navigation.navigate('AppAdmin');
-                                        } else if (accountNew.authorities === 'admin-restaurant') {
-                                                this.props.navigation.navigate('AppAdminRestaurant');
-                                        }
-                                }, 200);
+                                if (response.error) {
+                                        Alert.alert(
+                                                'Thông Báo Lỗi',
+                                                'Bạn chưa đăng nhập !',
+                                                [
+                                                        { text: 'OK' },
+                                                ],
+                                                { cancelable: false },
+                                        );
+                                        this.props.navigation.navigate('Auth');
+                                } else {
+                                        var accountNew = {
+                                                _id: response.data._id,
+                                                authorities: response.data.authorities,
+                                                email: response.data.email,
+                                                password: response.data.password,
+                                                name: response.data.name,
+                                                phone: response.data.phone,
+                                                score: response.data.score,
+                                                avatar: response.data.avatar
+                                        };
+                                        AccountModel.AddInfoAccountFromDatabaseLocal(accountNew);
+                                        this.setState({
+                                                account: accountNew
+                                        });
+                                        setTimeout(() => {
+                                                if (accountNew.authorities === 'client') {
+                                                        this.props.navigation.navigate('Client');
+                                                } else if (accountNew.authorities === 'admin') {
+                                                        this.props.navigation.navigate('AppAdmin');
+                                                } else if (accountNew.authorities === 'admin-restaurant') {
+                                                        this.props.navigation.navigate('AppAdminRestaurant');
+                                                }
+                                        }, 100);
+                                }
                         }
                 } catch (error) {
-                        console.log('error: ', error);
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
                 }
         }
-
+        componentDidMount () {
+                this.getAccount();
+        }
         render () {
                 return (
                         <View style={styles.container}>

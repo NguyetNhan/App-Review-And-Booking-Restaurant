@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity, FlatList, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { urlServer } from '../../config';
+import { urlServer, colorMain, backgroundStatusBar } from '../../config';
 import { AccountModel } from '../../models/account';
 import { socket } from '../../socket';
 import ItemListNotification from './item_list_notification';
@@ -34,15 +34,42 @@ export default class Notification extends Component {
 
         async _getAccountFromLocal () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        account: account,
-                        isLoading: true,
-                })
-                const data = {
-                        idAccount: account.id,
-                        page: 1
-                };
-                this.props.onFetchNotification(data)
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.props.navigation.navigate('Auth');
+                        } else {
+                                this.setState({
+                                        account: account.data,
+                                        isLoading: true,
+                                })
+                                const data = {
+                                        idAccount: account.data.id,
+                                        page: 1
+                                };
+                                this.props.onFetchNotification(data)
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
+                }
+
+
+
         }
         componentDidMount () {
                 this._getAccountFromLocal();
@@ -58,7 +85,7 @@ export default class Notification extends Component {
                         prevState.listNotification = prevState.listNotification.concat(nextProps.listNotification);
                         prevState.isLoadMore = false;
                 }
-                if (nextProps.isLoading !== prevState.isLoading) {
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
                         prevState.isLoading = nextProps.isLoading
                 }
                 if (nextProps.messages !== undefined && !prevState.isLoading) {
@@ -128,17 +155,15 @@ export default class Notification extends Component {
                 return (
                         <View style={styles.container}   >
                                 <StatusBar
-                                        backgroundColor='white'
-                                        barStyle='dark-content'
+                                        backgroundColor={backgroundStatusBar}
+                                        barStyle='light-content'
+                                        translucent={false}
                                 />
-                                <View style={styles.containerHeader}>
-                                        <TouchableOpacity onPress={this.props.navigation.openDrawer}>
-                                                <Icon name='menu' size={25} color='black' />
-                                        </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Thông Báo</Text>
-                                        <TouchableOpacity >
-                                                <Icon name='user' size={25} color='black' />
-                                        </TouchableOpacity>
+                                <View
+                                        onTouchStart={() => this.props.navigation.navigate('Search')}
+                                        style={styles.containerSearch}>
+                                        <Icon name='search' size={25} color='white' />
+                                        <Text style={styles.textTitleSearch}>tìm kiếm nhà hàng, bạn bè...</Text>
                                 </View>
                                 <View style={styles.content}>
                                         <FlatList
@@ -161,7 +186,7 @@ export default class Notification extends Component {
                                                                         content={item.item.content}
                                                                         image={item.item.image}
                                                                         type={item.item.type}
-                                                                        time={item.item.time}
+                                                                        createDate={item.item.createDate}
                                                                         idAccount={item.item.idAccount}
                                                                         idRestaurant={item.item.idRestaurant}
                                                                         idOrder={item.item.idOrder}
@@ -181,18 +206,21 @@ const styles = StyleSheet.create({
                 flex: 1,
                 alignItems: 'center'
         },
-        containerHeader: {
-                width: '100%',
-                height: 50,
+        containerSearch: {
                 flexDirection: 'row',
-                justifyContent: 'space-between',
-                backgroundColor: 'white',
+                height: 55,
+                backgroundColor: colorMain,
+                paddingHorizontal: 20,
                 alignItems: 'center',
-                paddingHorizontal: 20
+                justifyContent: 'center'
         },
-        textHeader: {
-                fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 18
+        textTitleSearch: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize',
+                color: 'white',
+                flex: 1,
+                marginLeft: 10,
+                fontSize: 16
         },
         content: {
                 flex: 1,

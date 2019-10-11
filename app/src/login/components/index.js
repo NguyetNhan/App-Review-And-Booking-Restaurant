@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator, SafeAreaView, ToastAndroid } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, StatusBar, Modal, ActivityIndicator, SafeAreaView, ToastAndroid, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Validate from 'validate.js';
-import { socket } from '../../socket';
 
 //FIXME: chưa fix lỗi hủy màn hình login sau khi đăng nhập
 export default class Login extends Component {
@@ -15,33 +14,47 @@ export default class Login extends Component {
                         isLoading: false,
                         infoUser: null,
                         account: null,
-                        messages: ''
                 };
-        }
-        componentDidMount () {
+
         }
 
         static getDerivedStateFromProps (props, state) {
-                if (props.infoUser !== undefined) {
-                        props.onAddAccountIntoLocal(props.infoUser);
+                if (props.isLoading !== state.isLoading && props.isLoading !== undefined) {
+                        state.isLoading = props.isLoading;
                 }
-                if (props.account !== undefined && state.account !== props.account) {
+                if (!state.isLoading && props.messagesLogin !== undefined) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                props.messagesLogin,
+                                [
+                                        { text: 'OK', onPress: () => props.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+                if (!state.isLoading && props.messagesAddAccountFailed !== undefined) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                props.messagesAddAccountFailed,
+                                [
+                                        { text: 'OK', onPress: () => props.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+                if (props.account !== undefined) {
                         state.account = props.account;
-                        socket.emit('idAccount', props.account._id);
-                        if (props.account.authorities === 'client') {
+                        props.onAddAccountIntoLocal(props.account);
+                }
+                if (!state.isLoading && props.messagesAddAccountSucceeded !== undefined) {
+                        ToastAndroid.show(props.messagesAddAccountSucceeded, ToastAndroid.SHORT);
+                        if (state.account.authorities === 'client') {
                                 props.navigation.navigate('Client');
-                        } else if (props.account.authorities === 'admin') {
+                        } else if (state.account.authorities === 'admin') {
                                 props.navigation.navigate('AppAdmin');
-                        } else if (props.account.authorities === 'admin-restaurant') {
+                        } else if (state.account.authorities === 'admin-restaurant') {
                                 props.navigation.navigate('AppAdminRestaurant');
                         }
-                }
-                if (props.loading !== state.isLoading && props.loading !== undefined) {
-                        state.isLoading = props.loading;
-                }
-                if (props.messages !== state.messages && props.messages !== undefined) {
-                        state.messages = props.messages;
-                        ToastAndroid.show(props.messages, ToastAndroid.LONG);
                 }
                 return null;
         }

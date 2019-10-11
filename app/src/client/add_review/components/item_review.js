@@ -459,6 +459,7 @@ export default class ItemReview extends Component {
                                                                                                 <View style={styles.containerImage}>
                                                                                                         <TouchableOpacity
                                                                                                                 onPress={() => {
+                                                                                                                        this.onClickButtonPicture();
                                                                                                                 }}
                                                                                                         >
                                                                                                                 <EvilIcons name='camera' size={50} color={colorMain} />

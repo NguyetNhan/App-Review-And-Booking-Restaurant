@@ -20,6 +20,8 @@ export default class ModalInfo extends Component {
                         food: props.order.food,
                         receptionTime: props.order.receptionTime,
                         totalMoney: props.order.totalMoney,
+                        totalMoneyFood: props.order.totalMoneyFood,
+                        discount: props.order.discount,
                         note: props.order.note,
                 };
         }
@@ -105,14 +107,20 @@ export default class ModalInfo extends Component {
                                                 </View>
                                                 <Text style={styles.textTitle}>thông tin thanh toán</Text>
                                                 <View style={styles.containerValue}>
-                                                        <View style={styles.formatValue}>
-                                                                <Text style={styles.textTitleValue}>Tổng tiền thanh toán: </Text>
-                                                                <Text style={styles.textValue}>
-                                                                        {convertVND(this.state.totalMoney)} VND
-                                                                </Text>
-                                                        </View>
+                                                        {
+                                                                this.state.discount === null ? null :
+                                                                        this.state.discount.type === 'score' ?
+                                                                                <Text style={styles.textTitleValueMoney}>Sử dụng điểm tích lũy: <Text style={styles.textValuePriceMoney}>{convertVND(this.state.discount.score)} VND</Text></Text>
+                                                                                :
+                                                                                null
+                                                        }
+                                                        <Text style={styles.textTitleValueMoney}>Tổng tiền thực đơn: <Text style={styles.textValuePriceMoney}>
+                                                                {convertVND(this.state.totalMoneyFood)} VND
+                                                                </Text></Text>
+                                                        <Text style={styles.textTitleValueMoney}>Tổng tiền thanh toán: <Text style={styles.textValuePriceMoney}>
+                                                                {convertVND(this.state.totalMoney)} VND
+                                                                </Text></Text>
                                                 </View>
-
                                         </View>
                                         <View style={{
                                                 alignItems: 'center',
@@ -201,5 +209,17 @@ const styles = StyleSheet.create({
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center'
+        },
+        textTitleValueMoney: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize',
+                fontSize: 12,
+        },
+        textValuePriceMoney: {
+                fontFamily: 'UVN-Baisau-Bold',
+                flex: 1,
+                fontSize: 12,
+                color: 'red',
+                textTransform: 'uppercase'
         },
 });

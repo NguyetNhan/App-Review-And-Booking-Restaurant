@@ -10,7 +10,7 @@ import { AccountModel } from './models/account';
 import Home from './home/containers';
 import Search from './search/containers';
 import Notification from './notification/containers';
-import Follow from './follow/components';
+import Profile from './profile/components';
 import AuthLoading from './auth_loading/components';
 import Login from './login/containers';
 import SignUp from './sign_up/containers';
@@ -19,13 +19,15 @@ import ConfirmRestaurant from './admin/confirm_restaurant/containers';
 import Overview from './detail_restaurant/overview/containers';
 import Menu from './detail_restaurant/menu/containers';
 import Review from './detail_restaurant/review/containers';
-import Chat from './chat/components';
+import Chat from './chat/containers';
 import Order from './order/containers';
 import Map from './map/containers';
 import Deal from './deal/containers';
 import DetailDeal from './detail_deal/containers';
 import ScanQrOrder from './admin_restaurant/scan_qr_order/containers';
 import AddReview from './client/add_review/containers';
+import Person from './person/components';
+import DetailChat from './detail_chat/containers';
 
 
 const RouteBottomTabConfig = {
@@ -41,8 +43,8 @@ const RouteBottomTabConfig = {
         Notification: {
                 screen: Notification,
         },
-        Follow: {
-                screen: Follow,
+        Profile: {
+                screen: Profile,
         }
 };
 
@@ -51,7 +53,7 @@ const BottomTabNavigatorConfig = {
         activeColor: colorMain,
         inactiveColor: 'black',
         barStyle: { backgroundColor: 'white' },
-        order: ['Home', 'Chat', 'Map', 'Notification', 'Follow']
+        order: ['Home', 'Chat', 'Map', 'Notification', 'Profile']
 };
 
 const BottomTabNavigator = createMaterialBottomTabNavigator(RouteBottomTabConfig, BottomTabNavigatorConfig);
@@ -84,98 +86,11 @@ const DetailRestaurant = createMaterialTopTabNavigator(
 }
 );
 
-class DrawerContentClient extends Component {
-        constructor (props) {
-                super(props);
-                this.state = {
-                        name: null
-                };
-        }
-        componentDidMount () {
-                this.getNameAccount();
-        }
-        async getNameAccount () {
-                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        name: account.name
-                });
-        }
-        render () {
-                return (
-                        <View style={styleDrawerAdminRestaurant.container}>
-                                <View style={styleDrawerAdminRestaurant.containerImage}>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.closeDrawer();
-                                        }}>
-                                                <Icon
-                                                        name='close'
-                                                        size={50}
-                                                        color='white'
-                                                        style={{
-                                                                marginTop: 20
-                                                        }} />
-                                        </TouchableOpacity>
-                                        <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
-                                                style={styleDrawerAdminRestaurant.image}
-                                        />
-                                        <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
-                                </View>
-                                <View style={styleDrawerAdminRestaurant.containerAction}>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.props.navigation.closeDrawer();
-                                                        this.props.navigation.navigate('RegisterRestaurant');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng kí cửa hàng</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.props.navigation.closeDrawer();
-                                                        this.props.navigation.navigate('Deal');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đơn hàng</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                                onPress={async () => {
-                                                        await AccountModel.DeleteAccountInfoFromDatabaseLocal();
-                                                        this.props.navigation.navigate('Auth');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
-                                        </TouchableOpacity>
-                                </View>
-                        </View>
-                );
-        }
-}
-
-const DrawerNavigatorClient = createDrawerNavigator(
-        {
-                RegisterRestaurant: {
-                        screen: RegisterRestaurant,
-                },
-                App: BottomTabNavigator,
-
-        },
-        {
-                initialRouteName: 'App',
-                hideStatusBar: true,
-                drawerBackgroundColor: 'white',
-                overlayColor: 'rgba(255,255,255,.7)',
-                contentOptions: {
-                        activeTintColor: '#fff',
-                        activeBackgroundColor: '#6b52ae',
-                },
-                contentComponent: DrawerContentClient
-        }
-);
 
 const MainNavigatorClient = createStackNavigator(
         {
-                DrawerNavigatorClient: {
-                        screen: DrawerNavigatorClient,
+                App: {
+                        screen: BottomTabNavigator,
                         navigationOptions: {
                                 header: null,
                         },
@@ -216,129 +131,35 @@ const MainNavigatorClient = createStackNavigator(
                                 header: null,
                         },
                 },
-
-
-        }, {
-        initialRouteName: 'DrawerNavigatorClient'
-}
-);
-
-
-class DrawerContentAdminRestaurant extends Component {
-        constructor (props) {
-                super(props);
-                this.state = {
-                        name: null,
-                        account: null
-                };
-        }
-        componentDidMount () {
-                this.getNameAccount();
-        }
-        async getNameAccount () {
-                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        name: account.name,
-                        account: account
-                });
-        }
-        render () {
-                return (
-                        <View style={styleDrawerAdminRestaurant.container}>
-                                <View style={styleDrawerAdminRestaurant.containerImage}>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.closeDrawer();
-                                        }}>
-                                                <Icon
-                                                        name='close'
-                                                        size={50}
-                                                        color='white'
-                                                        style={{
-                                                                marginTop: 20
-                                                        }} />
-                                        </TouchableOpacity>
-                                        <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
-                                                style={styleDrawerAdminRestaurant.image}
-                                        />
-                                        <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
-                                </View>
-                                <View style={styleDrawerAdminRestaurant.containerAction}>
-                                        <TouchableOpacity onPress={async () => {
-                                                this.props.navigation.closeDrawer();
-                                                const idAccount = this.state.account.id;
-                                                try {
-                                                        const result = await fetch(`${urlServer}/restaurant/idAdminRestaurant/${idAccount}`, {
-                                                                method: 'GET',
-                                                                headers: {
-                                                                        Accept: 'application/json',
-                                                                        'Content-Type': 'application/json',
-                                                                },
-                                                        }).then(data => data.json());
-                                                        var id = {
-                                                                idRestaurant: result.data._id,
-                                                                idAdmin: this.state.account.id
-                                                        };
-                                                        this.props.navigation.navigate('DetailRestaurant', {
-                                                                IdConfigDetailRestaurant: id,
-                                                                GoBack: 'Home'
-                                                        });
-                                                } catch (err) {
-                                                        console.log('err: ', err);
-                                                }
-                                        }}>
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Cửa hàng</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.props.navigation.closeDrawer();
-                                                        this.props.navigation.navigate('Deal');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đơn hàng</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.props.navigation.closeDrawer();
-                                                        this.props.navigation.navigate('ScanQrOrder');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >quét mã đơn hàng</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                                onPress={async () => {
-                                                        await AccountModel.DeleteAccountInfoFromDatabaseLocal();
-                                                        this.props.navigation.navigate('Auth');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
-                                        </TouchableOpacity>
-                                </View>
-                        </View>
-                );
-        }
-}
-
-const DrawerNavigatorAdminRestaurant = createDrawerNavigator(
-        {
-                App: BottomTabNavigator,
-        },
-        {
-                initialRouteName: 'App',
-                hideStatusBar: true,
-                drawerBackgroundColor: 'white',
-                overlayColor: 'rgba(255,255,255,.7)',
-                contentOptions: {
-                        activeTintColor: '#fff',
-                        activeBackgroundColor: '#6b52ae',
+                RegisterRestaurant: {
+                        screen: RegisterRestaurant,
+                        navigationOptions: {
+                                header: null,
+                        },
                 },
-                contentComponent: DrawerContentAdminRestaurant
-        }
+                Person: {
+                        screen: Person,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                DetailChat: {
+                        screen: DetailChat,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+        }, {
+        initialRouteName: 'App'
+}
 );
+
+
 
 const MainNavigatorAdminRestaurant = createStackNavigator(
         {
-                DrawerNavigatorAdminRestaurant: {
-                        screen: DrawerNavigatorAdminRestaurant,
+                App: {
+                        screen: BottomTabNavigator,
                         navigationOptions: {
                                 header: null,
                         },
@@ -379,95 +200,34 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                                 header: null,
                         },
                 },
+                Person: {
+                        screen: Person,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                DetailChat: {
+                        screen: DetailChat,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
         }, {
-        initialRouteName: 'DrawerNavigatorAdminRestaurant'
+        initialRouteName: 'App'
 }
 );
 
-class DrawerContentAdmin extends Component {
-        constructor (props) {
-                super(props);
-                this.state = {
-                        name: null
-                };
-        }
-        componentDidMount () {
-                this.getNameAccount();
-        }
-        async getNameAccount () {
-                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        name: account.name
-                });
-        }
-        render () {
-                return (
-                        <View style={styleDrawerAdminRestaurant.container}>
-                                <View style={styleDrawerAdminRestaurant.containerImage}>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.closeDrawer();
-                                        }}>
-                                                <Icon
-                                                        name='close'
-                                                        size={50}
-                                                        color='white'
-                                                        style={{
-                                                                marginTop: 20
-                                                        }} />
-                                        </TouchableOpacity>
-                                        <Image source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
-                                                style={styleDrawerAdminRestaurant.image}
-                                        />
-                                        <Text style={styleDrawerAdminRestaurant.textName}>{this.state.name}</Text>
-                                </View>
-
-                                <View style={styleDrawerAdminRestaurant.containerAction}>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.props.navigation.closeDrawer();
-                                                        this.props.navigation.navigate('ConfirmRestaurant');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Xác nhận nhà hàng</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                                onPress={async () => {
-                                                        await AccountModel.DeleteAccountInfoFromDatabaseLocal();
-                                                        this.props.navigation.navigate('Auth');
-                                                }}
-                                        >
-                                                <Text style={styleDrawerAdminRestaurant.textAction} >Đăng xuất</Text>
-                                        </TouchableOpacity>
-                                </View>
-                        </View>
-                );
-        }
-}
-
-const DrawerNavigatorAdmin = createDrawerNavigator(
-        {
-                ConfirmRestaurant: {
-                        screen: ConfirmRestaurant
-                },
-                App: BottomTabNavigator,
-        },
-        {
-                initialRouteName: 'App',
-                hideStatusBar: true,
-                drawerBackgroundColor: 'white',
-                overlayColor: 'rgba(255,255,255,.7)',
-                contentOptions: {
-                        activeTintColor: '#fff',
-                        activeBackgroundColor: '#6b52ae',
-                },
-                contentComponent: DrawerContentAdmin
-        }
-);
 
 const MainNavigatorAdmin = createStackNavigator(
         {
-                DrawerNavigatorAdmin: {
-                        screen: DrawerNavigatorAdmin,
+                App: {
+                        screen: BottomTabNavigator,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                ConfirmRestaurant: {
+                        screen: ConfirmRestaurant,
                         navigationOptions: {
                                 header: null,
                         },
@@ -490,60 +250,23 @@ const MainNavigatorAdmin = createStackNavigator(
                                 header: null,
                         },
                 },
+                Person: {
+                        screen: Person,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                DetailChat: {
+                        screen: DetailChat,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
         }, {
-        initialRouteName: 'DrawerNavigatorAdmin'
+        initialRouteName: 'App'
 }
 );
 
-const styleDrawerAdminRestaurant = StyleSheet.create({
-        container: {
-                flex: 1,
-                elevation: 10,
-        },
-        containerImage: {
-                width: '100%',
-                height: 300,
-                alignItems: 'center',
-                backgroundColor: '#22D499',
-                borderBottomLeftRadius: 50,
-                borderBottomRightRadius: 50,
-                paddingBottom: 10,
-                marginBottom: 10,
-                justifyContent: 'space-around'
-        },
-        image: {
-                width: 120,
-                height: 120,
-                borderRadius: 60,
-                borderWidth: 1,
-                borderColor: 'white'
-        },
-        containerName: {
-                width: '100%',
-                alignItems: 'center'
-        },
-        textName: {
-                fontSize: 20,
-                color: 'white',
-                fontFamily: 'UVN-Baisau-Bold'
-        },
-        textAddress: {
-                fontSize: 15,
-                color: 'gray',
-                fontFamily: 'OpenSans-Regulars'
-        },
-        containerAction: {
-                flex: 1,
-                alignItems: 'center',
-                marginTop: 30
-        },
-        textAction: {
-                color: 'black',
-                fontFamily: 'UVN-Baisau-Bold',
-                margin: 18,
-                textTransform: 'capitalize'
-        },
-});
 
 const AuthStack = createStackNavigator(
         {

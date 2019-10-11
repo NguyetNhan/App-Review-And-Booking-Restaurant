@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { urlServer } from '../../config';
+import { urlServer, colorMain, backgroundStatusBar } from '../../config';
 import { AccountModel } from '../../models/account';
-import { chat } from '../../socket';
+import ListConversation from '../containers/list_conversation';
 
 export default class Chat extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -17,29 +17,33 @@ export default class Chat extends Component {
                 super(props);
                 this.state = {
                 }
-                this._onConnectServer();
+                this.onChangeScreenDetailChat = this.onChangeScreenDetailChat.bind(this);
         }
 
-        async _onConnectServer () {
-                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                chat.emit('id', account.id);
+        onChangeScreenDetailChat (idConversation, idAccountReceiver) {
+                this.props.navigation.navigate('DetailChat', {
+                        idConversation: idConversation,
+                        idAccountReceiver: idAccountReceiver
+                })
         }
 
         render () {
                 return (
                         <View style={styles.container}>
                                 <StatusBar
-                                        backgroundColor='white'
-                                        barStyle='dark-content'
+                                        backgroundColor={backgroundStatusBar}
+                                        barStyle='light-content'
+                                        translucent={false}
                                 />
-                                <View style={styles.containerHeader}>
-                                        <Text style={styles.textHeader}>Chat</Text>
+                                <View
+                                        onTouchStart={() => this.props.navigation.navigate('Search')}
+                                        style={styles.containerSearch}>
+                                        <Icon name='search' size={25} color='white' />
+                                        <Text style={styles.textTitleSearch}>tìm kiếm nhà hàng, bạn bè...</Text>
                                 </View>
-                                <TouchableOpacity onPress={() => {
-                                        chat.emit('test', ' con cac')
-                                }}>
-                                        <Text>Test Server</Text>
-                                </TouchableOpacity>
+                                <ListConversation
+                                        onChangeScreenDetailChat={this.onChangeScreenDetailChat}
+                                />
                         </View>
                 );
         }
@@ -50,15 +54,20 @@ const styles = StyleSheet.create({
                 flex: 1,
                 alignItems: 'center'
         },
-        containerHeader: {
-                width: '100%',
-                height: 50,
-                backgroundColor: 'white',
+        containerSearch: {
+                flexDirection: 'row',
+                height: 55,
+                backgroundColor: colorMain,
+                paddingHorizontal: 20,
                 alignItems: 'center',
                 justifyContent: 'center'
         },
-        textHeader: {
-                fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 20
-        }
+        textTitleSearch: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize',
+                color: 'white',
+                flex: 1,
+                marginLeft: 10,
+                fontSize: 16
+        },
 })

@@ -1,29 +1,55 @@
 import {
-        LOGIN_RESULTS,
-        ADD_ACCOUNT_INTO_LOCAL_RESULTS,
-        RESET_PROPS
+        LOGIN_FAILED,
+        LOGIN_SUCCEEDED,
+        ADD_ACCOUNT_INTO_LOCAL_FAILED,
+        ADD_ACCOUNT_INTO_LOCAL_SUCCEEDED,
+        RESET_PROPS_LOGIN,
+        RESET_PROPS_MESSAGE_LOGIN
 } from '../actions/action_types';
 
 
-const LoginReducers = (state = [], action) => {
+const LoginReducers = (state = null, action) => {
         switch (action.type) {
-                case LOGIN_RESULTS:
+                case LOGIN_SUCCEEDED:
                         return {
-                                Login: {
-                                        data: action.data
+                                loginSucceeded: {
+                                        data: action.data,
                                 }
                         };
-                case ADD_ACCOUNT_INTO_LOCAL_RESULTS:
+                case LOGIN_FAILED:
                         return {
-                                AddAccount: {
-                                        data: action.data
+                                loginFailed: {
+                                        message: action.message
                                 }
                         };
-                case RESET_PROPS:
+                case ADD_ACCOUNT_INTO_LOCAL_SUCCEEDED:
                         return {
-                                ResetProps: {
-                                        loading: false,
-                                        account: null,
+                                addAccountLocalSucceeded: {
+                                        message: action.message,
+                                }
+                        };
+                case ADD_ACCOUNT_INTO_LOCAL_FAILED:
+                        return {
+                                addAccountLocalFailed: {
+                                        message: action.message
+                                }
+                        };
+                case RESET_PROPS_LOGIN:
+                        return {
+                                resetProps: {
+                                        messagesAddAccountSucceeded: undefined,
+                                        messagesAddAccountFailed: undefined,
+                                        messagesLogin: undefined,
+                                        account: undefined,
+                                        isLoading: false,
+                                }
+                        };
+                case RESET_PROPS_MESSAGE_LOGIN:
+                        return {
+                                resetPropsMessage: {
+                                        messagesAddAccountSucceeded: undefined,
+                                        messagesAddAccountFailed: undefined,
+                                        messagesLogin: undefined,
                                 }
                         };
                 default:

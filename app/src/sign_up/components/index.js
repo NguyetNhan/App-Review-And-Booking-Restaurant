@@ -24,10 +24,18 @@ export default class SignUp extends Component {
         }
 
         static getDerivedStateFromProps (props, state) {
-                if (props.loading !== state.isLoading) {
-                        return {
-                                isLoading: props.loading
-                        };
+                if (props.isLoading !== state.isLoading && props.isLoading !== undefined) {
+                        state.isLoading = props.isLoading;
+                }
+                if (props.message !== undefined && !state.isLoading) {
+                        Alert.alert(
+                                'Thông Báo',
+                                props.message,
+                                [
+                                        { text: 'OK', onPress: () => props.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
                 }
                 return null;
         }
@@ -156,6 +164,9 @@ export default class SignUp extends Component {
         }
 
         onClickButtonSignup () {
+                this.setState({
+                        isLoading: !this.state.isLoading
+                });
                 if (this.state.validateError) {
                         Alert.alert('Thông báo', 'Bạn đã nhập sai !');
                 } else {
@@ -167,6 +178,10 @@ export default class SignUp extends Component {
                         };
                         this.props.onSignup(data);
                 }
+        }
+
+        componentWillUnmount () {
+                this.props.onResetProps();
         }
 
         render () {
@@ -280,7 +295,7 @@ export default class SignUp extends Component {
                                                 </TouchableOpacity>
                                         </View>
                                         <Modal
-                                                animationType="fade"
+                                                animationType="slide"
                                                 transparent={true}
                                                 visible={this.state.isLoading}
                                         >
@@ -354,6 +369,6 @@ const styles = StyleSheet.create({
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.7)'
+                backgroundColor: 'rgba(0, 0, 0, 0.9)'
         }
 });

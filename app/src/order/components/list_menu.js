@@ -27,25 +27,32 @@ export default class ListMenu extends Component {
                 });
         }
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && prevState.isRefresh && !prevState.isLoadMore) {
-                        prevState.isRefresh = false;
-                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
+                if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listMenu = nextProps.listMenu;
-                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && prevState.isLoadMore) {
+                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+                        prevState.listMenu = nextProps.listMenu;
+                        prevState.isRefresh = false;
+                } else if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listMenu = prevState.listMenu.concat(nextProps.listMenu);
                         prevState.isLoadMore = false;
                 }
-                if (nextProps.isLoading !== prevState.isLoading) {
+                if (nextProps.page !== prevState.page && nextProps.page !== undefined && !prevState.isLoading) {
+                        prevState.page = nextProps.page;
+                }
+                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
+                        prevState.total_page = nextProps.total_page;
+                }
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
                         prevState.isLoading = nextProps.isLoading;
                 }
                 if (nextProps.changePage !== undefined) {
                         if (nextProps.changePage == 'settling') {
                                 var listSelected = [];
-                                var totalMoney = 0;
+                                var totalMoneyFood = 0;
                                 for (item of prevState.listMenu) {
                                         if (item.isSelected) {
                                                 const money = item.price;
-                                                totalMoney = totalMoney + (money * Number.parseInt(item.amount));
+                                                totalMoneyFood = totalMoneyFood + (money * Number.parseInt(item.amount));
                                                 listSelected.push({
                                                         idFood: item._id,
                                                         amount: Number.parseInt(item.amount)
@@ -54,7 +61,7 @@ export default class ListMenu extends Component {
                                 }
                                 nextProps._setListFoodSelected({
                                         list: listSelected,
-                                        totalMoney: totalMoney
+                                        totalMoneyFood: totalMoneyFood
                                 });
                         }
                 }
@@ -95,6 +102,9 @@ export default class ListMenu extends Component {
 
         _onChangeAmount (index, amount) {
                 this.state.listMenu[index].amount = amount;
+        }
+        componentWillUnmount () {
+                this.props.onResetPropsListMenu();
         }
         render () {
                 return (

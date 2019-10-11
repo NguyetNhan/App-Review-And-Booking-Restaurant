@@ -17,7 +17,7 @@ const mapStateToProps = (state) => {
                 } else if (confirmReducers.confirmFailed !== undefined) {
                         return {
                                 isLoading: false,
-                                messageSucceeded: confirmReducers.confirmFailed.messages
+                                messageFailed: confirmReducers.confirmFailed.messages
                         };
                 } else if (confirmReducers.ResetProps !== undefined) {
                         return confirmReducers.ResetProps;

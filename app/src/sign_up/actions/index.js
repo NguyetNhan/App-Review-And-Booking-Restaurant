@@ -1,4 +1,4 @@
-import { SIGNUP, SIGNUP_RESULTS } from './action_types';
+import { SIGNUP, SIGNUP_FAILED, SIGNUP_SUCCEEDED, RESET_PROPS_MESSAGE_SIGNUP, RESET_PROPS_SIGNUP } from './action_types';
 
 export const onSignup = (data) => {
         return {
@@ -7,9 +7,27 @@ export const onSignup = (data) => {
         };
 };
 
-export const onSignupResults = (data) => {
+export const onSignupSucceeded = (message) => {
         return {
-                type: SIGNUP_RESULTS,
-                data
+                type: SIGNUP_SUCCEEDED,
+                message
         };
 };
+export const onSignupFailed = (message) => {
+        return {
+                type: SIGNUP_FAILED,
+                message
+        };
+};
+
+export const onResetProps = () => {
+        return {
+                type: RESET_PROPS_SIGNUP,
+        };
+};
+export const onResetPropsMessage = () => {
+        return {
+                type: RESET_PROPS_MESSAGE_SIGNUP,
+        };
+};
+

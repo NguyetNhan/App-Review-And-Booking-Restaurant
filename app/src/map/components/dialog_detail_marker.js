@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colorMain, urlServer } from '../../config';
+import Icon from 'react-native-vector-icons/EvilIcons';
 export default class DialogDetailMarker extends Component {
         constructor (props) {
                 super(props);
@@ -49,6 +50,13 @@ export default class DialogDetailMarker extends Component {
                                                         <Text style={styles.textButton}>chỉ đường</Text>
                                                 </TouchableOpacity>
                                         </View>
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.props._onClickCloseDialogDetailMarker();
+                                                }}
+                                                style={styles.buttonClose}>
+                                                <Icon name='close' size={50} color='black' />
+                                        </TouchableOpacity>
                                 </View>
                         </View>
                 );
@@ -111,4 +119,7 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize'
         },
+        buttonClose: {
+                marginBottom: 10
+        }
 });

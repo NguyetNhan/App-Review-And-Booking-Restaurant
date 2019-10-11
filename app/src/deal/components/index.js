@@ -25,33 +25,55 @@ export default class Deal extends Component {
 
         async _getInfoAccountFromLocal () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                if (account.authorities === 'admin-restaurant') {
-                        this.setState({
-                                account: account,
-                                isLoading: true,
-                        });
-                        this.props.onFetchListOrder({
-                                data: {
-                                        idAdmin: account.id,
-                                        page: 1,
-                                        filter: this.state.filter
-                                },
-                                type: 'admin-restaurant'
-                        });
-                } else if (account.authorities === 'client') {
-                        this.setState({
-                                account: account,
-                                isLoading: true,
-                        });
-                        this.props.onFetchListOrder({
-                                data: {
-                                        idClient: account.id,
-                                        page: 1,
-                                        filter: this.state.filter
-                                },
-                                type: 'client'
-                        });
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.props.navigation.navigate('Auth');
+                        } else {
+                                this.setState({
+                                        account: account.data,
+                                        isLoading: true
+                                });
+                                if (account.data.authorities === 'admin-restaurant') {
+                                        this.props.onFetchListOrder({
+                                                data: {
+                                                        idAdmin: account.data.id,
+                                                        page: 1,
+                                                        filter: this.state.filter
+                                                },
+                                                type: 'admin-restaurant'
+                                        });
+                                } else if (account.data.authorities === 'client') {
+                                        this.props.onFetchListOrder({
+                                                data: {
+                                                        idClient: account.data.id,
+                                                        page: 1,
+                                                        filter: this.state.filter
+                                                },
+                                                type: 'client'
+                                        });
+                                }
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
                 }
+
+
 
         }
 
@@ -253,7 +275,7 @@ export default class Deal extends Component {
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                         onPress={() => {
-                                                                this._onCloseModalFilter('complete');
+                                                                this._onCloseModalFilter('review');
                                                         }}
                                                 >
                                                         <Text style={styles.textStatus}>hoàn thành</Text>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, StatusBar, Modal, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, StatusBar, Modal, ActivityIndicator, FlatList, Alert } from 'react-native';
 import { urlServer, colorMain, background } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { AccountModel } from '../../../models/account';
@@ -54,24 +54,50 @@ export default class Menu extends Component {
 
         async _onGetInfoAccount () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        account: account,
-                        authorities: account.authorities
-                })
-                const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
-                this.setState({
-                        idRestaurant: id.idRestaurant,
-                        idAdmin: id.idAdmin
-                })
-                if (account.id == id.idAdmin) {
-                        this.setState({
-                                showEdit: true
-                        })
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.props.navigation.navigate('Auth');
+                        } else {
+                                this.setState({
+                                        account: account.data,
+                                        isLoading: false
+                                })
+                                const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
+                                this.setState({
+                                        idRestaurant: id.idRestaurant,
+                                        idAdmin: id.idAdmin
+                                })
+                                if (account.data.id == id.idAdmin) {
+                                        this.setState({
+                                                showEdit: true
+                                        })
+                                }
+                                this.props.onFetchMenu({
+                                        idRestaurant: id.idRestaurant,
+                                        page: 1
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
                 }
-                this.props.onFetchMenu({
-                        idRestaurant: id.idRestaurant,
-                        page: 1
-                });
+
+
         }
 
         componentDidMount () {
@@ -79,7 +105,7 @@ export default class Menu extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.isLoading) {
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
                         prevState.isLoading = nextProps.isLoading
                 }
                 if (nextProps.listMenu !== prevState.listMenu && nextProps.listMenu !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
@@ -91,8 +117,21 @@ export default class Menu extends Component {
                         prevState.listMenu = prevState.listMenu.concat(nextProps.listMenu);
                         prevState.isLoadMore = false;
                 }
+                if (nextProps.page !== prevState.page && nextProps.page !== undefined && !prevState.isLoading && nextProps.page !== undefined) {
+                        prevState.page = nextProps.page
+                }
+                if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading && nextProps.total_page !== undefined) {
+                        prevState.total_page = nextProps.total_page
+                }
                 if (nextProps.messages !== undefined) {
-                        alert(nextProps.messages)
+                        Alert.alert(
+                                'Thông Báo',
+                                nextProps.messages,
+                                [
+                                        { text: 'OK', onPress: () => nextProps.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
                 }
                 return null
         }
@@ -165,6 +204,10 @@ export default class Menu extends Component {
                 });
         }
 
+        componentWillUnmount () {
+                this.props.onResetProps();
+        }
+
         render () {
                 return (
                         <View style={styles.container}>
@@ -197,7 +240,7 @@ export default class Menu extends Component {
                                                 extraData={this.state}
                                                 keyExtractor={(item, index) => index.toString()}
                                                 showsVerticalScrollIndicator={false}
-                                                refreshing={this.state.refreshing}
+                                                refreshing={this.state.isLoading}
                                                 onRefresh={() => {
                                                         this._onRefreshListMenu()
                                                 }}
@@ -243,7 +286,7 @@ export default class Menu extends Component {
                                                 onClickSelectImage={this._onClickSelectImage}
                                         />
                                 </Modal>
-                                <Modal
+                                {/*  <Modal
                                         visible={this.state.isLoading}
                                         transparent={true}
                                         animationType='slide'
@@ -256,7 +299,7 @@ export default class Menu extends Component {
                                         }} >
                                                 <ActivityIndicator animating={true} size={80} color={colorMain} />
                                         </View>
-                                </Modal>
+                                </Modal> */}
                                 <Modal
                                         visible={this.state.visibleDetailMenu}
                                         transparent={false}

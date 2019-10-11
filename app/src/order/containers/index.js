@@ -3,27 +3,32 @@ import Component from '../components';
 import {
         onAddOrder,
         onChangePage,
-        onResetProps
+        onResetPropsMain,
+        onResetPropsMessage
 } from '../actions';
 
 const mapStateToProps = (state) => {
-        const addOrderSucceeded = state.OrderReducers.AddOrderSucceeded;
-        const addOrderFailed = state.OrderReducers.AddOrderFailed;
-        const resetProps = state.OrderReducers.ResetProps;
-        if (addOrderSucceeded !== undefined) {
-                return {
-                        isLoading: false,
-                        resultOrder: addOrderSucceeded.data
-                };
-        } else if (addOrderFailed !== undefined) {
-                return {
-                        isLoading: false,
-                        messages: addOrderFailed.messages
-                };
-        } else if (resetProps !== undefined) {
-                return resetProps;
-        }
-        else {
+        const orderReducers = state.OrderReducers;
+        if (orderReducers !== null) {
+                if (orderReducers.addOrderSucceeded !== undefined) {
+                        return {
+                                isLoading: false,
+                                messagesSucceeded: orderReducers.addOrderSucceeded.messages,
+                        };
+                } else if (orderReducers.addOrderFailed !== undefined) {
+                        return {
+                                isLoading: false,
+                                messagesFailed: orderReducers.addOrderFailed.messages
+                        };
+                } else if (orderReducers.resetProps !== undefined) {
+                        return orderReducers.resetProps;
+                } else if (orderReducers.resetPropsMessage !== undefined) {
+                        return orderReducers.resetPropsMessage;
+                } else {
+                        return {
+                        };
+                }
+        } else {
                 return {
                         isLoading: false
                 };
@@ -38,8 +43,11 @@ const mapDispatchToProps = (dispatch) => {
                 onChangePage: (status) => {
                         dispatch(onChangePage(status));
                 },
-                onResetProps: () => {
-                        dispatch(onResetProps());
+                onResetPropsMain: () => {
+                        dispatch(onResetPropsMain());
+                },
+                onResetPropsMessage: () => {
+                        dispatch(onResetPropsMessage());
                 }
         };
 };

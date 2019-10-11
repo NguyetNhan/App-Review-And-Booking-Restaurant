@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar, ActivityIndicator, Modal, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { urlServer, colorMain, background } from '../../config';
+import { urlServer, colorMain, background, backgroundStatusBar } from '../../config';
 import InfoAccount from '../containers/info_account';
 import StepIndicator from 'react-native-step-indicator';
 import ViewPager from '@react-native-community/viewpager';
@@ -22,13 +22,14 @@ export default class Order extends Component {
                         customerName: null,
                         customerEmail: null,
                         customerPhone: null,
-                        totalMoney: null,
+                        totalMoneyFood: null,
                         receptionTime: null,
                         note: null,
                         amountPerson: null,
                         idClient: null,
+                        discount: null,
                         visibleModalComplete: false,
-                        complete: null
+                        complete: null,
                 };
                 this._onActionOrder = this._onActionOrder.bind(this);
                 this._onClickButtonNext = this._onClickButtonNext.bind(this);
@@ -40,13 +41,30 @@ export default class Order extends Component {
                 this._onCloseModalComplete = this._onCloseModalComplete.bind(this);
         }
 
+
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.isLoading) {
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
                         prevState.isLoading = nextProps.isLoading;
                 }
-                if (nextProps.resultOrder !== prevState.resultOrder && nextProps.resultOrder !== undefined) {
-                        prevState.resultOrder = nextProps.resultOrder;
-                        alert(nextProps.resultOrder.messages);
+                if (nextProps.messagesSucceeded !== undefined) {
+                        Alert.alert(
+                                'Thông Báo',
+                                nextProps.messagesSucceeded,
+                                [
+                                        { text: 'OK', onPress: () => nextProps.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+                if (nextProps.messagesFailed !== undefined) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                nextProps.messagesFailed,
+                                [
+                                        { text: 'OK', onPress: () => nextProps.onResetPropsMessage() },
+                                ],
+                                { cancelable: false },
+                        );
                 }
                 return null;
         }
@@ -62,14 +80,14 @@ export default class Order extends Component {
                 }
                 this.setState({
                         listFoodSelect: listSelect,
-                        totalMoney: money
+                        totalMoneyFood: money
                 });
         }
 
         _setListFoodSelected (data) {
                 this.setState({
                         listFoodSelect: data.list,
-                        totalMoney: data.totalMoney
+                        totalMoneyFood: data.totalMoneyFood
                 });
         }
 
@@ -78,7 +96,8 @@ export default class Order extends Component {
                         customerName: info.name,
                         customerEmail: info.email,
                         customerPhone: info.phone,
-                        idClient: info.idClient
+                        idClient: info.idClient,
+                        discount: info.discount
                 });
         }
         _setChonLich (data) {
@@ -89,18 +108,19 @@ export default class Order extends Component {
                 });
         }
 
-        _onComplete () {
+        _onComplete (info) {
                 const data = {
-                        idClient: this.state.idClient,
+                        idClient: info.idClient,
                         idRestaurant: this.state.idRestaurant,
-                        customerName: this.state.customerName,
-                        customerEmail: this.state.customerEmail,
-                        customerPhone: Number.parseInt(this.state.customerPhone),
+                        customerName: info.name,
+                        customerEmail: info.email,
+                        customerPhone: Number.parseInt(info.phone),
                         amountPerson: Number.parseInt(this.state.amountPerson),
                         food: this.state.listFoodSelect,
                         receptionTime: this.state.receptionTime,
-                        totalMoney: Number.parseFloat(this.state.totalMoney),
+                        totalMoneyFood: Number.parseFloat(this.state.totalMoneyFood),
                         note: this.state.note,
+                        discount: info.discount
                 };
                 this.setState({
                         visibleModalComplete: !this.state.visibleModalComplete,
@@ -115,10 +135,10 @@ export default class Order extends Component {
         }
 
         _onActionOrder (data) {
-                this.props.onAddOrder(data);
                 this.setState({
                         isLoading: true
                 });
+                this.props.onAddOrder(data);
         }
 
         _onClickButtonNext () {
@@ -142,97 +162,98 @@ export default class Order extends Component {
         }
 
         componentWillUnmount () {
-                this.props.onResetProps();
+                this.props.onResetPropsMain();
         }
 
         render () {
-                if (this.state.isLoading) {
-                        return (
-                                <View style={{
-                                        flex: 1,
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        backgroundColor: 'rgba(0,0,0,0.5)'
-                                }}>
-                                        <ActivityIndicator animating={true} size={100} color={colorMain} />
-                                </View>
-                        );
-                } else {
-                        return (
-                                <View style={styles.container}>
-                                        <StatusBar
-                                                backgroundColor='white'
-                                                barStyle='dark-content'
-                                        />
-                                        <View style={styles.containerHeader}>
-                                                <TouchableOpacity onPress={() => {
-                                                        this.props.navigation.goBack();
-                                                }}>
-                                                        <Icon name='arrow-left' size={25} color='black' />
-                                                </TouchableOpacity>
-                                                <Text style={styles.textHeader}>đặt chỗ</Text>
-                                                <View />
-                                        </View>
-                                        <StepIndicator
-                                                customStyles={customStyles}
-                                                stepCount={3}
-                                                currentPosition={this.state.currentPage}
-                                                labels={this.state.labels}
-                                        />
-                                        <ViewPager
-                                                ref={viewPager => {
-                                                        this.viewPager = viewPager;
-                                                }}
-                                                style={styles.viewPager}
-                                                initialPage={this.state.currentPage}
-                                                onPageSelected={(event) => {
-                                                        this.setState({ currentPage: event.nativeEvent.position });
-                                                }}
-                                                onPageScrollStateChanged={(event) => {
-                                                        this._onListenChangePage(event.nativeEvent.pageScrollState);
-                                                }}
-                                        >
-                                                <View key="1">
-                                                        <FormChonLich
-                                                                _onClickButtonNext={this._onClickButtonNext}
-                                                                _setChonLich={this._setChonLich}
-                                                        />
-                                                </View>
-                                                <View key="2">
-                                                        <ListFood
-                                                                _onClickButtonNext={this._onClickButtonNext}
-                                                                _onClickButtonPrevious={this._onClickButtonPrevious}
-                                                                idRestaurant={this.state.idRestaurant}
-                                                                _setListFoodSelected={this._setListFoodSelected}
-                                                        />
-                                                </View>
-                                                <View key="3">
-                                                        <InfoAccount
 
-                                                                _onClickButtonPrevious={this._onClickButtonPrevious}
-                                                                _setInfoAccount={this._setInfoAccount}
-                                                                _onComplete={this._onComplete}
-                                                        />
-                                                </View>
-                                        </ViewPager>
-                                        <Modal
-                                                visible={this.state.visibleModalComplete}
-                                                animationType='slide'
-                                                onRequestClose={() => {
-                                                        this._onCloseModalComplete();
-                                                }}
-                                        >
-                                                <ModalComplete
-                                                        complete={this.state.complete}
-                                                        _onCloseModalComplete={this._onCloseModalComplete}
-                                                        _onActionOrder={this._onActionOrder}
+                return (
+                        <View style={styles.container}>
+                                <StatusBar
+                                        backgroundColor='white'
+                                        barStyle='dark-content'
+                                />
+                                <View style={styles.containerHeader}>
+                                        <TouchableOpacity onPress={() => {
+                                                this.props.navigation.goBack();
+                                        }}>
+                                                <Icon name='arrow-left' size={25} color='black' />
+                                        </TouchableOpacity>
+                                        <Text style={styles.textHeader}>đặt chỗ</Text>
+                                        <View />
+                                </View>
+                                <StepIndicator
+                                        customStyles={customStyles}
+                                        stepCount={3}
+                                        currentPosition={this.state.currentPage}
+                                        labels={this.state.labels}
+                                />
+                                <ViewPager
+                                        ref={viewPager => {
+                                                this.viewPager = viewPager;
+                                        }}
+                                        style={styles.viewPager}
+                                        initialPage={this.state.currentPage}
+                                        onPageSelected={(event) => {
+                                                this.setState({ currentPage: event.nativeEvent.position });
+                                        }}
+                                        onPageScrollStateChanged={(event) => {
+                                                this._onListenChangePage(event.nativeEvent.pageScrollState);
+                                        }}
+                                >
+                                        <View key="1">
+                                                <FormChonLich
+                                                        _onClickButtonNext={this._onClickButtonNext}
+                                                        _setChonLich={this._setChonLich}
                                                 />
-                                        </Modal>
-                                </View>
-                        );
-                }
-
+                                        </View>
+                                        <View key="2">
+                                                <ListFood
+                                                        _onClickButtonNext={this._onClickButtonNext}
+                                                        _onClickButtonPrevious={this._onClickButtonPrevious}
+                                                        idRestaurant={this.state.idRestaurant}
+                                                        _setListFoodSelected={this._setListFoodSelected}
+                                                />
+                                        </View>
+                                        <View key="3">
+                                                <InfoAccount
+                                                        _onClickButtonPrevious={this._onClickButtonPrevious}
+                                                        _setInfoAccount={this._setInfoAccount}
+                                                        _onComplete={this._onComplete}
+                                                />
+                                        </View>
+                                </ViewPager>
+                                <Modal
+                                        visible={this.state.visibleModalComplete}
+                                        animationType='slide'
+                                        onRequestClose={() => {
+                                                this._onCloseModalComplete();
+                                        }}
+                                >
+                                        <ModalComplete
+                                                complete={this.state.complete}
+                                                _onCloseModalComplete={this._onCloseModalComplete}
+                                                _onActionOrder={this._onActionOrder}
+                                        />
+                                </Modal>
+                                <Modal
+                                        visible={this.state.isLoading}
+                                        animationType='slide'
+                                >
+                                        <View style={{
+                                                flex: 1,
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: 'rgba(0,0,0,0.5)'
+                                        }}>
+                                                <ActivityIndicator animating={true} size={100} color={colorMain} />
+                                        </View>
+                                </Modal>
+                        </View>
+                );
         }
+
+
 }
 
 const styles = StyleSheet.create({

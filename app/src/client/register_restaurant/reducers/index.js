@@ -6,7 +6,6 @@ const RegisterRestaurantReducers = (state = null, action) => {
                 case REGISTER_RESTAURANT_SUCCEEDED:
                         return {
                                 registerSucceeded: {
-                                        data: action.data,
                                         message: action.message
                                 }
                         };

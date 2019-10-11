@@ -4,7 +4,9 @@ import {
         ADD_MENU_SUCCEEDED,
         FETCH_MENU,
         FETCH_MENU_FAILED,
-        FETCH_MENU_SUCCEEDED
+        FETCH_MENU_SUCCEEDED,
+        RESET_PROPS_MENU,
+        RESET_PROPS_MESSAGE_MENU
 } from './action_types';
 
 export const onAddMenu = (data) => {
@@ -14,10 +16,10 @@ export const onAddMenu = (data) => {
         };
 };
 
-export const onAddMenuSucceeded = (data) => {
+export const onAddMenuSucceeded = (message) => {
         return {
                 type: ADD_MENU_SUCCEEDED,
-                data
+                message
         };
 };
 
@@ -46,6 +48,17 @@ export const onFetchMenuFailed = (message) => {
         return {
                 type: FETCH_MENU_FAILED,
                 message
+        };
+};
+
+export const onResetProps = () => {
+        return {
+                type: RESET_PROPS_MENU,
+        };
+};
+export const onResetPropsMessage = () => {
+        return {
+                type: RESET_PROPS_MESSAGE_MENU,
         };
 };
 

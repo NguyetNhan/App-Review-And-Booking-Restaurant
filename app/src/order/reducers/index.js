@@ -4,33 +4,37 @@ import {
         ADD_ORDER_FAILED,
         ADD_ORDER_SUCCEEDED,
         ON_CHANGE_PAGE,
-        RESET_PROPS
+        RESET_PROPS_MAIN_ORDER,
+        RESET_PROPS_MESSAGE_ORDER,
+        RESET_PROPS_FORM_INFO_ORDER,
+        RESET_PROPS_FORM_MENU_ORDER,
+        RESET_PROPS_FORM_TIME_ORDER
 } from '../actions/action_types';
 
 
-const OrderReducers = (state = [], action) => {
+const OrderReducers = (state = null, action) => {
         switch (action.type) {
                 case FETCH_LIST_MENU_ORDER_SUCCEEDED:
                         return {
-                                FetchMenuSucceeded: {
+                                fetchMenuSucceeded: {
                                         data: action.data
                                 }
                         };
                 case FETCH_LIST_MENU_ORDER_FAILED:
                         return {
-                                FetchMenuFailed: {
+                                fetchMenuFailed: {
                                         messages: action.messages
                                 }
                         };
                 case ADD_ORDER_SUCCEEDED:
                         return {
-                                AddOrderSucceeded: {
-                                        data: action.data
+                                addOrderSucceeded: {
+                                        messages: action.messages
                                 }
                         };
                 case ADD_ORDER_FAILED:
                         return {
-                                AddOrderFailed: {
+                                addOrderFailed: {
                                         messages: action.messages
                                 }
                         };
@@ -38,11 +42,42 @@ const OrderReducers = (state = [], action) => {
                         return {
                                 status: action.status
                         };
-                case RESET_PROPS:
+                case RESET_PROPS_MAIN_ORDER:
                         return {
-                                ResetProps: {
+                                resetProps: {
                                         isLoading: false,
-                                        resultOrder: null
+                                        messagesSucceeded: undefined,
+                                        messagesFailed: undefined,
+                                        changePage: undefined,
+                                }
+                        };
+                case RESET_PROPS_FORM_INFO_ORDER:
+                        return {
+                                resetPropsInfoOrder: {
+                                        changePage: undefined
+                                }
+                        };
+                case RESET_PROPS_FORM_TIME_ORDER:
+                        return {
+                                resetPropsFormChonLich: {
+                                        changePage: undefined,
+                                }
+                        };
+                case RESET_PROPS_FORM_MENU_ORDER:
+                        return {
+                                resetPropsMenu: {
+                                        isLoading: false,
+                                        listMenu: undefined,
+                                        page: undefined,
+                                        total_page: undefined,
+                                        changePage: undefined
+                                }
+                        };
+                case RESET_PROPS_MESSAGE_ORDER:
+                        return {
+                                resetPropsMessage: {
+                                        messagesSucceeded: undefined,
+                                        messagesFailed: undefined
                                 }
                         };
                 default:

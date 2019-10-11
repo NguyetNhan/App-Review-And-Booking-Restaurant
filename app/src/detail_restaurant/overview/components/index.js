@@ -42,17 +42,44 @@ export default class OverView extends Component {
 
         async _onGetInfoAccount () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
-                const screenGoBack = this.props.navigation.getParam('GoBack');
-                this.setState({
-                        account: account,
-                        authorities: account.authorities,
-                        idConfig: id,
-                        screenGoBack: screenGoBack
-                });
-                this.props.onFetchDetailRestaurant(id.idRestaurant);
-                this.props.onFetchScoreReview(id.idRestaurant);
-                this.props.onCheckFollowRestaurant(id.idRestaurant, account.id);
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.props.navigation.navigate('Auth');
+                        } else {
+                                const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
+                                const screenGoBack = this.props.navigation.getParam('GoBack');
+                                this.setState({
+                                        account: account.data,
+                                        authorities: account.data.authorities,
+                                        idConfig: id,
+                                        screenGoBack: screenGoBack
+                                });
+                                this.props.onFetchDetailRestaurant(id.idRestaurant);
+                                this.props.onFetchScoreReview(id.idRestaurant);
+                                this.props.onCheckFollowRestaurant(id.idRestaurant, account.data.id);
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
+                }
+
+
+
 
         }
 
@@ -118,6 +145,12 @@ export default class OverView extends Component {
                         isCheckedFollow: !this.state.isCheckedFollow
                 });
                 this.props.onFollowedAndUnFollowedRestaurant(this.state.idConfig.idRestaurant, this.state.account.id);
+        }
+
+        onClickButtonChat () {
+                this.props.navigation.navigate('DetailChat', {
+                        idAccountReceiver: this.state.restaurant.idAdmin
+                })
         }
 
         componentWillUnmount () {
@@ -292,7 +325,11 @@ export default class OverView extends Component {
                                                                                                 <IconFontisto name='navigate' size={20} color={colorMain} />
                                                                                                 <Text style={styles.textNavigation}>chỉ đường</Text>
                                                                                         </TouchableOpacity>
-                                                                                        <TouchableOpacity style={styles.button}>
+                                                                                        <TouchableOpacity
+                                                                                                onPress={() => {
+                                                                                                        this.onClickButtonChat();
+                                                                                                }}
+                                                                                                style={styles.button}>
                                                                                                 <Icon name='customerservice' size={20} color={colorMain} />
                                                                                                 <Text style={styles.textNavigation}>Tư Vấn</Text>
                                                                                         </TouchableOpacity>

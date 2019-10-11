@@ -1,40 +1,37 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onLogin, onAddAccountIntoLocal, onResetProps } from '../actions';
+import { onLogin, onAddAccountIntoLocal, onResetProps, onResetPropsMessage } from '../actions';
 
 const mapStateToProps = (state) => {
-        const resultsLogin = state.LoginReducers.Login;
-        const resultsAddAccount = state.LoginReducers.AddAccount;
-        const resetProps = state.LoginReducers.ResetProps;
-        if (resultsLogin !== undefined) {
-                if (resultsLogin.data.error) {
+        const resultsLogin = state.LoginReducers;
+        if (resultsLogin !== null) {
+                if (resultsLogin.loginSucceeded !== undefined) {
                         return {
-                                loading: false,
-                                messages: resultsLogin.data.message
+                                account: resultsLogin.loginSucceeded.data
                         };
-                } else {
+                } else if (resultsLogin.loginFailed !== undefined) {
                         return {
-                                infoUser: resultsLogin.data.data,
-                                loading: true
+                                isLoading: false,
+                                messagesLogin: resultsLogin.loginFailed.message
                         };
+                } else if (resultsLogin.addAccountLocalSucceeded !== undefined) {
+                        return {
+                                isLoading: false,
+                                messagesAddAccountSucceeded: resultsLogin.addAccountLocalSucceeded.message,
+                        };
+                } else if (resultsLogin.addAccountLocalFailed !== undefined) {
+                        return {
+                                isLoading: false,
+                                messagesAddAccountFailed: resultsLogin.addAccountLocalFailed.message
+                        };
+                } else if (resultsLogin.resetProps !== undefined) {
+                        return resultsLogin.resetProps;
+                } else if (resultsLogin.resetPropsMessage !== undefined) {
+                        return resultsLogin.resetPropsMessage;
                 }
-        } else if (resultsAddAccount !== undefined) {
-                if (resultsAddAccount.data.error) {
-                        return {
-                                loading: false
-                        };
-                } else {
-                        return {
-                                loading: false,
-                                account: resultsAddAccount.data.data,
-                                messages: resultsAddAccount.data.message
-                        };
-                }
-        } else if (resetProps !== undefined) {
-                return resetProps;
         } else {
                 return {
-                        loading: false
+                        isLoading: false
                 };
         }
 };
@@ -48,6 +45,9 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onResetProps: () => {
                         dispatch(onResetProps());
+                },
+                onResetPropsMessage: () => {
+                        dispatch(onResetPropsMessage());
                 }
         };
 };

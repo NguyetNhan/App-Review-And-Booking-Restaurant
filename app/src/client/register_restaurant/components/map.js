@@ -39,14 +39,30 @@ export default class SelectPlaceOnMap extends Component {
                                                 }
                                         });
                                 }, (error) => {
-                                        console.log('error: ', error);
+                                        Alert.alert(
+                                                'Thông Báo Lỗi',
+                                                error.message,
+                                                [
+                                                        { text: 'OK' },
+                                                ],
+                                                { cancelable: false },
+                                        );
+
                                 }, {
                                         enableHighAccuracy: true,
                                         timeout: 20000,
                                         maximumAge: 1000
                                 });
                         } else {
-                                alert('Chức năng này không được bạn cho phép sử dụng !');
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Chức năng này không được bạn cho phép sử dụng !!',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+
                         }
                 } catch (err) {
                         console.warn(err);

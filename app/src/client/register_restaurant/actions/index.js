@@ -21,10 +21,9 @@ export const onRegisterRestaurantFailed = (message) => {
         };
 };
 
-export const onRegisterRestaurantSucceeded = (data, message) => {
+export const onRegisterRestaurantSucceeded = (message) => {
         return {
                 type: REGISTER_RESTAURANT_SUCCEEDED,
-                data,
                 message
         };
 };

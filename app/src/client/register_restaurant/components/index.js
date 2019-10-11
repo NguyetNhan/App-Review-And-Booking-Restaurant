@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { colorMain, urlServer, KEY_API_GOOGLE_MAP } from '../../../config';
 import SelectPlaceOnMap from './map';
 import Geocoder from 'react-native-geocoder';
+import { AccountModel } from '../../../models/account';
 
 const { height, width } = Dimensions.get('window');
 export default class RegisterRestaurant extends Component {
@@ -36,12 +37,50 @@ export default class RegisterRestaurant extends Component {
                                 latitudeDelta: 0.00922 * 1.5,
                                 longitudeDelta: 0.00421 * 1.5
                         },
-                        marker: null
+                        marker: null,
+                        account: null
                 };
                 Geocoder.fallbackToGoogle(KEY_API_GOOGLE_MAP);
                 this.requestLocationPermission();
                 this._onClickCloseModalMap = this._onClickCloseModalMap.bind(this);
                 this._onClickComplete = this._onClickComplete.bind(this);
+        }
+
+        async fetchInfoAccountFromLocal () {
+                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.props.navigation.navigate('Auth');
+                        } else {
+                                this.setState({
+                                        account: account.data,
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
+                }
+
+        }
+
+
+        componentDidMount () {
+                this.fetchInfoAccountFromLocal();
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -214,7 +253,8 @@ export default class RegisterRestaurant extends Component {
                         position: {
                                 latitude: this.state.marker.latitude,
                                 longitude: this.state.marker.longitude,
-                        }
+                        },
+                        idAdmin: this.state.account.id
                 };
                 if (data.name.length === 0) {
                         Alert.alert(

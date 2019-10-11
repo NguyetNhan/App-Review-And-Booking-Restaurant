@@ -2,8 +2,6 @@ import {
         FETCH_LIST_RESTAURANT,
         FETCH_LIST_RESTAURANT_SUCCEEDED,
         FETCH_LIST_RESTAURANT_FAILED,
-        FETCH_LIST_BAR, FETCH_LIST_BAR_FAILED,
-        FETCH_LIST_BAR_SUCCEEDED,
         FETCH_LIST_COFFEE,
         FETCH_LIST_COFFEE_FAILED, FETCH_LIST_COFFEE_SUCCEEDED,
         FETCH_NEARBY_LOCATION_RESTAURANT_FAILED,
@@ -51,28 +49,6 @@ export const onFetchListCoffeeSucceeded = (data) => {
 export const onFetchListCoffeeFailed = (messages) => {
         return {
                 type: FETCH_LIST_COFFEE_FAILED,
-                messages
-        };
-};
-
-export const onFetchListBar = (data) => {
-        return {
-                type: FETCH_LIST_BAR,
-                data
-        };
-};
-
-
-export const onFetchListBarSucceeded = (data) => {
-        return {
-                type: FETCH_LIST_BAR_SUCCEEDED,
-                data
-        };
-};
-
-export const onFetchListBarFailed = (messages) => {
-        return {
-                type: FETCH_LIST_BAR_FAILED,
                 messages
         };
 };

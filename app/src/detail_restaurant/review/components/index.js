@@ -28,15 +28,40 @@ export default class Review extends Component {
         async  getInfoAccountFormLocal () {
                 const id = this.props.navigation.getParam('IdConfigDetailRestaurant');
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                this.setState({
-                        account: account,
-                        idRestaurant: id.idRestaurant,
-                        refreshing: true,
-                });
-                this.props.onFetchListReview({
-                        page: 1,
-                        idRestaurant: id.idRestaurant
-                });
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.props.navigation.navigate('Auth');
+                        } else {
+                                this.setState({
+                                        account: account.data,
+                                        idRestaurant: id.idRestaurant,
+                                        refreshing: true,
+                                });
+                                this.props.onFetchListReview({
+                                        page: 1,
+                                        idRestaurant: id.idRestaurant
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
+                }
+
         }
 
         componentDidMount () {

@@ -1,6 +1,6 @@
 import { all } from 'redux-saga/effects';
-import { WatchLogin, WatchAddAccount } from '../login/sagas';
-import { WatchSignup } from '../sign_up/sagas';
+import { watchLogin, watchAddAccount } from '../login/sagas';
+import { watchSignup } from '../sign_up/sagas';
 import { WatchRegisterRestaurant } from '../client/register_restaurant/sagas';
 import {
         WatchFetchListConfirmRestaurantFromAPI,
@@ -8,10 +8,9 @@ import {
         WatchConfirmRestaurantCancelFromAPI
 } from '../admin/confirm_restaurant/sagas';
 import {
-        WatchFetchListRestaurantFromAPI,
-        WatchFetchListBarFromAPI,
-        WatchFetchListCoffeeFromAPI,
-        WatchFetchNearbyLocationRestaurantForHomeFromAPI
+        watchFetchListRestaurantFromAPI,
+        watchFetchListCoffeeFromAPI,
+        watchFetchNearbyLocationRestaurantForHomeFromAPI
 } from '../home/sagas';
 import {
         watchSearchFollowTypeFromAPI,
@@ -42,26 +41,34 @@ import {
         watchCheckHasReview,
         watchFetchDetailData
 } from '../client/add_review/sagas';
+import {
+        watchFetchListConversationFromApi,
+        watchFetchInfoAccountReceiverFromAPI
+} from '../chat/sagas';
+import {
+        watchCheckConversationExist,
+        watchFetchListMessageFromAPI,
+        watchFetchInfoAccountReceiverForDetaiChatFromAPI,
+        watchSendMessage
+} from '../detail_chat/sagas';
 
 export default function* RootSaga () {
         yield all([
-                WatchLogin(),
-                WatchAddAccount(),
-                WatchSignup(),
+                watchLogin(), watchAddAccount(),
+                watchSignup(),
                 WatchRegisterRestaurant(),
                 WatchFetchListConfirmRestaurantFromAPI(),
                 WatchConfirmRestaurantAgreeFromAPI(),
                 WatchConfirmRestaurantCancelFromAPI(),
-                WatchFetchListRestaurantFromAPI(),
+                watchFetchListRestaurantFromAPI(),
                 watchFetchDetailRestaurantFormAPI(),
                 WatchAddMenuOnAPI(),
                 WatchFetchMenuFromAPI(),
-                WatchFetchListCoffeeFromAPI(),
-                WatchFetchListBarFromAPI(),
+                watchFetchListCoffeeFromAPI(),
                 WatchFetchNotificationFromAPI(),
                 WatchFetchListMenuForOrderFromAPI(),
                 WatchFetchNearbyLocationRestaurantFromAPI(),
-                WatchFetchNearbyLocationRestaurantForHomeFromAPI(),
+                watchFetchNearbyLocationRestaurantForHomeFromAPI(),
                 WatchAddOrderIntoDatabase(),
                 WatchFetchListOrderFromAPI(),
                 watchFetchDetailOrderFromAPI(),
@@ -76,6 +83,12 @@ export default function* RootSaga () {
                 watchCheckHasReview(),
                 watchFetchDetailData(),
                 watchSearchFollowTypeFromAPI(),
-                watchSearchRestaurantAndClientFromAPI()
+                watchSearchRestaurantAndClientFromAPI(),
+                watchFetchListConversationFromApi(),
+                watchCheckConversationExist(),
+                watchFetchListMessageFromAPI(),
+                watchFetchInfoAccountReceiverFromAPI(),
+                watchFetchInfoAccountReceiverForDetaiChatFromAPI(),
+                watchSendMessage()
         ]);
 }

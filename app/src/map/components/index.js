@@ -52,11 +52,6 @@ export default class Map extends Component {
                 this._onClickDirections = this._onClickDirections.bind(this);
         }
 
-
-        componentDidMount () {
-
-        }
-
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.listRestaurant !== undefined && nextProps.listRestaurant !== prevState.listRestaurant) {
                         prevState.listRestaurant = nextProps.listRestaurant
@@ -84,7 +79,14 @@ export default class Map extends Component {
                                         }
                                         this.props.onFetchNearbyLocationRestaurant(position1);
                                 }, (error) => {
-                                        console.log('error: ', error);
+                                        Alert.alert(
+                                                'Thông Báo Lỗi',
+                                                error.message,
+                                                [
+                                                        { text: 'OK' },
+                                                ],
+                                                { cancelable: false },
+                                        );
                                 }, {
                                         enableHighAccuracy: true,
                                         timeout: 20000,
@@ -107,7 +109,14 @@ export default class Map extends Component {
                                                 loadingMap: false
                                         });
                                 }, (error) => {
-                                        console.log('error: ', error);
+                                        Alert.alert(
+                                                'Thông Báo Lỗi',
+                                                error.message,
+                                                [
+                                                        { text: 'OK' },
+                                                ],
+                                                { cancelable: false },
+                                        );
                                 }, {
                                         enableHighAccuracy: true,
                                         timeout: 20000,
@@ -117,7 +126,14 @@ export default class Map extends Component {
                                 alert('Chức năng này không được bạn cho phép sử dụng !');
                         }
                 } catch (err) {
-                        console.warn(err);
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                err.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
                 }
         }
 
@@ -151,7 +167,14 @@ export default class Map extends Component {
                                 longitude: position.coords.longitude,
                         });
                 }, (error) => {
-                        console.log('error: ', error);
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
                 }, {
                         enableHighAccuracy: true,
                         timeout: 20000,
@@ -203,25 +226,11 @@ export default class Map extends Component {
                 return (
                         <View style={styles.container}>
                                 <StatusBar
-                                        backgroundColor='white'
                                         barStyle='dark-content'
+                                        backgroundColor='rgba(0,0,0,0)'
+                                        translucent
+                                        animated={true}
                                 />
-                                <View style={styles.containerHeader}>
-                                        <TouchableOpacity onPress={this.props.navigation.openDrawer}>
-                                                <Icon name='menu' size={25} color='black' />
-                                        </TouchableOpacity>
-                                        <Text style={styles.textHeader}>bản đồ</Text>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.navigate('Search', {
-                                                        Condition: {
-                                                                type: 'restaurant',
-                                                                address: 'Hồ Chí Minh'
-                                                        }
-                                                });
-                                        }}>
-                                                <Icon name='user' size={25} color='black' />
-                                        </TouchableOpacity>
-                                </View>
                                 <View style={styles.containerMap} >
                                         <MapView
                                                 style={styles.map}
@@ -315,20 +324,7 @@ const styles = StyleSheet.create({
         container: {
                 flex: 1
         },
-        containerHeader: {
-                width: '100%',
-                height: 50,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                backgroundColor: 'white',
-                alignItems: 'center',
-                paddingHorizontal: 20
-        },
-        textHeader: {
-                fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 18,
-                textTransform: 'capitalize'
-        },
+
         containerMap: {
                 flex: 1
         },

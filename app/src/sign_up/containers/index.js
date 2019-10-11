@@ -1,26 +1,28 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onSignup } from '../actions';
-import { ToastAndroid } from 'react-native';
+import { onSignup, onResetProps, onResetPropsMessage } from '../actions';
 
 const mapStateToProps = (state) => {
-        const signupResults = state.SignupReducers.Signup;
-        if (signupResults !== undefined) {
-                if (signupResults.data.error) {
-                        ToastAndroid.show(signupResults.data.message, ToastAndroid.LONG);
+        const signupResults = state.SignupReducers;
+        if (signupResults !== null) {
+                if (signupResults.signUpSucceeded !== undefined) {
                         return {
-                                loading: false
+                                isLoading: false,
+                                message: signupResults.signUpSucceeded.message
                         };
-                } else {
-                        ToastAndroid.show(signupResults.data.message, ToastAndroid.LONG);
+                } else if (signupResults.signUpFailed !== undefined) {
                         return {
-                                loading: false,
-                                infoUser: signupResults.data.data
+                                isLoading: false,
+                                message: signupResults.signUpFailed.message
                         };
+                } else if (signupResults.resetProps !== undefined) {
+                        return signupResults.resetProps;
+                } else if (signupResults.resetPropsMessage !== undefined) {
+                        return signupResults.resetPropsMessage;
                 }
         } else {
                 return {
-                        loading: false,
+                        isLoading: false,
                 };
         }
 };
@@ -28,6 +30,12 @@ const mapDispatchToProps = (dispatch) => {
         return {
                 onSignup: (data) => {
                         dispatch(onSignup(data));
+                },
+                onResetProps: () => {
+                        dispatch(onResetProps());
+                },
+                onResetPropsMessage: () => {
+                        dispatch(onResetPropsMessage());
                 }
         };
 };

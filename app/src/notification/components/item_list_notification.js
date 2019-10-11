@@ -11,7 +11,7 @@ export default class ItemListNotification extends Component {
                         content: props.content,
                         image: props.image,
                         type: props.type,
-                        time: props.time,
+                        createDate: props.createDate,
                         idAccount: props.idAccount,
                         idRestaurant: props.idRestaurant,
                         idOrder: props.idOrder
@@ -20,7 +20,7 @@ export default class ItemListNotification extends Component {
 
 
         render () {
-                const date = new Date(this.state.time);
+                const date = new Date(this.state.createDate);
                 const formatDate = `${date.getHours()}h${date.getMinutes()}   ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
                 return (
                         <TouchableOpacity onPress={() => {

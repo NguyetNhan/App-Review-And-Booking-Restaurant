@@ -25,17 +25,41 @@ export default class Index extends Component {
 
         async _getInfoAccountFromLocal () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                if (account.authorities === 'admin-restaurant') {
-                        this.setState({
-                                account: account,
-                                labels: ['Xác Nhận', 'Đang Thực Hiện', 'Hoàn Thành'],
-                        });
-                } else if (account.authorities === 'client') {
-                        this.setState({
-                                account: account,
-                                labels: ['Chờ Xác Nhận', 'Đang Thực Hiện', 'Hoàn Thành', 'Đánh Giá'],
-                        });
+                try {
+                        if (account.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        'Bạn chưa đăng nhập !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                        } else {
+                                if (account.data.authorities === 'admin-restaurant') {
+                                        this.setState({
+                                                account: account.data,
+                                                labels: ['Xác Nhận', 'Đang Thực Hiện', 'Hoàn Thành'],
+                                        });
+                                } else if (account.data.authorities === 'client') {
+                                        this.setState({
+                                                account: account.data,
+                                                labels: ['Chờ Xác Nhận', 'Đang Thực Hiện', 'Hoàn Thành', 'Đánh Giá'],
+                                        });
+                                }
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
                 }
+
+
         }
 
         componentDidMount () {
@@ -97,8 +121,6 @@ export default class Index extends Component {
         render () {
                 return (
                         <View style={styles.content}>
-
-
                                 <ScrollView
                                         showsVerticalScrollIndicator={false}
                                         refreshControl={
@@ -222,8 +244,9 @@ const styles = StyleSheet.create({
                 textAlign: 'center',
                 fontFamily: 'UVN-Baisau-Bold',
                 fontSize: 30,
-                color: colorMain,
-                textTransform: 'capitalize'
+                color: 'red',
+                textTransform: 'capitalize',
+                marginBottom: 5
         }
 });
 

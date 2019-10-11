@@ -2,6 +2,7 @@ import { put, takeLatest } from 'redux-saga/effects';
 import { onFetchListMenuFailed, onFetchListMenuSucceeded, onAddOrderFailed, onAddOrderSucceeded } from '../actions';
 import { FETCH_LIST_MENU_ORDER, ADD_ORDER } from '../actions/action_types';
 import { API } from './API';
+import { AccountModel } from '../../models/account';
 
 function* FetchListMenuForOrderFromAPI (action) {
         try {
@@ -26,7 +27,16 @@ function* AddOrderIntoDatabase (action) {
                 if (results.error) {
                         yield put(onAddOrderFailed(results.messages));
                 } else {
-                        yield put(onAddOrderSucceeded(results));
+                        if (results.data.discount !== null) {
+                                if (results.data.discount.type === 'score') {
+                                        const resultAccount = yield AccountModel.FetchInfoAccountFromDatabaseLocal();
+                                        if (!resultAccount.error) {
+                                                const score = resultAccount.data.score - results.data.discount.score;
+                                                yield AccountModel.updateAccountInfoFromDatabaseLocal(resultAccount.data.id, score);
+                                        }
+                                }
+                        }
+                        yield put(onAddOrderSucceeded(results.messages));
                 }
         } catch (error) {
                 yield put(onAddOrderFailed(error.message));

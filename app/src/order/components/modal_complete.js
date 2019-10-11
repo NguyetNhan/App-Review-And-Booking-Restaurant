@@ -17,12 +17,15 @@ export default class Complete extends Component {
                         amountPerson: props.complete.amountPerson,
                         food: props.complete.food,
                         receptionTime: props.complete.receptionTime,
-                        totalMoney: props.complete.totalMoney,
+                        totalMoneyFood: props.complete.totalMoneyFood,
                         note: props.complete.note,
+                        discount: props.complete.discount,
                 };
         }
 
-        onClickButtonAgree () {
+
+
+        onClickButtonAgree (totalMoney, scoreDiscount) {
                 if (this.state.food.length === 0) {
                         Alert.alert(
                                 'Thông Báo Lỗi',
@@ -65,16 +68,39 @@ export default class Complete extends Component {
                         this.props._onCloseModalComplete();
                 }
                 else {
-                        this.props._onActionOrder(this.state.complete);
-                        this.props._onCloseModalComplete();
+                        if (scoreDiscount !== undefined) {
+                                let complete = this.state.complete;
+                                complete.totalMoney = totalMoney;
+                                complete.discount.score = scoreDiscount;
+                                this.props._onActionOrder(complete);
+                                this.props._onCloseModalComplete();
+                        } else {
+                                let complete = this.state.complete;
+                                complete.totalMoney = totalMoney;
+                                this.props._onActionOrder(complete);
+                                this.props._onCloseModalComplete();
+                        }
                 }
-
         }
 
         render () {
                 const date = this.state.receptionTime;
                 const convertTime = `${date.getHours()}h ${date.getMinutes()}''`;
                 const convertDate = `${date.getDate()} / ${date.getMonth() + 1} / ${date.getFullYear()}`;
+                const totalMoneyFood = this.state.totalMoneyFood;
+                var totalMoney = 0;
+                if (this.state.discount === null) {
+                        totalMoney = totalMoneyFood;
+                } else {
+                        var scoreDiscount = this.state.discount.score;
+                        if (this.state.discount.type === 'score') {
+                                totalMoney = totalMoneyFood - scoreDiscount;
+                                if (totalMoney < 0) {
+                                        totalMoney = 0;
+                                        scoreDiscount = totalMoneyFood;
+                                }
+                        }
+                }
                 return (
                         <View style={styles.container}>
                                 <View style={styles.header}>
@@ -152,17 +178,19 @@ export default class Complete extends Component {
                                                 </View>
                                                 <Text style={styles.textTitle}>thông tin thanh toán</Text>
                                                 <View style={styles.containerValue}>
-                                                        <View style={styles.formatValue}>
-                                                                <Text style={styles.textTitleValue}>Tổng tiền thanh toán: </Text>
-                                                                <Text style={styles.textValue}>
-                                                                        {convertVND(this.state.totalMoney)} VND
-                                                                </Text>
-                                                        </View>
+                                                        {
+                                                                this.state.discount === null ? null :
+                                                                        this.state.discount.type === 'score' ?
+                                                                                <Text style={styles.textTitleValue}>sử dụng điểm tích lũy: <Text style={styles.textValue}>{scoreDiscount}</Text></Text>
+                                                                                : null
+                                                        }
+                                                        <Text style={styles.textTitleValue}>tổng tiền menu: <Text style={styles.textValueMoney}>{convertVND(this.state.totalMoneyFood)} VND</Text></Text>
+                                                        <Text style={styles.textTitleValue}>Tổng tiền thanh toán: <Text style={styles.textValueMoney}>{convertVND(totalMoney)} VND</Text></Text>
                                                 </View>
                                                 <View style={styles.containerButton}>
                                                         <TouchableOpacity
                                                                 onPress={() => {
-                                                                        this.onClickButtonAgree();
+                                                                        this.onClickButtonAgree(totalMoney, scoreDiscount);
                                                                 }}
                                                                 style={styles.buttonAgree}>
                                                                 <Text style={styles.textButton}>chấp nhận</Text>
@@ -221,6 +249,11 @@ const styles = StyleSheet.create({
         textValue: {
                 fontFamily: 'UVN-Baisau-Bold',
                 flex: 1,
+        },
+        textValueMoney: {
+                fontFamily: 'UVN-Baisau-Bold',
+                flex: 1,
+                textTransform: 'uppercase'
         },
         formatValue: {
                 flexDirection: 'row',

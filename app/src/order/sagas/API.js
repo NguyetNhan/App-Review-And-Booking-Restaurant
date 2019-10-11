@@ -11,7 +11,10 @@ FetchMenuFromAPI = async (data) => {
                 }).then(data => data.json());
                 return response;
         } catch (error) {
-                console.log('FetchMenuFromAPI error: ', error);
+                return {
+                        error: true,
+                        message: error.message,
+                };
         }
 };
 
@@ -32,14 +35,18 @@ AddOrderIntoDatabase = async (data) => {
                                 amountPerson: data.amountPerson,
                                 food: data.food,
                                 receptionTime: data.receptionTime,
+                                totalMoneyFood: data.totalMoneyFood,
+                                discount: data.discount,
                                 totalMoney: data.totalMoney,
                                 note: data.note,
                         })
                 }).then(value => value.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error);
-
+                return {
+                        error: true,
+                        messages: error.message,
+                };
         }
 };
 

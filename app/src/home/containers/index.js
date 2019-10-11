@@ -1,12 +1,10 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onFetchListRestaurant, onFetchListBar, onFetchListCoffee, onFetchNearbyLocationRestaurant } from '../actions';
+import { onFetchListRestaurant, onFetchListCoffee, onFetchNearbyLocationRestaurant } from '../actions';
 
 const mapStateToProps = (state) => {
         const fetchListRestaurantSucceeded = state.HomeReducers.FetchListRestaurantSucceeded;
         const fetchListRestaurantFailed = state.HomeReducers.FetchListRestaurantFailed;
-        const fetchListBarSucceeded = state.HomeReducers.FetchListBarSucceeded;
-        const fetchListBarFailed = state.HomeReducers.FetchListBarFailed;
         const fetchListCoffeeSucceeded = state.HomeReducers.FetchListCoffeeSucceeded;
         const fetchListCoffeeFailed = state.HomeReducers.FetchListCoffeeFailed;
         const fetchListRestaurantFollowLocationSucceeded = state.HomeReducers.FetchListRestaurantFollowLocationSucceeded;
@@ -31,16 +29,6 @@ const mapStateToProps = (state) => {
                         isLoading: false,
                         messages: fetchListRestaurantFailed.messages
                 };
-        } else if (fetchListBarSucceeded !== undefined) {
-                return {
-                        isLoading: false,
-                        listBar: fetchListBarSucceeded.data.data,
-                };
-        } else if (fetchListBarFailed !== undefined) {
-                return {
-                        isLoading: false,
-                        messages: fetchListBarFailed.messages
-                };
         } else if (fetchListCoffeeSucceeded !== undefined) {
                 return {
                         isLoading: false,
@@ -63,9 +51,6 @@ const mapDispatchToProps = (dispatch) => {
         return {
                 onFetchListRestaurant: (data) => {
                         dispatch(onFetchListRestaurant(data));
-                },
-                onFetchListBar: (data) => {
-                        dispatch(onFetchListBar(data));
                 },
                 onFetchListCoffee: (data) => {
                         dispatch(onFetchListCoffee(data));

@@ -2,7 +2,7 @@ import { urlServer } from '../../../config';
 import FormData from 'FormData';
 const urlRegisterRestaurant = `${urlServer}/restaurant/register-restaurant`;
 
-RegisterRestaurant = async (data, idAccount) => {
+RegisterRestaurant = async (data) => {
         try {
                 const formData = new FormData();
                 for (var item of data.image) {
@@ -12,7 +12,7 @@ RegisterRestaurant = async (data, idAccount) => {
                 formData.append('introduce', data.introduce);
                 formData.append('address', data.address);
                 formData.append('phone', data.phone);
-                formData.append('idAdmin', idAccount);
+                formData.append('idAdmin', data.idAdmin);
                 formData.append('type', data.type);
                 formData.append('time_activity', data.time);
                 formData.append('latitude', data.position.latitude);
@@ -27,7 +27,10 @@ RegisterRestaurant = async (data, idAccount) => {
                 }).then(value => value.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error);
+                return {
+                        error: true,
+                        message: error.message
+                };
         }
 };
 
