@@ -12,8 +12,17 @@ import {
         SEND_MESSAGE,
         FETCH_INFO_ACCOUNT_RECEIVER_FOR_DETAIL_CHAT,
         FETCH_INFO_ACCOUNT_RECEIVER_FOR_DETAIL_CHAT_FAILED,
-        FETCH_INFO_ACCOUNT_RECEIVER_FOR_DETAIL_CHAT_SUCCEEDED
+        FETCH_INFO_ACCOUNT_RECEIVER_FOR_DETAIL_CHAT_SUCCEEDED,
+        RECEIVER_MESSAGE_FROM_SERVER
 } from './types';
+
+
+export const onReceiverMessage = (messageReceiver) => {
+        return {
+                type: RECEIVER_MESSAGE_FROM_SERVER,
+                messageReceiver
+        };
+};
 
 export const onSendMessage = (idConversation, idSender, content) => {
         return {

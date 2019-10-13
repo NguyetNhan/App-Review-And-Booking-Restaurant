@@ -8,9 +8,12 @@ import {
         WatchConfirmRestaurantCancelFromAPI
 } from '../admin/confirm_restaurant/sagas';
 import {
-        watchFetchListRestaurantFromAPI,
-        watchFetchListCoffeeFromAPI,
-        watchFetchNearbyLocationRestaurantForHomeFromAPI
+        watchFetchNearbyLocationPlaceFromAPIForHome,
+        watchFetchStarPlaceForItemSuggestionFromAPI,
+        watchFetchListPlaceTheBest,
+        watchFetchListPlaceTheBestModal,
+        watchFetchListFoodTheBest,
+        watchFetchListFoodTheBestModal
 } from '../home/sagas';
 import {
         watchSearchFollowTypeFromAPI,
@@ -25,7 +28,7 @@ import {
 import { WatchAddMenuOnAPI, WatchFetchMenuFromAPI } from '../detail_restaurant/menu/sagas';
 import { WatchFetchNotificationFromAPI } from '../notification/sagas';
 import { WatchFetchListMenuForOrderFromAPI, WatchAddOrderIntoDatabase } from '../order/sagas';
-import { WatchFetchNearbyLocationRestaurantFromAPI } from '../map/sagas';
+import { watchFetchNearbyLocationPlaceFromAPIForMap } from '../map/sagas';
 import { WatchFetchListOrderFromAPI } from '../deal/sagas';
 import {
         watchFetchDetailOrderFromAPI,
@@ -43,7 +46,8 @@ import {
 } from '../client/add_review/sagas';
 import {
         watchFetchListConversationFromApi,
-        watchFetchInfoAccountReceiverFromAPI
+        watchFetchInfoAccountReceiverFromAPI,
+        watchFetchNewMessageFromAPIForItemConversation
 } from '../chat/sagas';
 import {
         watchCheckConversationExist,
@@ -60,15 +64,11 @@ export default function* RootSaga () {
                 WatchFetchListConfirmRestaurantFromAPI(),
                 WatchConfirmRestaurantAgreeFromAPI(),
                 WatchConfirmRestaurantCancelFromAPI(),
-                watchFetchListRestaurantFromAPI(),
                 watchFetchDetailRestaurantFormAPI(),
                 WatchAddMenuOnAPI(),
                 WatchFetchMenuFromAPI(),
-                watchFetchListCoffeeFromAPI(),
                 WatchFetchNotificationFromAPI(),
                 WatchFetchListMenuForOrderFromAPI(),
-                WatchFetchNearbyLocationRestaurantFromAPI(),
-                watchFetchNearbyLocationRestaurantForHomeFromAPI(),
                 WatchAddOrderIntoDatabase(),
                 WatchFetchListOrderFromAPI(),
                 watchFetchDetailOrderFromAPI(),
@@ -89,6 +89,14 @@ export default function* RootSaga () {
                 watchFetchListMessageFromAPI(),
                 watchFetchInfoAccountReceiverFromAPI(),
                 watchFetchInfoAccountReceiverForDetaiChatFromAPI(),
-                watchSendMessage()
+                watchSendMessage(),
+                watchFetchNewMessageFromAPIForItemConversation(),
+                watchFetchNearbyLocationPlaceFromAPIForHome(),
+                watchFetchNearbyLocationPlaceFromAPIForMap(),
+                watchFetchStarPlaceForItemSuggestionFromAPI(),
+                watchFetchListPlaceTheBest(),
+                watchFetchListPlaceTheBestModal(),
+                watchFetchListFoodTheBest(),
+                watchFetchListFoodTheBestModal()
         ]);
 }

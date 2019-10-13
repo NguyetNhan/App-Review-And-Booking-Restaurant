@@ -1,21 +1,99 @@
-import { put, takeLatest } from 'redux-saga/effects';
+import { put, takeLatest, takeEvery } from 'redux-saga/effects';
 import {
-        FETCH_LIST_RESTAURANT,
-        FETCH_LIST_COFFEE,
-        FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME
-} from '../actions/action_types';
+        FETCH_NEARBY_LOCATION_PLACE_FOR_HOME,
+        FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION,
+        FETCH_PLACE_THE_BEST,
+        FETCH_PLACE_THE_BEST_FOR_MODAL,
+        FETCH_FOOD_THE_BEST,
+        FETCH_FOOD_THE_BEST_FOR_MODAL
+} from '../actions/types';
 import {
-        onFetchListRestaurantFailed,
-        onFetchListRestaurantSucceeded,
-        onFetchListCoffeeFailed,
-        onFetchListCoffeeSucceeded,
-        onFetchNearbyLocationRestaurantFailed,
-        onFetchNearbyLocationRestaurantSucceeded
+        onFetchNearbyLocationPlaceFailed,
+        onFetchNearbyLocationPlaceSucceeded,
+        onFetchStarPlaceForItemSuggestionFailed,
+        onFetchStarPlaceForItemSuggestionSucceeded,
+        onFetchPlaceTheBestFailed,
+        onFetchPlaceTheBestSucceeded,
+        onFetchPlaceTheBestForModalFailed,
+        onFetchPlaceTheBestForModalSucceeded,
+        onFetchFoodTheBestFailed,
+        onFetchFoodTheBestSucceeded,
+        onFetchFoodTheBestForModalFailed,
+        onFetchFoodTheBestForModalSucceeded
 } from '../actions';
-import { API } from './API';
-import { API as MapAPI } from '../../map/sagas/API';
+import { API as mapAPI } from '../../map/sagas/API';
+import { API as overviewAPI } from '../../detail_restaurant/overview/sagas/API';
+import { API } from './api';
 
-function* fetchListRestaurantFromAPI (action) {
+
+function* fetchListFoodTheBestModal (action) {
+        try {
+                const result = yield API.fetchListFoodTheBest(action.page);
+                if (result.error) {
+                        yield put(onFetchFoodTheBestForModalFailed(result.message));
+                } else {
+                        yield put(onFetchFoodTheBestForModalSucceeded(result));
+                }
+        } catch (error) {
+                yield put(onFetchFoodTheBestForModalFailed(error.message));
+        }
+}
+
+export function* watchFetchListFoodTheBestModal () {
+        yield takeLatest(FETCH_FOOD_THE_BEST_FOR_MODAL, fetchListFoodTheBestModal);
+}
+function* fetchListFoodTheBest (action) {
+        try {
+                const result = yield API.fetchListFoodTheBest(action.page);
+                if (result.error) {
+                        yield put(onFetchFoodTheBestFailed(result.message));
+                } else {
+                        yield put(onFetchFoodTheBestSucceeded(result.data));
+                }
+        } catch (error) {
+                yield put(onFetchFoodTheBestFailed(error.message));
+        }
+}
+
+export function* watchFetchListFoodTheBest () {
+        yield takeLatest(FETCH_FOOD_THE_BEST, fetchListFoodTheBest);
+}
+
+function* fetchListPlaceTheBestModal (action) {
+        try {
+                const result = yield API.fetchListPlaceTheBest(action.page);
+                if (result.error) {
+                        yield put(onFetchPlaceTheBestForModalFailed(result.message));
+                } else {
+                        yield put(onFetchPlaceTheBestForModalSucceeded(result));
+                }
+        } catch (error) {
+                yield put(onFetchPlaceTheBestForModalFailed(error.message));
+        }
+}
+
+export function* watchFetchListPlaceTheBestModal () {
+        yield takeLatest(FETCH_PLACE_THE_BEST_FOR_MODAL, fetchListPlaceTheBestModal);
+}
+function* fetchListPlaceTheBest (action) {
+        try {
+                const result = yield API.fetchListPlaceTheBest(action.page);
+                if (result.error) {
+                        yield put(onFetchPlaceTheBestFailed(result.message));
+                } else {
+                        yield put(onFetchPlaceTheBestSucceeded(result.data));
+                }
+        } catch (error) {
+                yield put(onFetchPlaceTheBestFailed(error.message));
+        }
+}
+
+export function* watchFetchListPlaceTheBest () {
+        yield takeLatest(FETCH_PLACE_THE_BEST, fetchListPlaceTheBest);
+}
+
+
+/* function* fetchListRestaurantFromAPI (action) {
         try {
                 const results = yield API.fetchListRestaurantFormAPI(action.data);
                 if (results.error) {
@@ -47,21 +125,42 @@ function* fetchListCoffeeFromAPI (action) {
 
 export function* watchFetchListCoffeeFromAPI () {
         yield takeLatest(FETCH_LIST_COFFEE, fetchListCoffeeFromAPI);
-}
+} */
 
-function* fetchNearbyLocationRestaurantFromAPI (action) {
+
+
+function* fetchNearbyLocationPlaceFromAPI (action) {
         try {
-                const results = yield MapAPI.FetchNearbyLocationRestaurant(action.position);
-                if (results.error) {
-                        yield put(onFetchNearbyLocationRestaurantFailed(results.messages));
+                const result = yield mapAPI.fetchNearbyLocationPlace(action.geolocation);
+                if (result.error) {
+                        yield put(onFetchNearbyLocationPlaceFailed(result.message));
                 } else {
-                        yield put(onFetchNearbyLocationRestaurantSucceeded(results.data));
+                        yield put(onFetchNearbyLocationPlaceSucceeded(result.data));
                 }
         } catch (error) {
-                yield put(onFetchNearbyLocationRestaurantFailed(error.message));
+                yield put(onFetchNearbyLocationPlaceFailed(error.message));
         }
 }
 
-export function* watchFetchNearbyLocationRestaurantForHomeFromAPI () {
-        yield takeLatest(FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME, fetchNearbyLocationRestaurantFromAPI);
+export function* watchFetchNearbyLocationPlaceFromAPIForHome () {
+        yield takeLatest(FETCH_NEARBY_LOCATION_PLACE_FOR_HOME, fetchNearbyLocationPlaceFromAPI);
 }
+
+function* fetchStarPlaceForItemSuggestionFromAPI (action) {
+        try {
+                const result = yield overviewAPI.fetchScoreReview(action.idPlace);
+                if (result.error) {
+                        yield put(onFetchStarPlaceForItemSuggestionFailed(result.message));
+                } else {
+                        yield put(onFetchStarPlaceForItemSuggestionSucceeded(result.mediumScore));
+                }
+        } catch (error) {
+                yield put(onFetchStarPlaceForItemSuggestionFailed(error.message));
+        }
+}
+
+export function* watchFetchStarPlaceForItemSuggestionFromAPI () {
+        yield takeEvery(FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION, fetchStarPlaceForItemSuggestionFromAPI);
+}
+
+

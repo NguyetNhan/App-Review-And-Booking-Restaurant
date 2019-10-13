@@ -1,54 +1,14 @@
-import {
-        FETCH_LIST_RESTAURANT_SUCCEEDED,
-        FETCH_LIST_RESTAURANT_FAILED,
-        FETCH_LIST_COFFEE_FAILED,
-        FETCH_LIST_COFFEE_SUCCEEDED,
-        FETCH_NEARBY_LOCATION_RESTAURANT_FAILED,
-        FETCH_NEARBY_LOCATION_RESTAURANT_SUCCEEDED
-} from '../actions/action_types';
+import { combineReducers } from 'redux';
+import SuggestionsReducers from './suggestions';
+import ItemPlaceReducers from './item_place';
+import ModalListPlaceBestReducers from './modal_list_place_best';
+import ModalListFoodBestReducers from './modal_list_food_best';
 
-
-const HomeReducers = (state = [], action) => {
-        switch (action.type) {
-                case FETCH_LIST_RESTAURANT_SUCCEEDED:
-                        return {
-                                FetchListRestaurantSucceeded: {
-                                        data: action.data
-                                }
-                        };
-                case FETCH_LIST_RESTAURANT_FAILED:
-                        return {
-                                FetchListRestaurantFailed: {
-                                        messages: action.messages
-                                }
-                        };
-                case FETCH_LIST_COFFEE_SUCCEEDED:
-                        return {
-                                FetchListCoffeeSucceeded: {
-                                        data: action.data
-                                }
-                        };
-                case FETCH_LIST_COFFEE_FAILED:
-                        return {
-                                FetchListCoffeeFailed: {
-                                        messages: action.messages
-                                }
-                        };
-                case FETCH_NEARBY_LOCATION_RESTAURANT_SUCCEEDED:
-                        return {
-                                FetchListRestaurantFollowLocationSucceeded: {
-                                        data: action.data
-                                }
-                        };
-                case FETCH_NEARBY_LOCATION_RESTAURANT_FAILED:
-                        return {
-                                FetchListRestaurantFollowLocationFailed: {
-                                        messages: action.messages
-                                }
-                        };
-                default:
-                        return state;
-        }
-};
+const HomeReducers = combineReducers({
+        SuggestionsReducers,
+        ItemPlaceReducers,
+        ModalListPlaceBestReducers,
+        ModalListFoodBestReducers
+});
 
 export default HomeReducers;

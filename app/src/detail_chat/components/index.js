@@ -88,6 +88,7 @@ export default class DetailChat extends Component {
         }
 
         componentWillUnmount () {
+                socket.emit('leave-room-chat', this.state.idConversation);
                 this.props.onResetPropsMain();
         }
         render () {

@@ -1,75 +1,148 @@
 import {
-        FETCH_LIST_RESTAURANT,
-        FETCH_LIST_RESTAURANT_SUCCEEDED,
-        FETCH_LIST_RESTAURANT_FAILED,
-        FETCH_LIST_COFFEE,
-        FETCH_LIST_COFFEE_FAILED, FETCH_LIST_COFFEE_SUCCEEDED,
-        FETCH_NEARBY_LOCATION_RESTAURANT_FAILED,
-        FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME,
-        FETCH_NEARBY_LOCATION_RESTAURANT_SUCCEEDED
-} from './action_types';
+        FETCH_NEARBY_LOCATION_PLACE_FOR_HOME,
+        FETCH_NEARBY_LOCATION_PLACE_FOR_HOME_FAILED,
+        FETCH_NEARBY_LOCATION_PLACE_FOR_HOME_SUCCEEDED,
+        RESET_PROPS_MESSAGE_SUGGESTION,
+        RESET_PROPS_SUGGESTION,
+        FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION,
+        FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION_FAILED,
+        FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION_SUCCEEDED,
+        FETCH_PLACE_THE_BEST,
+        FETCH_PLACE_THE_BEST_FAILED,
+        FETCH_PLACE_THE_BEST_SUCCEEDED,
+        FETCH_PLACE_THE_BEST_FOR_MODAL,
+        FETCH_PLACE_THE_BEST_FOR_MODAL_FAILED,
+        FETCH_PLACE_THE_BEST_FOR_MODAL_SUCCEEDED,
+        FETCH_FOOD_THE_BEST,
+        FETCH_FOOD_THE_BEST_FAILED,
+        FETCH_FOOD_THE_BEST_SUCCEEDED,
+        FETCH_FOOD_THE_BEST_FOR_MODAL,
+        FETCH_FOOD_THE_BEST_FOR_MODAL_FAILED,
+        FETCH_FOOD_THE_BEST_FOR_MODAL_SUCCEEDED
+} from './types';
 
-export const onFetchListRestaurant = (data) => {
+export const onFetchFoodTheBestForModal = (page) => {
         return {
-                type: FETCH_LIST_RESTAURANT,
+                type: FETCH_FOOD_THE_BEST_FOR_MODAL,
+                page
+        };
+};
+export const onFetchFoodTheBestForModalSucceeded = (data) => {
+        return {
+                type: FETCH_FOOD_THE_BEST_FOR_MODAL_SUCCEEDED,
+                data
+        };
+};
+export const onFetchFoodTheBestForModalFailed = (message) => {
+        return {
+                type: FETCH_FOOD_THE_BEST_FOR_MODAL_FAILED,
+                message
+        };
+};
+export const onFetchFoodTheBest = (page) => {
+        return {
+                type: FETCH_FOOD_THE_BEST,
+                page
+        };
+};
+export const onFetchFoodTheBestSucceeded = (data) => {
+        return {
+                type: FETCH_FOOD_THE_BEST_SUCCEEDED,
+                data
+        };
+};
+export const onFetchFoodTheBestFailed = (message) => {
+        return {
+                type: FETCH_FOOD_THE_BEST_FAILED,
+                message
+        };
+};
+export const onFetchPlaceTheBestForModal = (page) => {
+        return {
+                type: FETCH_PLACE_THE_BEST_FOR_MODAL,
+                page
+        };
+};
+export const onFetchPlaceTheBestForModalSucceeded = (data) => {
+        return {
+                type: FETCH_PLACE_THE_BEST_FOR_MODAL_SUCCEEDED,
+                data
+        };
+};
+export const onFetchPlaceTheBestForModalFailed = (message) => {
+        return {
+                type: FETCH_PLACE_THE_BEST_FOR_MODAL_FAILED,
+                message
+        };
+};
+
+export const onFetchPlaceTheBest = (page) => {
+        return {
+                type: FETCH_PLACE_THE_BEST,
+                page
+        };
+};
+export const onFetchPlaceTheBestSucceeded = (data) => {
+        return {
+                type: FETCH_PLACE_THE_BEST_SUCCEEDED,
+                data
+        };
+};
+export const onFetchPlaceTheBestFailed = (message) => {
+        return {
+                type: FETCH_PLACE_THE_BEST_FAILED,
+                message
+        };
+};
+
+export const onFetchStarPlaceForItemSuggestion = (idPlace) => {
+        return {
+                type: FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION,
+                idPlace
+        };
+};
+
+export const onFetchStarPlaceForItemSuggestionSucceeded = (data) => {
+        return {
+                type: FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION_SUCCEEDED,
+                data
+        };
+};
+export const onFetchStarPlaceForItemSuggestionFailed = (message) => {
+        return {
+                type: FETCH_STAR_PLACE_FOR_ITEM_SUGGESTION_FAILED,
+                message
+        };
+};
+export const onFetchNearbyLocationPlace = (geolocation) => {
+        return {
+                type: FETCH_NEARBY_LOCATION_PLACE_FOR_HOME,
+                geolocation
+        };
+};
+
+export const onFetchNearbyLocationPlaceSucceeded = (data) => {
+        return {
+                type: FETCH_NEARBY_LOCATION_PLACE_FOR_HOME_SUCCEEDED,
                 data
         };
 };
 
-export const onFetchListRestaurantSucceeded = (data) => {
+export const onFetchNearbyLocationPlaceFailed = (messages) => {
         return {
-                type: FETCH_LIST_RESTAURANT_SUCCEEDED,
-                data
-        };
-};
-
-export const onFetchListRestaurantFailed = (messages) => {
-        return {
-                type: FETCH_LIST_RESTAURANT_FAILED,
+                type: FETCH_NEARBY_LOCATION_PLACE_FOR_HOME_FAILED,
                 messages
         };
 };
 
-
-export const onFetchListCoffee = (data) => {
+export const onResetPropsSuggestion = () => {
         return {
-                type: FETCH_LIST_COFFEE,
-                data
+                type: RESET_PROPS_SUGGESTION
         };
 };
 
-
-export const onFetchListCoffeeSucceeded = (data) => {
+export const onResetPropsMessageSuggestion = () => {
         return {
-                type: FETCH_LIST_COFFEE_SUCCEEDED,
-                data
-        };
-};
-
-export const onFetchListCoffeeFailed = (messages) => {
-        return {
-                type: FETCH_LIST_COFFEE_FAILED,
-                messages
-        };
-};
-
-export const onFetchNearbyLocationRestaurant = (position) => {
-        return {
-                type: FETCH_NEARBY_LOCATION_RESTAURANT_FOR_HOME,
-                position
-        };
-};
-
-export const onFetchNearbyLocationRestaurantSucceeded = (data) => {
-        return {
-                type: FETCH_NEARBY_LOCATION_RESTAURANT_SUCCEEDED,
-                data
-        };
-};
-
-export const onFetchNearbyLocationRestaurantFailed = (messages) => {
-        return {
-                type: FETCH_NEARBY_LOCATION_RESTAURANT_FAILED,
-                messages
+                type: RESET_PROPS_MESSAGE_SUGGESTION
         };
 };

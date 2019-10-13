@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert, ActivityIndicator, Dimensions, TouchableOpacity } from 'react-native';
 import { urlServer, colorMain } from '../../config';
 const { width, height } = Dimensions.get('window');
+import { socket } from '../../socket';
 
 export default class ItemConversation extends Component {
         constructor (props) {
@@ -10,8 +11,36 @@ export default class ItemConversation extends Component {
                         item: props.item,
                         accountSend: props.account,
                         accountReceiver: null,
-                        isLoading: true
+                        isLoading: true,
+                        isCheckOnline: false,
+                        tinNhanMoiNhat: null
                 };
+                this.checkAccountReceiverOnline();
+        }
+
+        async checkAccountReceiverOnline () {
+                this.intervalId = setInterval(() => {
+                        if (this.state.accountReceiver !== null) {
+                                socket.emit('idClientOnline', (listId) => {
+                                        var checked = false;
+                                        for (item of listId) {
+                                                if (this.state.accountReceiver._id === item.idAccount) {
+                                                        checked = true;
+                                                        break;
+                                                }
+                                        }
+                                        if (checked) {
+                                                this.setState({
+                                                        isCheckOnline: true
+                                                });
+                                        } else {
+                                                this.setState({
+                                                        isCheckOnline: false
+                                                });
+                                        }
+                                });
+                        }
+                }, 1000);
         }
 
         componentDidMount () {
@@ -20,6 +49,7 @@ export default class ItemConversation extends Component {
                                 this.props.onFetchInfoAccountReceiver(item);
                         }
                 }
+
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -28,6 +58,11 @@ export default class ItemConversation extends Component {
                 }
                 if (nextProps.accountReceiver !== prevState.accountReceiver && nextProps.accountReceiver !== undefined && !prevState.isLoading) {
                         prevState.accountReceiver = nextProps.accountReceiver;
+                        prevState.isLoading = true;
+                        nextProps.onFetchNewMessageForItem(prevState.item._id);
+                }
+                if (nextProps.tinNhanMoiNhat !== prevState.tinNhanMoiNhat && nextProps.tinNhanMoiNhat !== undefined && !prevState.isLoading) {
+                        prevState.tinNhanMoiNhat = nextProps.tinNhanMoiNhat;
                 }
 
                 if (nextProps.message !== undefined) {
@@ -47,6 +82,7 @@ export default class ItemConversation extends Component {
         }
 
         componentWillUnmount () {
+                clearInterval(this.intervalId);
                 this.props.onResetPropsItemConversation();
         }
 
@@ -70,19 +106,42 @@ export default class ItemConversation extends Component {
                                         style={styles.container}>
                                         {
                                                 this.state.accountReceiver.avatar === null ?
-                                                        <Image
-                                                                source={require('../../assets/images/avatar_user.png')}
-                                                                style={styles.image}
-                                                        />
+                                                        this.state.isCheckOnline ?
+                                                                <Image
+                                                                        source={require('../../assets/images/avatar_user.png')}
+                                                                        style={styles.imageOnline}
+                                                                /> :
+                                                                <Image
+                                                                        source={require('../../assets/images/avatar_user.png')}
+                                                                        style={styles.image}
+                                                                />
                                                         :
-                                                        <Image
-                                                                source={{ uri: `${urlServer}${this.state.accountReceiver.avatar}` }}
-                                                                style={styles.image}
-                                                        />
+                                                        this.state.isCheckOnline ?
+                                                                <Image
+                                                                        source={{ uri: `${urlServer}${this.state.accountReceiver.avatar}` }}
+                                                                        style={styles.imageOnline}
+                                                                /> :
+                                                                <Image
+                                                                        source={{ uri: `${urlServer}${this.state.accountReceiver.avatar}` }}
+                                                                        style={styles.image}
+                                                                />
                                         }
                                         <View style={styles.contentValue}>
                                                 <Text style={styles.name}>{this.state.accountReceiver.name}</Text>
-                                                <Text>tin nhan moi nhat</Text>
+                                                {
+                                                        this.state.tinNhanMoiNhat === null ? null :
+                                                                this.state.accountSend.id === this.state.tinNhanMoiNhat.idSender ?
+                                                                        <Text
+                                                                                numberOfLines={1}
+                                                                                ellipsizeMode='tail'
+                                                                                style={styles.textMessage}>Bạn: {this.state.tinNhanMoiNhat.content}
+                                                                        </Text> :
+                                                                        <Text
+                                                                                numberOfLines={1}
+                                                                                ellipsizeMode='tail'
+                                                                                style={styles.textMessage}>{this.state.tinNhanMoiNhat.content}
+                                                                        </Text>
+                                                }
                                         </View>
                                 </TouchableOpacity>
                         );
@@ -107,11 +166,24 @@ const styles = StyleSheet.create({
                 height: 50,
                 borderRadius: 25
         },
+        imageOnline: {
+                width: 50,
+                height: 50,
+                borderRadius: 25,
+                borderWidth: 5,
+                borderColor: colorMain
+        },
         contentValue: {
-                marginLeft: 10
+                marginLeft: 10,
+                flex: 1,
+                justifyContent: 'center'
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 16
+                fontSize: 20
+        },
+        textMessage: {
+                color: 'gray',
+                fontFamily: 'UVN-Baisau-Regular',
         }
 });

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Dimensions, FlatList, ToastAndroid, ScrollView, Modal, RefreshControl, PermissionsAndroid, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer, backgroundStatusBar } from '../../config';
-import Carousel from 'react-native-snap-carousel';
 import ItemAddress from './item_address';
 import ItemList from './item_list';
 import Geolocation from '@react-native-community/geolocation';
@@ -51,7 +50,7 @@ export default class Home extends Component {
                         ],
                 }
                 socket.connect();
-                this.fetchInfoAccountFromLocal();
+                //    this.fetchInfoAccountFromLocal();
                 this._onClickItemFlatList = this._onClickItemFlatList.bind(this);
                 this._onClickModalRestaurant = this._onClickModalRestaurant.bind(this);
                 this._onClickModalCoffee = this._onClickModalCoffee.bind(this);
@@ -131,17 +130,17 @@ export default class Home extends Component {
                 }
         }
 
-        componentDidMount () {
-                //    this.fetchInfoAccountFromLocal();
-                this.props.onFetchListRestaurant({
-                        type: 'restaurant',
-                        page: 1
-                });
-                this.props.onFetchListCoffee({
-                        type: 'coffee',
-                        page: 1
-                });
-        }
+        /*   componentDidMount () {
+                  //    this.fetchInfoAccountFromLocal();
+                  this.props.onFetchListRestaurant({
+                          type: 'restaurant',
+                          page: 1
+                  });
+                  this.props.onFetchListCoffee({
+                          type: 'coffee',
+                          page: 1
+                  });
+          } */
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.listRestaurantFollowLocation !== prevState.listRestaurantFollowLocation && nextProps.listRestaurantFollowLocation !== undefined) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert, FlatList } from 'react-native';
-import ItemMessage from '../containers/item_message';
+import ItemMessage from './item_message';
 import { socket } from '../../socket';
 
 export default class ListMessage extends Component {
@@ -17,19 +17,18 @@ export default class ListMessage extends Component {
                         isLoadMore: false,
                         page: 1,
                         total_page: null,
-                        socket_send: false
+                        resetListMessage: false
                 };
                 this.receiverMessageFromServer();
         }
 
         async receiverMessageFromServer () {
                 await socket.on('server-send-message-chat', (data) => {
-                        const list = [data, ...this.state.listMessage];
                         this.setState({
-                                listMessage: list,
-                                isLoading: true,
+                                isLoading: true
                         });
-                        this.props.onResetPropsMessageListMessage();
+                        let list = [data, ...this.state.listMessage];
+                        this.props.onReceiverMessage(list);
                 });
         }
 
@@ -39,19 +38,26 @@ export default class ListMessage extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.resetListMessage !== prevState.resetListMessage && nextProps.resetListMessage !== undefined && !prevState.isLoading) {
+                        prevState.resetListMessage = nextProps.resetListMessage;
+                }
                 if (nextProps.page !== prevState.page && nextProps.page !== undefined && !prevState.isLoading) {
                         prevState.page = nextProps.page;
                 }
                 if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page;
+
                 }
                 if (nextProps.listMessage !== prevState.listMessage && nextProps.listMessage !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+
                         prevState.listMessage = nextProps.listMessage;
-                } else if (nextProps.listMessage !== prevState.listMessage && nextProps.listMessage !== undefined && prevState.isRefresh && !prevState.isLoadMore && prevState.isLoading) {
+                } else if (nextProps.listMessage !== prevState.listMessage && nextProps.listMessage !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+
                         prevState.listMessage = nextProps.listMessage;
-                        prevState.isLoading = false;
+                        prevState.isRefresh = false;
                 } else if (nextProps.listMessage !== prevState.listMessage && nextProps.listMessage !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listMessage = prevState.listMessage.concat(nextProps.listMessage);
+
                         prevState.isLoadMore = false;
                 }
                 if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
@@ -74,24 +80,36 @@ export default class ListMessage extends Component {
         }
 
         onRefresh () {
-                this.setState({
-                        page: 1,
-                        isLoading: true,
-                        isRefresh: true
-                });
-                this.props.onFetchListMessage(this.state.idConversation, 1);
+                if (!this.state.isLoading) {
+                        this.setState({
+                                page: 1,
+                                listMessage: [],
+                                isLoading: true,
+                                isRefresh: true,
+                                resetListMessage: false
+                        });
+                        this.props.onFetchListMessage(this.state.idConversation, 1);
+                }
+
         }
 
         onLoadMore () {
-                const page = this.state.page;
-                const total_page = this.state.total_page;
-                if (page < total_page) {
-                        this.setState({
-                                isLoading: true,
-                                isLoadMore: true
-                        });
-                        this.props.onFetchListMessage(this.state.idConversation, page + 1);
+                if (!this.state.isLoading) {
+                        if (this.state.resetListMessage) {
+                                this.onRefresh();
+                        } else {
+                                const page = this.state.page;
+                                const total_page = this.state.total_page;
+                                if (page < total_page) {
+                                        this.setState({
+                                                isLoading: true,
+                                                isLoadMore: true
+                                        });
+                                        this.props.onFetchListMessage(this.state.idConversation, page + 1);
+                                }
+                        }
                 }
+
         }
 
         componentWillUnmount () {
@@ -102,7 +120,6 @@ export default class ListMessage extends Component {
                         <View style={styles.container}>
                                 <FlatList
                                         data={this.state.listMessage}
-
                                         extraData={this.state}
                                         keyExtractor={(item, index) => index.toString()}
                                         showsVerticalScrollIndicator={false}
@@ -116,10 +133,10 @@ export default class ListMessage extends Component {
                                         inverted={true}
                                         onEndReachedThreshold={0.1}
                                         renderItem={(item) => {
-                                                console.log('item: ', item.item.content);
                                                 return (
                                                         <ItemMessage
-                                                                item={item.item}
+                                                                content={item.item.content}
+                                                                idSender={item.item.idSender}
                                                                 idAccountSend={this.state.idAccountSend}
                                                                 accountReceiver={this.state.accountReceiver}
                                                         />

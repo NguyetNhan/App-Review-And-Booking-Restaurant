@@ -10,8 +10,33 @@ import {
         RESET_PROPS_MESSAGE_ITEM_CONVERSATION,
         FETCH_INFO_ACCOUNT_RECEIVER_FOR_CONVERSATION,
         FETCH_INFO_ACCOUNT_RECEIVER_FOR_CONVERSATION_FAILED,
-        FETCH_INFO_ACCOUNT_RECEIVER_FOR_CONVERSATION_SUCCEEDED
+        FETCH_INFO_ACCOUNT_RECEIVER_FOR_CONVERSATION_SUCCEEDED,
+        FETCH_NEW_MESSAGE_FOR_ITEM_MESSAGE,
+        FETCH_NEW_MESSAGE_FOR_ITEM_MESSAGE_FAILED,
+        FETCH_NEW_MESSAGE_FOR_ITEM_MESSAGE_SUCCEEDED
 } from './types';
+
+
+export const onFetchNewMessageForItem = (idConversation) => {
+        return {
+                type: FETCH_NEW_MESSAGE_FOR_ITEM_MESSAGE,
+                idConversation
+        };
+};
+
+export const onFetchNewMessageForItemSucceeded = (data) => {
+        return {
+                type: FETCH_NEW_MESSAGE_FOR_ITEM_MESSAGE_SUCCEEDED,
+                data
+        };
+};
+
+export const onFetchNewMessageForItemFailed = (message) => {
+        return {
+                type: FETCH_NEW_MESSAGE_FOR_ITEM_MESSAGE_FAILED,
+                message
+        };
+};
 
 export const onFetchListConversation = (idAccount, page) => {
         return {

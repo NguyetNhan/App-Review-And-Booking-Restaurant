@@ -1,25 +1,15 @@
 import { connect } from 'react-redux';
 import Component from '../components/list_message';
 import {
-        onCheckConversationExist,
         onFetchListMessage,
         onResetPropsListMessage,
-        onResetPropsMessageListMessage
+        onResetPropsMessageListMessage,
+        onReceiverMessage
 } from '../actions';
 
 const mapStateToProps = (state) => {
         const listMessageReducers = state.DetailChatReducers.ListMessageReducers;
         if (listMessageReducers !== null) {
-                /*  if (listMessageReducers.checkSucceeded !== undefined) {
-                         return {
-                                 idConversation: listMessageReducers.checkSucceeded.data
-                         };
-                 } else if (listMessageReducers.checkFailed !== undefined) {
-                         return {
-                                 message: listMessageReducers.checkFailed.message,
-                                 isLoading: false
-                         };
-                 } else  */
                 if (listMessageReducers.fetchSucceeded !== undefined) {
                         return {
                                 listMessage: listMessageReducers.fetchSucceeded.data.data,
@@ -36,7 +26,15 @@ const mapStateToProps = (state) => {
                         return listMessageReducers.resetPropsListMessage;
                 } else if (listMessageReducers.resetPropsMessageListMessage !== undefined) {
                         return listMessageReducers.resetPropsMessageListMessage;
+                } else if (listMessageReducers.messageReceiver !== undefined) {
+                        return {
+                                listMessage: listMessageReducers.messageReceiver,
+                                isLoading: false,
+                                resetListMessage: true,
+                        };
                 }
+
+
         } else
                 return {
                 };
@@ -47,9 +45,9 @@ const mapDispatchToProps = (dispatch) => {
                 onFetchListMessage: (idConversation, page) => {
                         dispatch(onFetchListMessage(idConversation, page));
                 },
-                /* onCheckConversationExist: (idSend, idReceiver) => {
-                        dispatch(onCheckConversationExist(idSend, idReceiver));
-                }, */
+                onReceiverMessage: (messageReceiver) => {
+                        dispatch(onReceiverMessage(messageReceiver));
+                },
                 onResetPropsListMessage: () => {
                         dispatch(onResetPropsListMessage());
                 },

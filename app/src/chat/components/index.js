@@ -41,9 +41,14 @@ export default class Chat extends Component {
                                         <Icon name='search' size={25} color='white' />
                                         <Text style={styles.textTitleSearch}>tìm kiếm nhà hàng, bạn bè...</Text>
                                 </View>
-                                <ListConversation
-                                        onChangeScreenDetailChat={this.onChangeScreenDetailChat}
-                                />
+                                <View style={{
+                                        flex: 1
+                                }}>
+                                        <ListConversation
+                                                onChangeScreenDetailChat={this.onChangeScreenDetailChat}
+                                        />
+                                </View>
+
                         </View>
                 );
         }

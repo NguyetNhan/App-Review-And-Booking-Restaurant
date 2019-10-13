@@ -36,7 +36,26 @@ fetchInfoAccountFromAPI = async (idAccount) => {
         }
 };
 
+fetchNewMessageFromAPI = async (idConversation) => {
+        try {
+                const response = await fetch(`${urlServer}/message/get-new-message/idConversation/${idConversation}`, {
+                        method: 'GET',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        },
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
+
 export const API = {
         fetchListConversationFromAPI,
-        fetchInfoAccountFromAPI
+        fetchInfoAccountFromAPI,
+        fetchNewMessageFromAPI
 };

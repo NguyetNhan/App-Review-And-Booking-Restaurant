@@ -8,7 +8,7 @@ export default class ListConversation extends Component {
                 super(props);
                 this.state = {
                         listConversation: [],
-                        isLoading: false,
+                        isLoading: true,
                         page: 1,
                         total_page: null,
                         account: null,
@@ -135,31 +135,30 @@ export default class ListConversation extends Component {
 
         render () {
                 return (
-                        <View style={styles.container}>
-                                <FlatList
-                                        data={this.state.listConversation}
-                                        extraData={this.state}
-                                        keyExtractor={(item, index) => index.toString()}
-                                        showsVerticalScrollIndicator={false}
-                                        refreshing={this.state.isLoading}
-                                        onRefresh={() => {
-                                                this.onRefresh();
-                                        }}
-                                        onEndReached={() => {
-                                                this.onLoadMore();
-                                        }}
-                                        onEndReachedThreshold={0.1}
-                                        renderItem={(item) => {
-                                                return (
-                                                        <ItemConversation
-                                                                item={item.item}
-                                                                account={this.state.account}
-                                                                onChangeScreenDetailChat={this.onChangeScreenDetailChat}
-                                                        />
-                                                );
-                                        }}
-                                />
-                        </View>
+
+                        <FlatList
+                                data={this.state.listConversation}
+                                extraData={this.state}
+                                keyExtractor={(item, index) => index.toString()}
+                                showsVerticalScrollIndicator={false}
+                                refreshing={this.state.isLoading}
+                                onRefresh={() => {
+                                        this.onRefresh();
+                                }}
+                                onEndReached={() => {
+                                        this.onLoadMore();
+                                }}
+                                onEndReachedThreshold={0.1}
+                                renderItem={(item) => {
+                                        return (
+                                                <ItemConversation
+                                                        item={item.item}
+                                                        account={this.state.account}
+                                                        onChangeScreenDetailChat={this.onChangeScreenDetailChat}
+                                                />
+                                        );
+                                }}
+                        />
                 );
         }
 }

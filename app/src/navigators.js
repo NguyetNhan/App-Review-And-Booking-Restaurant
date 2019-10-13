@@ -1,11 +1,6 @@
-import { createDrawerNavigator, createStackNavigator, createSwitchNavigator, createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation';
+import { createStackNavigator, createSwitchNavigator, createMaterialTopTabNavigator } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/EvilIcons';
-import { colorMain, urlServer } from './config';
-
-import { AccountModel } from './models/account';
+import { colorMain } from './config';
 
 import Home from './home/containers';
 import Search from './search/containers';

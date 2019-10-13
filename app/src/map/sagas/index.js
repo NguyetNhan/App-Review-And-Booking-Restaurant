@@ -3,11 +3,11 @@ import { onFetchNearbyLocationRestaurantFailed, onFetchNearbyLocationRestaurantS
 import { FETCH_NEARBY_LOCATION_RESTAURANT } from '../actions/action_types';
 import { API } from './API';
 
-function* FetchNearbyLocationRestaurantFromAPI (action) {
+function* fetchNearbyLocationPlaceFromAPI (action) {
         try {
-                const results = yield API.FetchNearbyLocationRestaurant(action.position);
+                const results = yield API.fetchNearbyLocationPlace(action.position);
                 if (results.error) {
-                        yield put(onFetchNearbyLocationRestaurantFailed(results.messages));
+                        yield put(onFetchNearbyLocationRestaurantFailed(results.message));
                 } else {
                         yield put(onFetchNearbyLocationRestaurantSucceeded(results.data));
                 }
@@ -16,6 +16,6 @@ function* FetchNearbyLocationRestaurantFromAPI (action) {
         }
 }
 
-export function* WatchFetchNearbyLocationRestaurantFromAPI () {
-        yield takeLatest(FETCH_NEARBY_LOCATION_RESTAURANT, FetchNearbyLocationRestaurantFromAPI);
+export function* watchFetchNearbyLocationPlaceFromAPIForMap () {
+        yield takeLatest(FETCH_NEARBY_LOCATION_RESTAURANT, fetchNearbyLocationPlaceFromAPI);
 }

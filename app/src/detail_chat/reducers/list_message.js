@@ -1,26 +1,17 @@
 import {
         FETCH_LIST_MESSAGE_FAILED,
         FETCH_LIST_MESSAGE_SUCCEEDED,
-        CHECK_CONVERSATION_EXIST_FAILED,
-        CHECK_CONVERSATION_EXIST_SUCCEEDED,
         RESET_PROPS_MESSAGE_LIST_MESSAGE,
-        RESET_PROPS_LIST_MESSAGE
+        RESET_PROPS_LIST_MESSAGE,
+        RECEIVER_MESSAGE_FROM_SERVER
 } from '../actions/types';
 
 const ListMessageReducers = (state = null, action) => {
         switch (action.type) {
-                /*    case CHECK_CONVERSATION_EXIST_SUCCEEDED:
-                           return {
-                                   checkSucceeded: {
-                                           data: action.data
-                                   }
-                           };
-                   case CHECK_CONVERSATION_EXIST_FAILED:
-                           return {
-                                   checkFailed: {
-                                           message: action.message
-                                   }
-                           }; */
+                case RECEIVER_MESSAGE_FROM_SERVER:
+                        return {
+                                messageReceiver: action.messageReceiver
+                        };
                 case FETCH_LIST_MESSAGE_SUCCEEDED:
                         return {
                                 fetchSucceeded: {
@@ -40,7 +31,6 @@ const ListMessageReducers = (state = null, action) => {
                                         listMessage: undefined,
                                         page: undefined,
                                         total_page: undefined,
-                                        //  idConversation: undefined
                                 }
                         };
                 case RESET_PROPS_MESSAGE_LIST_MESSAGE:
@@ -48,7 +38,6 @@ const ListMessageReducers = (state = null, action) => {
                                 resetPropsMessageListMessage: {
                                         message: undefined,
                                         isLoading: false,
-                                        listMessage: undefined,
                                 }
                         };
                 default:

@@ -7,14 +7,15 @@ export default class ItemMessage extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        item: props.item,
+                        content: props.content,
+                        idSender: props.idSender,
                         idAccountSend: props.idAccountSend,
                         accountReceiver: props.accountReceiver
                 };
         }
 
         render () {
-                if (this.state.item.idSender === this.state.accountReceiver._id)
+                if (this.props.idSender === this.state.accountReceiver._id)
                         return (
                                 <View style={styles.containerReceiver}>
                                         {
@@ -28,7 +29,7 @@ export default class ItemMessage extends Component {
                                                                 style={styles.image}
                                                         />
                                         }
-                                        <Text style={styles.textMessageReceiver}>{this.state.item.content}</Text>
+                                        <Text style={styles.textMessageReceiver}>{this.props.content}</Text>
                                 </View>
                         );
                 else
@@ -40,7 +41,7 @@ export default class ItemMessage extends Component {
                                                 justifyContent: 'flex-end'
                                         }}>
                                                 <View />
-                                                <Text style={styles.textMessageSend}>{this.state.item.content}</Text>
+                                                <Text style={styles.textMessageSend}>{this.props.content}</Text>
                                         </View>
                                 </View>
                         );

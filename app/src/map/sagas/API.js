@@ -1,6 +1,6 @@
 import { urlServer } from '../../config';
 
-FetchNearbyLocationRestaurant = async (position) => {
+fetchNearbyLocationPlace = async (position) => {
         try {
                 const response = await fetch(`${urlServer}/map/closest-distance/latitude/${position.latitude}/longitude/${position.longitude}`, {
                         method: 'GET',
@@ -11,10 +11,13 @@ FetchNearbyLocationRestaurant = async (position) => {
                 }).then(data => data.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error);
+                return {
+                        error: true,
+                        message: error.message
+                };
         }
 };
 
 export const API = {
-        FetchNearbyLocationRestaurant
+        fetchNearbyLocationPlace
 };

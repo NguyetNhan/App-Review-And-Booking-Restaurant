@@ -3,13 +3,25 @@ import Component from '../components/item_conversation';
 import {
         onFetchInfoAccountReceiver,
         onResetPropsItemConversation,
-        onResetPropsMessageItemConversation
+        onResetPropsMessageItemConversation,
+        onFetchNewMessageForItem
 } from '../actions';
 
 const mapStateToProps = (state) => {
         const itemConversationReducers = state.ChatReducers.ItemConversationReducers;
         if (itemConversationReducers !== null) {
-                if (itemConversationReducers.fetchInfoAccountReceiverSucceeded !== undefined) {
+
+                if (itemConversationReducers.fetchNewMessageSucceeded !== undefined) {
+                        return {
+                                tinNhanMoiNhat: itemConversationReducers.fetchNewMessageSucceeded.data,
+                                isLoading: false
+                        };
+                } else if (itemConversationReducers.fetchNewMessageFailed !== undefined) {
+                        return {
+                                message: itemConversationReducers.fetchNewMessageFailed.message,
+                                isLoading: false
+                        };
+                } else if (itemConversationReducers.fetchInfoAccountReceiverSucceeded !== undefined) {
                         return {
                                 accountReceiver: itemConversationReducers.fetchInfoAccountReceiverSucceeded.data.data,
                                 isLoading: false
@@ -40,6 +52,9 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onResetPropsMessageItemConversation: () => {
                         dispatch(onResetPropsMessageItemConversation());
+                },
+                onFetchNewMessageForItem: (idConversation) => {
+                        dispatch(onFetchNewMessageForItem(idConversation));
                 }
         };
 };
