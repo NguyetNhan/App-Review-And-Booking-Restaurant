@@ -28,7 +28,6 @@ const mapStateToProps = (state) => {
                 }
         } else {
                 return {
-                        isLoading: false
                 };
         }
 

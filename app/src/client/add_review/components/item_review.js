@@ -437,6 +437,7 @@ export default class ItemReview extends Component {
                                                                                                                                         numColumns={3}
                                                                                                                                         horizontal={false}
                                                                                                                                         renderItem={(item) => {
+                                                                                                                                                console.log('item: ', item);
                                                                                                                                                 return (
                                                                                                                                                         <Image source={{ uri: `${urlServer}${item.item}` }}
                                                                                                                                                                 style={{

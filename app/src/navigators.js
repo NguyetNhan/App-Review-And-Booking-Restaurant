@@ -21,8 +21,10 @@ import Deal from './deal/containers';
 import DetailDeal from './detail_deal/containers';
 import ScanQrOrder from './admin_restaurant/scan_qr_order/containers';
 import AddReview from './client/add_review/containers';
-import Person from './person/components';
+import Person from './person/containers';
 import DetailChat from './detail_chat/containers';
+import Friend from './friend/containers';
+import Stranger from './stranger/containers';
 
 
 const RouteBottomTabConfig = {
@@ -140,6 +142,18 @@ const MainNavigatorClient = createStackNavigator(
                 },
                 DetailChat: {
                         screen: DetailChat,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Friend: {
+                        screen: Friend,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Stranger: {
+                        screen: Stranger,
                         navigationOptions: {
                                 header: null,
                         },

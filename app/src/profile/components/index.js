@@ -4,9 +4,11 @@ import Icon from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { urlServer, colorMain, background, backgroundStatusBar } from '../../config';
 import { AccountModel } from '../../models/account';
 const { width, height } = Dimensions.get('window');
+import { socket } from '../../socket';
 
 export default class Profile extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -25,24 +27,7 @@ export default class Profile extends Component {
 
         async fetchInfoAccountFromLocal () {
                 const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                try {
-                        if (account.error) {
-                                Alert.alert(
-                                        'Thông Báo Lỗi',
-                                        'Bạn chưa đăng nhập !',
-                                        [
-                                                { text: 'OK' },
-                                        ],
-                                        { cancelable: false },
-                                );
-                                this.props.navigation.navigate('Auth');
-                        } else {
-                                this.setState({
-                                        account: account.data,
-                                        isLoading: false
-                                })
-                        }
-                } catch (error) {
+                if (account.error) {
                         Alert.alert(
                                 'Thông Báo Lỗi',
                                 'Bạn chưa đăng nhập !',
@@ -52,13 +37,14 @@ export default class Profile extends Component {
                                 { cancelable: false },
                         );
                         this.props.navigation.navigate('Auth');
+                } else {
+                        this.setState({
+                                account: account.data,
+                                isLoading: false
+                        })
                 }
-
         }
 
-        onClickAvatar () {
-                this.props.navigation.navigate('Person');
-        }
 
         componentDidMount () {
                 this.fetchInfoAccountFromLocal();
@@ -94,9 +80,18 @@ export default class Profile extends Component {
                 }
         }
 
-        async   onLogout () {
+        async  onLogout () {
+                socket.emit('logout', 'Logout');
                 await AccountModel.DeleteAccountInfoFromDatabaseLocal();
                 this.props.navigation.navigate('Auth');
+        }
+
+        onClickAvatar () {
+                this.props.navigation.navigate('Person');
+        }
+
+        onClickButtonFriend () {
+                this.props.navigation.navigate('Friend');
         }
 
         render () {
@@ -112,6 +107,7 @@ export default class Profile extends Component {
                                         <StatusBar
                                                 backgroundColor={backgroundStatusBar}
                                                 barStyle='light-content'
+                                                translucent={false}
                                         />
                                         <View
                                                 onTouchStart={() => this.props.navigation.navigate('Search')}
@@ -122,7 +118,7 @@ export default class Profile extends Component {
                                         <View style={styles.header}>
                                                 <TouchableOpacity
                                                         onPress={() => {
-                                                                //  this.onClickAvatar();
+                                                                this.onClickAvatar();
                                                         }}
                                                         style={styles.containerButtonPerson}>
                                                         {
@@ -137,7 +133,7 @@ export default class Profile extends Component {
                                                         }
                                                         <View style={styles.containerName}>
                                                                 <Text style={styles.textName} numberOfLines={1} ellipsizeMode='tail' >{this.state.account.name}</Text>
-                                                                <Text style={styles.textBottomName}><Text style={styles.textScore}>{this.state.account.score}</Text> điểm tích lũy</Text>
+                                                                <Text style={styles.textBottomName}>Bấm vào đây để truy cập trang cá nhân</Text>
                                                         </View>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
@@ -150,59 +146,82 @@ export default class Profile extends Component {
                                         </View>
                                         {
                                                 this.state.account.authorities === 'client' ?
-                                                        <View style={styles.containerNavigator}>
-                                                                <TouchableOpacity
-                                                                        onPress={() => {
-                                                                                this.props.navigation.navigate('Deal');
-                                                                        }}
-                                                                        style={styles.itemNavigator}>
-                                                                        <View style={styles.containerIconNavigator}>
-                                                                                <MaterialCommunityIcons name='bookmark-multiple-outline' size={30} color='black' />
-                                                                        </View>
-                                                                        <View style={styles.containerTextNavigator}>
-                                                                                <Text style={styles.textNavigator}
-                                                                                        numberOfLines={2}
-                                                                                        ellipsizeMode='tail'
-                                                                                >đơn hàng của tôi</Text>
-                                                                        </View>
-                                                                </TouchableOpacity>
-                                                                <TouchableOpacity style={styles.itemNavigator}>
-                                                                        <View style={styles.containerIconNavigator}>
-                                                                                <MaterialCommunityIcons name='account-supervisor' size={30} color='black' />
-                                                                        </View>
-                                                                        <View style={styles.containerTextNavigator}>
-                                                                                <Text style={styles.textNavigator}
-                                                                                        numberOfLines={2}
-                                                                                        ellipsizeMode='tail'
-                                                                                >bạn bè</Text>
-                                                                        </View>
-                                                                </TouchableOpacity>
-                                                                <TouchableOpacity style={styles.itemNavigator}>
-                                                                        <View style={styles.containerIconNavigator}>
-                                                                                <MaterialCommunityIcons name='home' size={30} color='black' />
-                                                                        </View>
-                                                                        <View style={styles.containerTextNavigator}>
-                                                                                <Text style={styles.textNavigator}
-                                                                                        numberOfLines={2}
-                                                                                        ellipsizeMode='tail'
-                                                                                >nhà hàng, coffee theo dõi</Text>
-                                                                        </View>
-                                                                </TouchableOpacity>
-                                                                <TouchableOpacity
-                                                                        onPress={() => {
-                                                                                this.props.navigation.navigate('RegisterRestaurant');
-                                                                        }}
-                                                                        style={styles.itemNavigator}>
-                                                                        <View style={styles.containerIconNavigator}>
-                                                                                <FontAwesome name='registered' size={30} color='black' />
-                                                                        </View>
-                                                                        <View style={styles.containerTextNavigator}>
-                                                                                <Text style={styles.textNavigator}
-                                                                                        numberOfLines={2}
-                                                                                        ellipsizeMode='tail'
-                                                                                >đăng kí nhà hàng của bạn</Text>
-                                                                        </View>
-                                                                </TouchableOpacity>
+                                                        <View>
+                                                                <View style={styles.containerNavigator}>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => {
+                                                                                        this.props.navigation.navigate('Deal');
+                                                                                }}
+                                                                                style={styles.itemNavigator}>
+                                                                                <View style={styles.containerIconNavigator}>
+                                                                                        <MaterialCommunityIcons name='bookmark-multiple-outline' size={30} color='black' />
+                                                                                </View>
+                                                                                <View style={styles.containerTextNavigator}>
+                                                                                        <Text style={styles.textNavigator}
+                                                                                                numberOfLines={2}
+                                                                                                ellipsizeMode='tail'
+                                                                                        >đơn hàng của tôi</Text>
+                                                                                </View>
+                                                                        </TouchableOpacity>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => {
+                                                                                        this.onClickButtonFriend();
+                                                                                }}
+                                                                                style={styles.itemNavigator}>
+                                                                                <View style={styles.containerIconNavigator}>
+                                                                                        <MaterialCommunityIcons name='account-supervisor' size={30} color='black' />
+                                                                                </View>
+                                                                                <View style={styles.containerTextNavigator}>
+                                                                                        <Text style={styles.textNavigator}
+                                                                                                numberOfLines={2}
+                                                                                                ellipsizeMode='tail'
+                                                                                        >bạn bè</Text>
+                                                                                </View>
+                                                                        </TouchableOpacity>
+                                                                        <TouchableOpacity style={styles.itemNavigator}>
+                                                                                <View style={styles.containerIconNavigator}>
+                                                                                        <MaterialCommunityIcons name='home' size={30} color='black' />
+                                                                                </View>
+                                                                                <View style={styles.containerTextNavigator}>
+                                                                                        <Text style={styles.textNavigator}
+                                                                                                numberOfLines={2}
+                                                                                                ellipsizeMode='tail'
+                                                                                        >nhà hàng, coffee theo dõi</Text>
+                                                                                </View>
+                                                                        </TouchableOpacity>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => {
+                                                                                        this.props.navigation.navigate('RegisterRestaurant');
+                                                                                }}
+                                                                                style={styles.itemNavigator}>
+                                                                                <View style={styles.containerIconNavigator}>
+                                                                                        <FontAwesome name='registered' size={30} color='black' />
+                                                                                </View>
+                                                                                <View style={styles.containerTextNavigator}>
+                                                                                        <Text style={styles.textNavigator}
+                                                                                                numberOfLines={2}
+                                                                                                ellipsizeMode='tail'
+                                                                                        >đăng kí nhà hàng của bạn</Text>
+                                                                                </View>
+                                                                        </TouchableOpacity>
+                                                                </View>
+                                                                <View style={styles.containerNavigator}>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => {
+                                                                                        this.props.navigation.navigate('Stranger');
+                                                                                }}
+                                                                                style={styles.itemNavigator}>
+                                                                                <View style={styles.containerIconNavigator}>
+                                                                                        <MaterialIcons name='person-pin-circle' size={30} color='black' />
+                                                                                </View>
+                                                                                <View style={styles.containerTextNavigator}>
+                                                                                        <Text style={styles.textNavigator}
+                                                                                                numberOfLines={2}
+                                                                                                ellipsizeMode='tail'
+                                                                                        >tìm bạn quanh đây</Text>
+                                                                                </View>
+                                                                        </TouchableOpacity>
+                                                                </View>
                                                         </View>
                                                         :
                                                         this.state.account.authorities === 'admin-restaurant' ?

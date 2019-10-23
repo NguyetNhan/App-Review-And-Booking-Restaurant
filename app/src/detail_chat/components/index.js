@@ -14,7 +14,8 @@ export default class DetailChat extends Component {
                         idAccountReceiver: props.navigation.getParam('idAccountReceiver', null),
                         idConversation: props.navigation.getParam('idConversation', null),
                         accountReceiver: null,
-                        isLoading: true,
+                        isLoadingIdConversation: true,
+                        isLoadingAccountReceiver: true,
                         idAccountSend: null
                 };
                 this.onGoBack = this.onGoBack.bind(this);
@@ -40,6 +41,9 @@ export default class DetailChat extends Component {
                                         this.props.onCheckConversationExist(result.data.id, this.state.idAccountReceiver);
                                 } else {
                                         socket.emit('create-room', this.state.idConversation);
+                                        this.setState({
+                                                isLoadingIdConversation: false
+                                        });
                                 }
                                 this.props.onFetchInfoAccountReceiver(this.state.idAccountReceiver);
                         }
@@ -61,10 +65,13 @@ export default class DetailChat extends Component {
                         prevState.idConversation = nextProps.idConversation;
                         socket.emit('create-room', nextProps.idConversation);
                 }
-                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
-                        prevState.isLoading = nextProps.isLoading;
+                if (nextProps.isLoadingIdConversation !== prevState.isLoadingIdConversation && nextProps.isLoadingIdConversation !== undefined) {
+                        prevState.isLoadingIdConversation = nextProps.isLoadingIdConversation;
                 }
-                if (nextProps.accountReceiver !== prevState.accountReceiver && nextProps.accountReceiver !== undefined && !prevState.isLoading) {
+                if (nextProps.isLoadingAccountReceiver !== prevState.isLoadingAccountReceiver && nextProps.isLoadingAccountReceiver !== undefined) {
+                        prevState.isLoadingAccountReceiver = nextProps.isLoadingAccountReceiver;
+                }
+                if (nextProps.accountReceiver !== prevState.accountReceiver && nextProps.accountReceiver !== undefined && !prevState.isLoadingAccountReceiver) {
                         prevState.accountReceiver = nextProps.accountReceiver;
                 }
                 if (nextProps.message !== undefined) {
@@ -92,20 +99,7 @@ export default class DetailChat extends Component {
                 this.props.onResetPropsMain();
         }
         render () {
-                if (this.state.isLoading)
-                        return (
-                                <View style={{
-                                        flex: 1,
-                                        alignItems: 'center'
-                                }}>
-                                        <ActivityIndicator
-                                                animating={true}
-                                                size={30}
-                                                color={colorMain}
-                                        />
-                                </View>
-                        );
-                else
+                if (!this.state.isLoadingIdConversation && !this.state.isLoadingAccountReceiver)
                         return (
                                 <View style={styles.container}>
                                         <Header
@@ -124,6 +118,20 @@ export default class DetailChat extends Component {
                                         />
                                 </View>
                         );
+                else
+                        return (
+                                <View style={{
+                                        flex: 1,
+                                        alignItems: 'center'
+                                }}>
+                                        <ActivityIndicator
+                                                animating={true}
+                                                size={30}
+                                                color={colorMain}
+                                        />
+                                </View>
+                        );
+
         }
 }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions, PermissionsAndroid, StatusBar, Alert, ToastAndroid, Modal } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, PermissionsAndroid, StatusBar, Alert, ToastAndroid, Modal, Picker, TouchableOpacity } from 'react-native';
 import MapView, {
         PROVIDER_GOOGLE,
         Marker
@@ -10,9 +10,9 @@ import Geocoder from 'react-native-geocoder';
 import { urlServer, KEY_API_GOOGLE_MAP, colorMain } from '../../config';
 import Icon from 'react-native-vector-icons/Feather';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import CustomItemMarker from './custom_item_marker';
 import DialogDetailMarker from './dialog_detail_marker';
+import { AccountModel } from '../../models/account';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,14 +26,9 @@ export default class Map extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        region: {
-                                latitude: 21.0242225,
-                                longitude: 105.8207913,
-                                latitudeDelta: 0.00922 * 1.5,
-                                longitudeDelta: 0.00421 * 1.5
-                        },
+                        region: null,
                         marker: null,
-                        listRestaurant: [],
+                        markerList: [],
                         visibleDialogDetailMarker: false,
                         imageDialogMarker: null,
                         titleDialogMarker: null,
@@ -42,7 +37,11 @@ export default class Map extends Component {
                         markerSelected: null,
                         destination: null,
                         origin: null,
-                        loadingMap: true
+                        loadingMap: true,
+                        type: 'place',
+                        account: null,
+                        distance: null,
+                        duration: null
                 };
                 this.mapView = null;
                 this.requestLocationPermission();
@@ -50,11 +49,35 @@ export default class Map extends Component {
                 this._onClickCloseDialogDetailMarker = this._onClickCloseDialogDetailMarker.bind(this);
                 this._onClickDetail = this._onClickDetail.bind(this);
                 this._onClickDirections = this._onClickDirections.bind(this);
+                this.onClickButtonChat = this.onClickButtonChat.bind(this);
+                this.onClickInfoAccount = this.onClickInfoAccount.bind(this);
         }
 
+        async getAccountFromLocal () {
+                const account = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                if (account.error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
+                } else {
+                        this.setState({
+                                account: account.data,
+                        })
+                }
+        }
+
+        componentDidMount () {
+                this.getAccountFromLocal();
+        }
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listRestaurant !== undefined && nextProps.listRestaurant !== prevState.listRestaurant) {
-                        prevState.listRestaurant = nextProps.listRestaurant
+                if (nextProps.markerList !== undefined && nextProps.markerList !== prevState.markerList) {
+                        prevState.markerList = nextProps.markerList
                 }
                 if (nextProps.messages !== undefined) {
                         ToastAndroid.show(nextProps.messages, ToastAndroid.SHORT);
@@ -93,7 +116,6 @@ export default class Map extends Component {
                                         maximumAge: 1000
                                 })
                                 Geolocation.watchPosition((position) => {
-                                        //   const res = await Geocoder.geocodeAddress('số 28 đường 25, phường linh đông, quận thủ đức, thành phố hồ chí minh');
                                         var region = {
                                                 latitude: position.coords.latitude,
                                                 longitude: position.coords.longitude,
@@ -201,10 +223,6 @@ export default class Map extends Component {
         _onClickOpenDialogDetailMarker (item) {
                 this.setState({
                         visibleDialogDetailMarker: !this.state.visibleDialogDetailMarker,
-                        titleDialogMarker: item.name,
-                        typeDialogMarker: item.type,
-                        addressDialogMarker: item.address,
-                        imageDialogMarker: item.imageRestaurant[0],
                         markerSelected: item
                 });
         }
@@ -222,13 +240,48 @@ export default class Map extends Component {
                 })
         }
 
+        onChangeType (type) {
+                this.setState({
+                        type: type,
+                        distance: null,
+                        duration: null,
+                        destination: null,
+                        origin: null,
+                        markerList: []
+                });
+                this.props.onResetProps();
+                if (type === 'friend') {
+                        this.props.onFetchLocationFriend(this.state.account.id);
+                } else if (type === 'place') {
+                        this.props.onFetchNearbyLocationRestaurant({
+                                latitude: this.state.region.latitude,
+                                longitude: this.state.region.longitude,
+                        });
+                }
+        }
+
+        onClickButtonChat(idAccount){
+                this.props.navigation.navigate('DetailChat', {
+                        idAccountReceiver: idAccount
+                })
+        }
+
+        onClickInfoAccount(idAccount){
+                this.props.navigation.navigate('Person', {
+                        idAccountView: idAccount
+                })
+        }
+        
+
+        componentWillUnmount () {
+                this.props.onResetProps();
+        }
         render () {
                 return (
                         <View style={styles.container}>
                                 <StatusBar
                                         barStyle='dark-content'
-                                        backgroundColor='rgba(0,0,0,0)'
-                                        translucent
+                                        backgroundColor='white'
                                         animated={true}
                                 />
                                 <View style={styles.containerMap} >
@@ -244,7 +297,7 @@ export default class Map extends Component {
                                                 {
                                                         this.state.marker === null ? null : <Marker
                                                                 coordinate={this.state.marker}
-                                                                pinColor={colorMain}
+                                                                pinColor='red'
                                                                 title='Vị Trí Của Bạn'
                                                         >
                                                         </Marker>
@@ -258,31 +311,43 @@ export default class Map extends Component {
                                                                 strokeWidth={3}
                                                                 strokeColor={colorMain}
                                                                 onStart={(params) => {
-                                                                        console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
+                                                                        //   console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
                                                                 }}
                                                                 onReady={result => {
-                                                                        console.log('result: ', result);
-                                                                        console.log(`Distance: ${result.distance} km`)
-                                                                        console.log(`Duration: ${result.duration} min.`)
+                                                                        // console.log('result: ', result);
+                                                                        // console.log(`Distance: ${result.distance} km`)
+                                                                        // console.log(`Duration: ${result.duration} min.`)
+                                                                        this.setState({
+                                                                                distance: result.distance,
+                                                                                duration: result.duration
+                                                                        });
                                                                 }}
                                                                 onError={(errorMessage) => {
-                                                                        console.log('errorMessage: ', errorMessage);
+                                                                        Alert.alert('Thông Báo Lỗi', errorMessage.message)
                                                                 }}
                                                         /> : null
                                                 }
                                                 {
-                                                        this.state.listRestaurant.map(item =>
+                                                        this.state.markerList.map(item =>
                                                                 <Marker
                                                                         key={item._id}
-                                                                        coordinate={item.position}
+                                                                        coordinate={item.geolocation}
                                                                         centerOffset={{ x: 0, y: 50 }}
                                                                         onPress={() => {
                                                                                 this._onClickOpenDialogDetailMarker(item);
                                                                         }}
                                                                 >
-                                                                        <CustomItemMarker
-                                                                                image={item.imageRestaurant[0]}
-                                                                        />
+                                                                        {
+                                                                                this.state.type === 'place' ?
+                                                                                        <CustomItemMarker
+                                                                                                image={item.imageRestaurant[0]}
+                                                                                                type={this.state.type}
+                                                                                        /> :
+                                                                                        <CustomItemMarker
+                                                                                                image={item.avatar}
+                                                                                                type={this.state.type}
+                                                                                        />
+                                                                        }
                                                                 </Marker>
                                                         )
                                                 }
@@ -295,6 +360,55 @@ export default class Map extends Component {
                                                         <IconMaterialIcons name='my-location' size={30} color='black' />
                                                 </TouchableOpacity>
                                         </View>
+                                        <View style={styles.containerSelectType}>
+                                                <View style={styles.option}>
+                                                        <TouchableOpacity
+                                                                onPress={() => {
+                                                                        this.onChangeType('place')
+                                                                }}
+                                                        >
+                                                                {
+                                                                        this.state.type === 'place' ?
+                                                                                <Text style={styles.textButtonOptionSelect}>Địa Điểm</Text> :
+                                                                                <Text style={styles.textButtonOptionUnSelect}>Địa Điểm</Text>
+                                                                }
+
+                                                        </TouchableOpacity>
+                                                        <View
+                                                                style={{
+                                                                        height: 30,
+                                                                        width: 1,
+                                                                        marginHorizontal: 5,
+                                                                        backgroundColor: 'black'
+                                                                }}
+                                                        />
+                                                        <TouchableOpacity
+                                                                onPress={() => {
+                                                                        this.onChangeType('friend')
+                                                                }}
+                                                        >
+                                                                {
+                                                                        this.state.type === 'friend' ?
+                                                                                <Text style={styles.textButtonOptionSelect}>Bạn Bè</Text> :
+                                                                                <Text style={styles.textButtonOptionUnSelect}>Bạn Bè</Text>
+                                                                }
+                                                        </TouchableOpacity>
+                                                </View>
+                                        </View>
+                                        {
+                                                this.state.duration !== null && this.state.distance !== null ? <View style={styles.containerTimeDirection}>
+                                                        <Text style={styles.textTime}>{this.state.duration} phút</Text>
+                                                        <View
+                                                                style={{
+                                                                        width: 100,
+                                                                        height: 1,
+                                                                        backgroundColor: 'black',
+                                                                        marginVertical: 5
+                                                                }}
+                                                        />
+                                                        <Text style={styles.textTime}>{this.state.distance} km</Text>
+                                                </View> : null
+                                        }
                                 </View>
                                 <Modal
                                         visible={this.state.visibleDialogDetailMarker}
@@ -307,12 +421,11 @@ export default class Map extends Component {
                                         <DialogDetailMarker
                                                 _onClickCloseDialogDetailMarker={this._onClickCloseDialogDetailMarker}
                                                 item={this.state.markerSelected}
-                                                image={this.state.imageDialogMarker}
-                                                title={this.state.titleDialogMarker}
-                                                type={this.state.typeDialogMarker}
-                                                address={this.state.addressDialogMarker}
                                                 _onClickDetail={this._onClickDetail}
                                                 _onClickDirections={this._onClickDirections}
+                                                typeCustoms={this.state.type}
+                                                onClickButtonChat={this.onClickButtonChat}
+                                                onClickInfoAccount={this.onClickInfoAccount}
                                         />
                                 </Modal>
                         </View>
@@ -343,5 +456,44 @@ const styles = StyleSheet.create({
                 position: 'absolute',
                 bottom: 30,
                 right: 30,
+        },
+        containerSelectType: {
+                backgroundColor: 'rgba(0,0,0,0)',
+                alignItems: 'center',
+                position: 'absolute',
+                width: width,
+                top: 10
+        },
+        option: {
+                flexDirection: 'row',
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                alignItems: 'center',
+                width: 200,
+                justifyContent: 'center',
+                borderRadius: 10,
+                height: 60
+        },
+        textButtonOptionSelect: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 16,
+                textTransform: 'capitalize'
+        },
+        textButtonOptionUnSelect: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize'
+        },
+        containerTimeDirection: {
+                position: 'absolute',
+                bottom: 30,
+                left: width / 2 - 100,
+                backgroundColor: 'white',
+                width: 200,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 10
+        },
+        textTime: {
+                fontFamily: 'UVN-Baisau-Regular',
+
         }
 });

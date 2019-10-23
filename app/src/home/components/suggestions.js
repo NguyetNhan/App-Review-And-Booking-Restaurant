@@ -63,6 +63,7 @@ export default class Suggestions extends Component {
                 return null;
         }
 
+        //FIXME: refresh theo geo
         onRefresh () {
                 if (this.state.geolocation !== null) {
                         this.props.onFetchNearbyLocationPlace(this.state.geolocation);
@@ -130,6 +131,7 @@ export default class Suggestions extends Component {
                                                                                 extraData={this.state}
                                                                                 keyExtractor={(item, index) => index.toString()}
                                                                                 showsVerticalScrollIndicator={false}
+                                                                                refreshing={this.state.isLoading}
                                                                                 numColumns={2}
                                                                                 horizontal={false}
                                                                                 renderItem={(item) => {
@@ -163,6 +165,7 @@ export default class Suggestions extends Component {
                                                                 data={this.state.listPlaceTheBest}
                                                                 extraData={this.state}
                                                                 keyExtractor={(item, index) => index.toString()}
+                                                                refreshing={this.state.isLoading}
                                                                 showsVerticalScrollIndicator={false}
                                                                 numColumns={2}
                                                                 horizontal={false}
@@ -195,6 +198,7 @@ export default class Suggestions extends Component {
                                                                 extraData={this.state}
                                                                 keyExtractor={(item, index) => index.toString()}
                                                                 showsVerticalScrollIndicator={false}
+                                                                refreshing={this.state.isLoading}
                                                                 numColumns={2}
                                                                 horizontal={false}
                                                                 renderItem={(item) => {

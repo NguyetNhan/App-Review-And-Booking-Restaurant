@@ -45,7 +45,6 @@ const ItemConversationReducers = (state = null, action) => {
                         return {
                                 resetPropsMessageItemConversation: {
                                         message: undefined,
-                                        isLoading: false
                                 }
                         };
                 default:

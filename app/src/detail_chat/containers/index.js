@@ -12,22 +12,23 @@ const mapStateToProps = (state) => {
         if (mainReducers !== null) {
                 if (mainReducers.checkSucceeded !== undefined) {
                         return {
-                                idConversation: mainReducers.checkSucceeded.data
+                                idConversation: mainReducers.checkSucceeded.data,
+                                isLoadingIdConversation: false
                         };
                 } else if (mainReducers.checkFailed !== undefined) {
                         return {
                                 message: mainReducers.checkFailed.message,
-                                isLoading: false
+                                isLoadingIdConversation: false
                         };
                 } else if (mainReducers.fetchInfoAccountReceiverSucceeded !== undefined) {
                         return {
                                 accountReceiver: mainReducers.fetchInfoAccountReceiverSucceeded.data.data,
-                                isLoading: false
+                                isLoadingAccountReceiver: false
                         };
                 } else if (mainReducers.fetchInfoAccountReceiverFailed !== undefined) {
                         return {
                                 message: mainReducers.fetchInfoAccountReceiverFailed.message,
-                                isLoading: false
+                                isLoadingAccountReceiver: false
                         };
                 } else if (mainReducers.resetPropsMain !== undefined) {
                         return mainReducers.resetPropsMain;

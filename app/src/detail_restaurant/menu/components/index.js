@@ -214,6 +214,7 @@ export default class Menu extends Component {
                                 <StatusBar
                                         backgroundColor={background}
                                         barStyle='dark-content'
+                                        translucent={false}
                                 />
                                 <View style={styles.header}>
                                         <TouchableOpacity onPress={() => {

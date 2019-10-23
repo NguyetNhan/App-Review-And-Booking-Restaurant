@@ -22,7 +22,7 @@ const ListConversationReducers = (state = null, action) => {
                 case RESET_PROPS_LIST_CONVERSATION:
                         return {
                                 resetPropsListConversation: {
-                                        isLoading: false,
+                                        isLoading: true,
                                         listConversation: undefined,
                                         page: undefined,
                                         total_page: undefined,
@@ -33,7 +33,6 @@ const ListConversationReducers = (state = null, action) => {
                                 resetPropsMessageListConversation: {
                                         messageSucceeded: undefined,
                                         messageFailed: undefined,
-                                        isLoading: false
                                 }
                         };
                 default:

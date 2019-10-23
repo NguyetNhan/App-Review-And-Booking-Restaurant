@@ -16,6 +16,7 @@
     "react": "16.9.0",
     "react-native": "0.60.5",
     "react-native-camera": "^3.4.0",
+    "react-native-contacts": "^5.0.4",
     "react-native-geocoder": "^0.5.0",
     "react-native-gesture-handler": "^1.4.1",
     "react-native-iphone-x-helper": "^1.2.1",

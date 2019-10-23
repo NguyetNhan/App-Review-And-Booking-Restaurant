@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, PermissionsAndroid, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, PermissionsAndroid, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import MapView, {
         PROVIDER_GOOGLE,
         Marker
@@ -107,16 +107,13 @@ export default class MapDirections extends Component {
                                                                 //  console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
                                                         }}
                                                         onReady={result => {
-                                                                // console.log('result: ', result);
-                                                                // console.log(`Distance: ${result.distance} km`)
-                                                                // console.log(`Duration: ${result.duration} min.`)
                                                                 this.setState({
                                                                         distance: result.distance,
                                                                         duration: result.duration
                                                                 });
                                                         }}
                                                         onError={(errorMessage) => {
-                                                                console.log('errorMessage: ', errorMessage);
+                                                                Alert.alert('Thông Báo Lỗi', errorMessage.message)  
                                                         }}
                                                 /> : null
                                         }

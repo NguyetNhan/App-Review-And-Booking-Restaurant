@@ -47,57 +47,43 @@ export default class Home extends Component {
                         this.setState({
                                 account: result.data
                         });
-                        try {
-                                const granted = await PermissionsAndroid.request(
-                                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-                                );
-                                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                                        Geolocation.getCurrentPosition((position) => {
-                                                const geolocation = {
-                                                        latitude: position.coords.latitude,
-                                                        longitude: position.coords.longitude,
-                                                }
-                                                this.setState({
-                                                        geolocation: geolocation,
-                                                        isLoading: false
-                                                });
-                                                socket.emit('infoAccount', { idAccount: result.data.id, geolocation: geolocation })
-                                        }, (error) => {
-                                                ToastAndroid.show(error.message, ToastAndroid.LONG);
-                                                this.setState({
-                                                        isLoading: false
-                                                });
-                                        }, {
-                                                enableHighAccuracy: true,
-                                                timeout: 20000,
-                                                maximumAge: 1000
-                                        })
-                                } else {
-                                        Alert.alert(
-                                                'Thông Báo',
-                                                'Bạn không đồng ý cung cấp vị trí nên không thể định vị các địa điểm gần bạn !',
-                                                [
-                                                        { text: 'OK' },
-                                                ],
-                                                { cancelable: false },
-                                        );
-                                        socket.emit('infoAccount', { idAccount: result.data.id, location: null });
+                        const granted = await PermissionsAndroid.request(
+                                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                        );
+                        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                                Geolocation.getCurrentPosition((position) => {
+                                        const geolocation = {
+                                                latitude: position.coords.latitude,
+                                                longitude: position.coords.longitude,
+                                        }
+                                        this.setState({
+                                                geolocation: geolocation,
+                                                isLoading: false
+                                        });
+                                        socket.emit('infoAccount', { idAccount: result.data.id, geolocation: geolocation })
+                                }, (error) => {
+                                        ToastAndroid.show(error.message, ToastAndroid.LONG);
                                         this.setState({
                                                 isLoading: false
                                         });
-                                }
-                        } catch (err) {
+                                }, {
+                                        enableHighAccuracy: true,
+                                        timeout: 20000,
+                                        maximumAge: 1000
+                                })
+                        } else {
+                                this.setState({
+                                        isLoading: false
+                                });
                                 Alert.alert(
-                                        'Thông Báo Lỗi',
-                                        err.message,
+                                        'Thông Báo',
+                                        'Bạn không đồng ý cung cấp vị trí nên không thể định vị các địa điểm gần bạn !',
                                         [
                                                 { text: 'OK' },
                                         ],
                                         { cancelable: false },
                                 );
-                                this.setState({
-                                        isLoading: false
-                                });
+                                socket.emit('infoAccount', { idAccount: result.data.id, location: null });
                         }
                 }
         }
@@ -137,6 +123,7 @@ export default class Home extends Component {
                                         <StatusBar
                                                 backgroundColor={backgroundStatusBar}
                                                 barStyle='light-content'
+                                                translucent={false}
                                         />
                                         <View
                                                 onTouchStart={() => this.props.navigation.navigate('Search')}
@@ -177,30 +164,28 @@ export default class Home extends Component {
                                                         }
                                                 </TouchableOpacity>
                                         </View>
-                                        <View style={styles.containerViewPager}>
-                                                <ViewPager
-                                                        style={styles.viewPager}
-                                                        initialPage={this.state.currentPage}
-                                                        ref={viewPager => {
-                                                                this.viewPager = viewPager
-                                                        }}
-                                                        onPageSelected={(event) => {
-                                                                this.setState({ currentPage: event.nativeEvent.position });
-                                                        }}
-                                                >
-                                                        <View key='1'>
-                                                                <Suggestions
-                                                                        account={this.state.account}
-                                                                        geolocation={this.state.geolocation}
-                                                                        onChangeScreenMap={this.onChangeScreenMap}
-                                                                        onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
-                                                                />
-                                                        </View>
-                                                        <View key='2'>
-                                                                <Posts />
-                                                        </View>
-                                                </ViewPager>
-                                        </View>
+                                        <ViewPager
+                                                style={styles.viewPager}
+                                                initialPage={this.state.currentPage}
+                                                ref={viewPager => {
+                                                        this.viewPager = viewPager
+                                                }}
+                                                onPageSelected={(event) => {
+                                                        this.setState({ currentPage: event.nativeEvent.position });
+                                                }}
+                                        >
+                                                <View key='1'>
+                                                        <Suggestions
+                                                                account={this.state.account}
+                                                                geolocation={this.state.geolocation}
+                                                                onChangeScreenMap={this.onChangeScreenMap}
+                                                                onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
+                                                        />
+                                                </View>
+                                                <View key='2'>
+                                                        <Posts />
+                                                </View>
+                                        </ViewPager>
                                 </View>
                         );
         }
@@ -230,9 +215,6 @@ const styles = StyleSheet.create({
                 flex: 1,
                 marginLeft: 10,
                 fontSize: 16
-        },
-        containerViewPager: {
-                flex: 1
         },
         viewPager: {
                 flex: 1

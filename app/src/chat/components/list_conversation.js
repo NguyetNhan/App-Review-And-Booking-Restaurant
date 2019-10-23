@@ -15,51 +15,54 @@ export default class ListConversation extends Component {
                         isRefresh: false,
                         isLoadMore: false
                 };
+                this.fetchInfoAccountFromLocal();
                 this.onChangeScreenDetailChat = this.onChangeScreenDetailChat.bind(this);
         }
 
         async fetchInfoAccountFromLocal () {
-                try {
-                        const result = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                        if (result.error) {
-                                Alert.alert(
-                                        'Thông Báo Lỗi',
-                                        result.message,
-                                        [
-                                                {
-                                                        text: 'OK',
-                                                },
-                                        ],
-                                        { cancelable: false },
-                                );
-                        } else {
-                                this.setState({
-                                        account: result.data,
-                                        isLoading: true
-                                });
-                                this.props.onFetchListConversation(result.data.id, 1);
-                        }
-                } catch (error) {
+                const result = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                if (result.error) {
                         Alert.alert(
                                 'Thông Báo Lỗi',
-                                error.message,
+                                result.message,
                                 [
-                                        { text: 'OK' },
+                                        {
+                                                text: 'OK',
+                                        },
                                 ],
                                 { cancelable: false },
                         );
+                } else {
+                        this.setState({
+                                account: result.data,
+                        });
+                        this.props.onFetchListConversation(result.data.id, 1);
                 }
+
         }
 
         componentDidMount () {
-                this.fetchInfoAccountFromLocal();
+                //       this.fetchInfoAccountFromLocal();
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
+                        prevState.isLoading = nextProps.isLoading;
+                }
                 if (nextProps.listConversation !== prevState.listConversation && nextProps.listConversation !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
-                        prevState.listConversation = nextProps.listConversation;
+                        if (nextProps.listConversation.length === 0) {
+                                let list = ['1', ...nextProps.listConversation];
+                                prevState.listConversation = list;
+                        } else {
+                                prevState.listConversation = nextProps.listConversation;
+                        }
                 } else if (nextProps.listConversation !== prevState.listConversation && nextProps.listConversation !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
-                        prevState.listConversation = nextProps.listConversation;
+                        if (nextProps.listConversation.length === 0) {
+                                let list = ['1', ...nextProps.listConversation];
+                                prevState.listConversation = list;
+                        } else {
+                                prevState.listConversation = nextProps.listConversation;
+                        }
                         prevState.isRefresh = false;
                 } else if (nextProps.listConversation !== prevState.listConversation && nextProps.listConversation !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listConversation = prevState.listConversation.concat(nextProps.listConversation);
@@ -70,9 +73,6 @@ export default class ListConversation extends Component {
                 }
                 if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page;
-                }
-                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
-                        prevState.isLoading = nextProps.isLoading;
                 }
                 if (nextProps.messageSucceeded !== undefined && !prevState.isLoading) {
                         Alert.alert(
@@ -104,24 +104,31 @@ export default class ListConversation extends Component {
         }
 
         onRefresh () {
-                this.setState({
-                        page: 1,
-                        listConversation: [],
-                        isLoading: true,
-                        isRefresh: true
-                });
-                this.props.onFetchListConversation(this.state.account.id, 1);
+                if (!this.state.isLoading) {
+                        console.log('refresh');
+                        this.setState({
+                                page: 1,
+                                listConversation: [],
+                                isLoading: true,
+                                isRefresh: true
+                        });
+                        this.props.onFetchListConversation(this.state.account.id, 1);
+                }
+
         }
 
         onLoadMore () {
-                const page = this.state.page;
-                const total_page = this.state.total_page;
-                if (page < total_page) {
-                        this.setState({
-                                isLoading: true,
-                                isLoadMore: true
-                        })
-                        this.props.onFetchListConversation(this.state.account.id, page + 1);
+                if (!this.state.isLoading) {
+                        console.log('load more');
+                        const page = this.state.page;
+                        const total_page = this.state.total_page;
+                        if (page < total_page) {
+                                this.setState({
+                                        isLoading: true,
+                                        isLoadMore: true
+                                });
+                                this.props.onFetchListConversation(this.state.account.id, page + 1);
+                        }
                 }
         }
 
@@ -135,7 +142,6 @@ export default class ListConversation extends Component {
 
         render () {
                 return (
-
                         <FlatList
                                 data={this.state.listConversation}
                                 extraData={this.state}
@@ -150,14 +156,28 @@ export default class ListConversation extends Component {
                                 }}
                                 onEndReachedThreshold={0.1}
                                 renderItem={(item) => {
-                                        return (
-                                                <ItemConversation
-                                                        item={item.item}
-                                                        account={this.state.account}
-                                                        onChangeScreenDetailChat={this.onChangeScreenDetailChat}
-                                                />
-                                        );
-                                }}
+                                        console.log('item: ', item);
+                                        if (item.item === '1')
+                                                return (
+                                                        <View>
+                                                                <Text style={{
+                                                                        textTransform: 'capitalize',
+                                                                        marginVertical: 5,
+                                                                        fontFamily: 'UVN-Baisau-Regular',
+                                                                }}>không có tin nhắn</Text>
+                                                        </View>
+                                                );
+                                        else
+                                                return (
+                                                        <ItemConversation
+                                                                item={item.item}
+                                                                account={this.state.account}
+                                                                onChangeScreenDetailChat={this.onChangeScreenDetailChat}
+                                                        />
+                                                );
+                                }
+                                }
+
                         />
                 );
         }

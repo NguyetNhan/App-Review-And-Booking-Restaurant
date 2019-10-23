@@ -7,16 +7,25 @@ export default class CustomItemMarker extends Component {
                 super(props);
                 this.state = {
                         image: props.image,
+                        type: props.type
                 };
         }
 
         render () {
                 return (
                         <View style={styles.container}>
-                                <Image
-                                        source={{ uri: `${urlServer}${this.state.image}` }}
-                                        style={styles.image}
-                                />
+                                {
+                                        this.state.image === null ?
+                                                <Image
+                                                        source={require('../../assets/images/avatar_user.png')}
+                                                        style={styles.image}
+                                                /> :
+                                                <Image
+                                                        source={{ uri: `${urlServer}${this.state.image}` }}
+                                                        style={styles.image}
+                                                />
+                                }
+
                                 <View style={styles.containerIconBottom}>
                                         <IconEntypo name='triangle-down' size={30} color={colorMain} />
                                 </View>
@@ -27,7 +36,10 @@ export default class CustomItemMarker extends Component {
 
 const styles = StyleSheet.create({
         container: {
-                flex: 1,
+                height: 100,
+                width: 80,
+                alignItems: 'center',
+
         },
         image: {
                 width: 80,
@@ -38,7 +50,6 @@ const styles = StyleSheet.create({
         },
         containerIconBottom: {
                 position: 'absolute',
-                bottom: -19,
-                left: 25
+                bottom: 0
         },
 });

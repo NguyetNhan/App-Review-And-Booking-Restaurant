@@ -17,6 +17,7 @@ import { API } from './api';
 function* fetchListConversationFromApi (action) {
         try {
                 const result = yield API.fetchListConversationFromAPI(action.idAccount, action.page);
+                console.log('result: ', result);
                 if (result.error) {
                         yield put(onFetchListConversationFailed(result.message));
                 } else {
@@ -34,6 +35,7 @@ export function* watchFetchListConversationFromApi () {
 function* fetchInfoAccountReceiverFromAPI (action) {
         try {
                 const result = yield API.fetchInfoAccountFromAPI(action.idAccount);
+                console.log('result: ', result);
                 if (result.error) {
                         yield put(onFetchInfoAccountReceiverFailed(result.message));
                 } else {

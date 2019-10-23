@@ -28,7 +28,10 @@ import {
 import { WatchAddMenuOnAPI, WatchFetchMenuFromAPI } from '../detail_restaurant/menu/sagas';
 import { WatchFetchNotificationFromAPI } from '../notification/sagas';
 import { WatchFetchListMenuForOrderFromAPI, WatchAddOrderIntoDatabase } from '../order/sagas';
-import { watchFetchNearbyLocationPlaceFromAPIForMap } from '../map/sagas';
+import {
+        watchFetchNearbyLocationPlaceFromAPIForMap,
+        watchFetchPositionFriendFromAPI
+} from '../map/sagas';
 import { WatchFetchListOrderFromAPI } from '../deal/sagas';
 import {
         watchFetchDetailOrderFromAPI,
@@ -55,6 +58,16 @@ import {
         watchFetchInfoAccountReceiverForDetaiChatFromAPI,
         watchSendMessage
 } from '../detail_chat/sagas';
+import {
+        watchUpdateFriendList,
+        watchFetchFriendList
+} from '../friend/sagas';
+import {
+        watchFetchStrangerListFromAPI
+} from '../stranger/sagas';
+import {
+        watchFetchInfoAccountViewFromAPIForPerson
+} from '../person/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -97,6 +110,11 @@ export default function* RootSaga () {
                 watchFetchListPlaceTheBest(),
                 watchFetchListPlaceTheBestModal(),
                 watchFetchListFoodTheBest(),
-                watchFetchListFoodTheBestModal()
+                watchFetchListFoodTheBestModal(),
+                watchUpdateFriendList(),
+                watchFetchFriendList(),
+                watchFetchPositionFriendFromAPI(),
+                watchFetchStrangerListFromAPI(),
+                watchFetchInfoAccountViewFromAPIForPerson()
         ]);
 }

@@ -15,7 +15,7 @@ export default class ItemConversation extends Component {
                         isCheckOnline: false,
                         tinNhanMoiNhat: null
                 };
-                this.checkAccountReceiverOnline();
+                //     this.checkAccountReceiverOnline();
         }
 
         async checkAccountReceiverOnline () {
@@ -47,9 +47,10 @@ export default class ItemConversation extends Component {
                 for (item of this.state.item.participant) {
                         if (item !== this.state.accountSend.id) {
                                 this.props.onFetchInfoAccountReceiver(item);
+                                break;
                         }
                 }
-
+                this.props.onFetchNewMessageForItem(this.state.item._id);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -58,8 +59,8 @@ export default class ItemConversation extends Component {
                 }
                 if (nextProps.accountReceiver !== prevState.accountReceiver && nextProps.accountReceiver !== undefined && !prevState.isLoading) {
                         prevState.accountReceiver = nextProps.accountReceiver;
-                        prevState.isLoading = true;
-                        nextProps.onFetchNewMessageForItem(prevState.item._id);
+                        // prevState.isLoading = true;
+                        // nextProps.onFetchNewMessageForItem(prevState.item._id);
                 }
                 if (nextProps.tinNhanMoiNhat !== prevState.tinNhanMoiNhat && nextProps.tinNhanMoiNhat !== undefined && !prevState.isLoading) {
                         prevState.tinNhanMoiNhat = nextProps.tinNhanMoiNhat;

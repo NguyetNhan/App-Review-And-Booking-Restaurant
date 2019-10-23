@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',
+                textTransform: 'capitalize'
         },
         star: {
                 flexDirection: 'row',

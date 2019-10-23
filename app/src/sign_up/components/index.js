@@ -86,27 +86,6 @@ export default class SignUp extends Component {
                                         validateError: true
                                 });
                         }
-                } else if (type === 'phone') {
-                        const constraints = {
-                                phone: {
-                                        length: {
-                                                is: 10,
-                                                wrongLength: '^*phải đủ %{count} số',
-                                        }
-                                }
-                        };
-                        let result = Validate({ phone: (this.state.phone).trim() }, constraints);
-                        if (result === undefined) {
-                                this.setState({
-                                        validatePhone: null,
-                                        validateError: false
-                                });
-                        } else {
-                                this.setState({
-                                        validatePhone: result.phone[0],
-                                        validateError: true
-                                });
-                        }
                 } else if (type === 'pass') {
                         const constraints = {
                                 pass: {

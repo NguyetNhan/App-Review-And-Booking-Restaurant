@@ -10,11 +10,9 @@ import {
 const mapStateToProps = (state) => {
         const itemConversationReducers = state.ChatReducers.ItemConversationReducers;
         if (itemConversationReducers !== null) {
-
                 if (itemConversationReducers.fetchNewMessageSucceeded !== undefined) {
                         return {
                                 tinNhanMoiNhat: itemConversationReducers.fetchNewMessageSucceeded.data,
-                                isLoading: false
                         };
                 } else if (itemConversationReducers.fetchNewMessageFailed !== undefined) {
                         return {
@@ -38,7 +36,6 @@ const mapStateToProps = (state) => {
                 }
         } else
                 return {
-                        isLoading: true
                 };
 };
 

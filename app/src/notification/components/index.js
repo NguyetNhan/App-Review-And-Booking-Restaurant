@@ -67,9 +67,6 @@ export default class Notification extends Component {
                         );
                         this.props.navigation.navigate('Auth');
                 }
-
-
-
         }
         componentDidMount () {
                 this._getAccountFromLocal();
@@ -77,9 +74,19 @@ export default class Notification extends Component {
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
-                        prevState.listNotification = nextProps.listNotification;
+                        if (nextProps.listNotification.length === 0) {
+                                let list = ['1', ...nextProps.listNotification];
+                                prevState.listNotification = list;
+                        } else {
+                                prevState.listNotification = nextProps.listNotification;
+                        }
                 } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
-                        prevState.listNotification = nextProps.listNotification;
+                        if (nextProps.listNotification.length === 0) {
+                                let list = ['1', ...nextProps.listNotification];
+                                prevState.listNotification = list;
+                        } else {
+                                prevState.listNotification = nextProps.listNotification;
+                        }
                         prevState.isRefresh = false;
                 } else if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listNotification = prevState.listNotification.concat(nextProps.listNotification);
@@ -179,20 +186,31 @@ export default class Notification extends Component {
                                                 }}
                                                 onEndReachedThreshold={0.1}
                                                 renderItem={(item) => {
-                                                        return (
-                                                                <ItemListNotification
-                                                                        item={item.item}
-                                                                        title={item.item.title}
-                                                                        content={item.item.content}
-                                                                        image={item.item.image}
-                                                                        type={item.item.type}
-                                                                        createDate={item.item.createDate}
-                                                                        idAccount={item.item.idAccount}
-                                                                        idRestaurant={item.item.idRestaurant}
-                                                                        idOrder={item.item.idOrder}
-                                                                        _onClickItem={this._onClickItem}
-                                                                />
-                                                        );
+                                                        if (item.item === '1')
+                                                                return (
+                                                                        <View>
+                                                                                <Text style={{
+                                                                                        textTransform: 'capitalize',
+                                                                                        marginVertical: 5,
+                                                                                        fontFamily: 'UVN-Baisau-Regular',
+                                                                                }}>không có thông báo</Text>
+                                                                        </View>
+                                                                );
+                                                        else
+                                                                return (
+                                                                        <ItemListNotification
+                                                                                item={item.item}
+                                                                                title={item.item.title}
+                                                                                content={item.item.content}
+                                                                                image={item.item.image}
+                                                                                type={item.item.type}
+                                                                                createDate={item.item.createDate}
+                                                                                idAccount={item.item.idAccount}
+                                                                                idRestaurant={item.item.idRestaurant}
+                                                                                idOrder={item.item.idOrder}
+                                                                                _onClickItem={this._onClickItem}
+                                                                        />
+                                                                );
                                                 }}
                                         />
                                 </View>

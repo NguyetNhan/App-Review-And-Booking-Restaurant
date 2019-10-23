@@ -17,5 +17,25 @@ export function convertVND (data) {
         return convert;
 }
 
+export function convertPhoneNumber (data) {
+        const string = data.toString();
+        const length = string.length;
+        var convert = '';
+        for (let i = 0; i < length; i++) {
+                let char = string.charAt(i);
+                if (char === '+') {
+                        let slice = string.slice(3, length);
+                        convert = '0'.concat(slice);
+                        break;
+                } else if (char === '-') {
+                        convert = string.replace(/-/g, '');
+                        break;
+                } else {
+                        convert = string;
+                }
+        }
+        return Number.parseInt(convert);
+}
+
 
 

@@ -38,7 +38,8 @@ const MainReducers = (state = null, action) => {
                                 resetPropsMain: {
                                         idConversation: undefined,
                                         accountReceiver: undefined,
-                                        isLoading: true
+                                        isLoadingIdConversation: true,
+                                        isLoadingAccountReceiver: true
                                 }
                         };
                 case RESET_PROPS_MESSAGE_MAIN:

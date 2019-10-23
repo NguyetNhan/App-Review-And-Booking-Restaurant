@@ -17,6 +17,9 @@ import ReviewReducers from '../detail_restaurant/review/reducers';
 import AddReviewReducers from '../client/add_review/reducers/add_review_reducers';
 import ChatReducers from '../chat/reducers';
 import DetailChatReducers from '../detail_chat/reducers';
+import FriendReducers from '../friend/reducers';
+import StrangerReducers from '../stranger/reducers';
+import PersonReducers from '../person/reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -36,7 +39,10 @@ const RootReducer = combineReducers({
         ReviewReducers,
         AddReviewReducers,
         ChatReducers,
-        DetailChatReducers
+        DetailChatReducers,
+        FriendReducers,
+        StrangerReducers,
+        PersonReducers
 });
 
 export default RootReducer;

@@ -149,7 +149,8 @@ const styles = StyleSheet.create({
                 alignItems: 'center',
         },
         name: {
-                fontFamily: 'UVN-Baisau-Bold'
+                fontFamily: 'UVN-Baisau-Bold',
+                textTransform: 'capitalize'
         },
         address: {
                 fontFamily: 'UVN-Baisau-Regular',

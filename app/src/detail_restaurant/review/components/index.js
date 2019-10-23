@@ -139,6 +139,7 @@ export default class Review extends Component {
                                 <StatusBar
                                         backgroundColor={background}
                                         barStyle='dark-content'
+                                        translucent={false}
                                 />
                                 <View style={styles.header}>
                                         <TouchableOpacity onPress={() => {

@@ -26,8 +26,13 @@ const Navigation = createAppContainer(AppNavigator);
 sagaMiddleware.run(RootSaga);
 
 export default class App extends Component {
+        constructor (props) {
+                super(props);
+
+        }
+
         render () {
-                socket.connect();
+                //   socket.connect();
                 return (
                         <Provider store={store}>
                                 <Navigation />

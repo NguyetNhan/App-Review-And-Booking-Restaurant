@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { urlServer, colorMain, backgroundStatusBar } from '../../config';
 import { AccountModel } from '../../models/account';
@@ -48,7 +48,6 @@ export default class Chat extends Component {
                                                 onChangeScreenDetailChat={this.onChangeScreenDetailChat}
                                         />
                                 </View>
-
                         </View>
                 );
         }
