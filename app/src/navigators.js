@@ -25,6 +25,8 @@ import Person from './person/containers';
 import DetailChat from './detail_chat/containers';
 import Friend from './friend/containers';
 import Stranger from './stranger/containers';
+import AddPost from './add_post/components/main';
+import Invite from './invite/containers';
 
 
 const RouteBottomTabConfig = {
@@ -154,6 +156,18 @@ const MainNavigatorClient = createStackNavigator(
                 },
                 Stranger: {
                         screen: Stranger,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                AddPost: {
+                        screen: AddPost,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Invite: {
+                        screen: Invite,
                         navigationOptions: {
                                 header: null,
                         },

@@ -39,6 +39,7 @@ AddOrderIntoDatabase = async (data) => {
                                 discount: data.discount,
                                 totalMoney: data.totalMoney,
                                 note: data.note,
+                                guests: data.guests
                         })
                 }).then(value => value.json());
                 return response;

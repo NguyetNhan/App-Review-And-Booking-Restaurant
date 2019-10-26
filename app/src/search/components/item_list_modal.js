@@ -37,6 +37,7 @@ export default class ItemListModal extends Component {
                         return (
                                 <TouchableOpacity
                                         onPress={() => {
+                                                this.props.onClickPerson(item._id);
                                         }}
                                 >
                                         <View style={styles.containerItem}

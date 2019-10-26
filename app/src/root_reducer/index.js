@@ -20,6 +20,7 @@ import DetailChatReducers from '../detail_chat/reducers';
 import FriendReducers from '../friend/reducers';
 import StrangerReducers from '../stranger/reducers';
 import PersonReducers from '../person/reducers';
+import InviteReducers from '../invite/reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -42,7 +43,8 @@ const RootReducer = combineReducers({
         DetailChatReducers,
         FriendReducers,
         StrangerReducers,
-        PersonReducers
+        PersonReducers,
+        InviteReducers
 });
 
 export default RootReducer;

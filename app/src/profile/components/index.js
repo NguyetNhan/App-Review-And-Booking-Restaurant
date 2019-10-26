@@ -133,7 +133,7 @@ export default class Profile extends Component {
                                                         }
                                                         <View style={styles.containerName}>
                                                                 <Text style={styles.textName} numberOfLines={1} ellipsizeMode='tail' >{this.state.account.name}</Text>
-                                                                <Text style={styles.textBottomName}>Bấm vào đây để truy cập trang cá nhân</Text>
+                                                                <Text style={styles.textBottomName}>Xem trang cá nhân</Text>
                                                         </View>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
@@ -219,6 +219,21 @@ export default class Profile extends Component {
                                                                                                 numberOfLines={2}
                                                                                                 ellipsizeMode='tail'
                                                                                         >tìm bạn quanh đây</Text>
+                                                                                </View>
+                                                                        </TouchableOpacity>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => {
+                                                                                        this.props.navigation.navigate('Invite');
+                                                                                }}
+                                                                                style={styles.itemNavigator}>
+                                                                                <View style={styles.containerIconNavigator}>
+                                                                                        <MaterialIcons name='mail' size={30} color='black' />
+                                                                                </View>
+                                                                                <View style={styles.containerTextNavigator}>
+                                                                                        <Text style={styles.textNavigator}
+                                                                                                numberOfLines={2}
+                                                                                                ellipsizeMode='tail'
+                                                                                        >lời mời</Text>
                                                                                 </View>
                                                                         </TouchableOpacity>
                                                                 </View>

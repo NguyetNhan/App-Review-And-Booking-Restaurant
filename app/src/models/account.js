@@ -21,7 +21,7 @@ const AccountSchema = {
                 password: 'string',
                 name: 'string',
                 score: { type: 'int', default: 0 },
-                phone: 'int',
+                phone: 'string',
                 avatar: { type: 'string', default: 'null' },
                 conversation: { type: 'list', objectType: Conversation },
         }

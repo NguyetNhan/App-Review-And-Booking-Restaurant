@@ -30,6 +30,7 @@ export default class Order extends Component {
                         discount: null,
                         visibleModalComplete: false,
                         complete: null,
+                        guests: [],
                 };
                 this._onActionOrder = this._onActionOrder.bind(this);
                 this._onClickButtonNext = this._onClickButtonNext.bind(this);
@@ -105,6 +106,7 @@ export default class Order extends Component {
                         receptionTime: data.receptionTime,
                         note: data.note,
                         amountPerson: data.amountPerson,
+                        guests: data.guests,
                 });
         }
 
@@ -120,7 +122,8 @@ export default class Order extends Component {
                         receptionTime: this.state.receptionTime,
                         totalMoneyFood: Number.parseFloat(this.state.totalMoneyFood),
                         note: this.state.note,
-                        discount: info.discount
+                        discount: info.discount,
+                        guests: this.state.guests,
                 };
                 this.setState({
                         visibleModalComplete: !this.state.visibleModalComplete,
@@ -244,7 +247,7 @@ export default class Order extends Component {
                                                 flex: 1,
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
-                                                backgroundColor: 'rgba(0,0,0,0.5)'
+                                                backgroundColor: 'rgba(0,0,0,0.2)'
                                         }}>
                                                 <ActivityIndicator animating={true} size={100} color={colorMain} />
                                         </View>

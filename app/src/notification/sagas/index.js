@@ -12,7 +12,7 @@ function* FetchNotificationFromAPI (action) {
                         yield put(onFetchNotificationSucceeded(results));
                 }
         } catch (error) {
-                console.log('FetchNotificationFromAPI error: ', error);
+                yield put(onFetchNotificationFailed(error.message));
         }
 }
 

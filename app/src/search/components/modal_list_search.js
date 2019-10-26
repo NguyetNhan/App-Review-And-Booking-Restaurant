@@ -19,6 +19,7 @@ export default class ModalListSearch extends Component {
                         count_item: null
                 };
                 this.onClickItem = this.onClickItem.bind(this);
+                this.onClickPerson = this.onClickPerson.bind(this);
         }
 
         componentDidMount () {
@@ -79,6 +80,11 @@ export default class ModalListSearch extends Component {
         onClickItem (idRestaurant, idAdmin) {
                 this.props.onCloseModalListSearch();
                 this.props._onClickItemRestaurant(idRestaurant, idAdmin);
+        }
+
+        onClickPerson (idAccount) {
+                this.props.onCloseModalListSearch();
+                this.props.onClickPerson(idAccount);
         }
 
 
@@ -146,6 +152,7 @@ export default class ModalListSearch extends Component {
                                                                                 item={item.item}
                                                                                 type={this.state.type}
                                                                                 onClickItem={this.onClickItem}
+                                                                                onClickPerson={this.onClickPerson}
                                                                         />
                                                                 );
                                                 }}

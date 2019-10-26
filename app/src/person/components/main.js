@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, StatusBar, Alert } from 'react-native';
 import { AccountModel } from '../../models/account';
 import { urlServer, colorMain, background } from '../../config';
-import Header from './header';
+import Header from '../containers/header';
+import AddPost from './add_post';
+import PostList from './post_list';
 
 export default class Person extends Component {
         constructor (props) {
@@ -16,26 +18,34 @@ export default class Person extends Component {
                 this.fetchInfoAccountFromLocal();
                 this.onClickChat = this.onClickChat.bind(this);
                 this.onClickButtonBack = this.onClickButtonBack.bind(this);
+                this.onClickAddPost = this.onClickAddPost.bind(this);
         }
 
         async fetchInfoAccountFromLocal () {
-                if (this.state.idAccountView !== null) {
-                        this.props.onFetchAccountView(this.state.idAccountView);
-                        this.setState({
-                                type: 'visit'
-                        });
+                const result = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                if (result.error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                'Bạn chưa đăng nhập !',
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.props.navigation.navigate('Auth');
                 } else {
-                        const result = await AccountModel.FetchInfoAccountFromDatabaseLocal();
-                        if (result.error) {
-                                Alert.alert(
-                                        'Thông Báo Lỗi',
-                                        'Bạn chưa đăng nhập !',
-                                        [
-                                                { text: 'OK' },
-                                        ],
-                                        { cancelable: false },
-                                );
-                                this.props.navigation.navigate('Auth');
+                        if (this.state.idAccountView !== null) {
+                                if (this.state.idAccountView === result.data.id) {
+                                        this.props.onFetchAccountView(result.data.id);
+                                        this.setState({
+                                                type: 'host'
+                                        });
+                                } else {
+                                        this.props.onFetchAccountView(this.state.idAccountView);
+                                        this.setState({
+                                                type: 'visit'
+                                        });
+                                }
                         } else {
                                 this.props.onFetchAccountView(result.data.id);
                                 this.setState({
@@ -43,7 +53,6 @@ export default class Person extends Component {
                                 });
                         }
                 }
-
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -79,6 +88,10 @@ export default class Person extends Component {
                 this.props.navigation.goBack();
         }
 
+        onClickAddPost () {
+                this.props.navigation.navigate('AddPost');
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsMain();
         }
@@ -100,7 +113,6 @@ export default class Person extends Component {
                                                 translucent
                                                 barStyle='light-content'
                                                 backgroundColor='rgba(0,0,0,0.1)'
-
                                         />
                                         <ScrollView
                                                 showsVerticalScrollIndicator={false}
@@ -111,6 +123,14 @@ export default class Person extends Component {
                                                         onClickChat={this.onClickChat}
                                                         onClickButtonBack={this.onClickButtonBack}
                                                 />
+                                                {
+                                                        this.state.type === 'host' ?
+                                                                <AddPost
+                                                                        onClickAddPost={this.onClickAddPost}
+                                                                /> : null
+                                                }
+
+                                                <PostList />
                                         </ScrollView>
                                 </View>
                         );

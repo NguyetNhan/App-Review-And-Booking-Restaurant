@@ -66,8 +66,13 @@ import {
         watchFetchStrangerListFromAPI
 } from '../stranger/sagas';
 import {
-        watchFetchInfoAccountViewFromAPIForPerson
+        watchFetchInfoAccountViewFromAPIForPerson,
+        watchCheckIsFriend,
+        watchSendFriendRequest
 } from '../person/sagas';
+import {
+        watchFetchInviteList
+} from '../invite/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -115,6 +120,10 @@ export default function* RootSaga () {
                 watchFetchFriendList(),
                 watchFetchPositionFriendFromAPI(),
                 watchFetchStrangerListFromAPI(),
-                watchFetchInfoAccountViewFromAPIForPerson()
+                watchFetchInfoAccountViewFromAPIForPerson(),
+                watchCheckIsFriend(),
+                watchSendFriendRequest(),
+                watchFetchInviteList()
+
         ]);
 }

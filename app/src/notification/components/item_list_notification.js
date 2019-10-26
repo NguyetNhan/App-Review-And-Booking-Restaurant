@@ -13,8 +13,6 @@ export default class ItemListNotification extends Component {
                         type: props.type,
                         createDate: props.createDate,
                         idAccount: props.idAccount,
-                        idRestaurant: props.idRestaurant,
-                        idOrder: props.idOrder
                 };
         }
 
@@ -42,10 +40,12 @@ export default class ItemListNotification extends Component {
                                                         />
                                         }
                                         <View style={styles.containerText}>
-                                                <Text style={styles.textTitle}
-                                                >{this.state.title}</Text>
-                                                <Text style={styles.textContent}
-                                                >{this.state.content}</Text>
+                                                <View>
+                                                        <Text style={styles.textTitle}
+                                                        >{this.state.title}</Text>
+                                                        <Text style={styles.textContent}
+                                                        >{this.state.content}</Text>
+                                                </View>
                                                 <Text style={styles.textTime}
                                                 >{formatDate}</Text>
                                         </View>
@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
         },
         containerText: {
                 marginLeft: 20,
-                width: 200
+                width: 200,
+                justifyContent: 'space-between',
         },
         textTitle: {
                 fontFamily: 'UVN-Baisau-Bold',

@@ -41,6 +41,7 @@ export default class ItemFriend extends Component {
         async fetchInfoAccount () {
                 try {
                         const result = await fetch(`${urlServer}/auth/id/${this.state.item.idAccountFriend}`, {
+                                method: 'GET',
                                 headers: {
                                         Accept: 'application/json',
                                         'Content-Type': 'application/json',
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
                 borderRadius: 20
         },
         name: {
-                fontFamily: 'UVN-Baisau-Bold',
+                fontFamily: 'UVN-Baisau-Regular',
                 marginLeft: 10,
                 fontSize: 18
         },

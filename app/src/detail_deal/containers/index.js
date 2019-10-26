@@ -7,14 +7,17 @@ export default class DetailDeal extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        idOrder: props.navigation.getParam('idOrder', null)
+                        idOrder: props.navigation.getParam('idOrder', null),
+                        navigationFrom: props.navigation.getParam('navigationFrom', null)
                 };
                 this._onCallback = this._onCallback.bind(this);
                 this._onClickChangeScreenRestaurant = this._onClickChangeScreenRestaurant.bind(this);
         }
 
         _onCallback () {
-                this.props.navigation.state.params.callback();
+                if (this.state.navigationFrom === null) {
+                        this.props.navigation.state.params.callback();
+                }
         }
 
         _onClickChangeScreenRestaurant (order) {

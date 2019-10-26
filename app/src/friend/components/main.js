@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, PermissionsAndroid, Dimensions, TouchableOpacity, Alert, FlatList } from 'react-native';
+import { View, Text, StyleSheet, PermissionsAndroid, Dimensions, TouchableOpacity, Alert, FlatList, ScrollView, RefreshControl, Modal, StatusBar } from 'react-native';
 import Contacts from 'react-native-contacts';
 const { width, height } = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -7,6 +7,8 @@ import { background, colorMain } from '../../config';
 import { AccountModel } from '../../models/account';
 import { convertPhoneNumber } from '../../functions/convert';
 import ItemFriend from './item_friend';
+import FriendRequest from './friend_request';
+
 export default class Friend extends Component {
         constructor (props) {
                 super(props);
@@ -14,9 +16,11 @@ export default class Friend extends Component {
                         account: null,
                         isLoading: true,
                         friendList: [],
+                        visibleModalInvitation: false
                 };
                 this.fetchInfoAccountFromLocal();
                 this.onClickItem = this.onClickItem.bind(this);
+                this.onCloseModalInvitation = this.onCloseModalInvitation.bind(this);
         }
 
         async fetchInfoAccountFromLocal () {
@@ -117,50 +121,111 @@ export default class Friend extends Component {
                 this.props.onFetchFriendList(this.state.account.id);
         }
 
-
+        onOpenModalInvitation () {
+                this.setState({
+                        visibleModalInvitation: !this.state.visibleModalInvitation
+                });
+        }
+        onCloseModalInvitation () {
+                this.setState({
+                        visibleModalInvitation: !this.state.visibleModalInvitation
+                });
+        }
 
 
         render () {
                 return (
                         <View style={styles.container}>
+                                <StatusBar
+                                        backgroundColor='white'
+                                        barStyle='dark-content'
+                                        translucent={false}
+                                />
                                 <View style={styles.header}>
                                         <TouchableOpacity onPress={() => {
                                                 this.props.navigation.goBack();
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
-                                        <Text style={styles.textHeader}>danh sách bạn bè</Text>
+                                        <Text style={styles.textHeader}>bạn bè</Text>
                                         <View style={{ width: 25 }} />
                                 </View>
-                                <View style={styles.containerButtonUpdateContacts}>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.onClickButtonUpdateContacts();
-                                                }}
-                                        >
-                                                <Text style={styles.textButtonUpdateContacts}>cập nhật danh bạ</Text>
-                                        </TouchableOpacity>
-                                </View>
-                                <View style={styles.flatList}>
-                                        <FlatList
-                                                data={this.state.friendList}
-                                                extraData={this.state}
-                                                keyExtractor={(item, index) => index.toString()}
-                                                showsVerticalScrollIndicator={false}
-                                                refreshing={this.state.isLoading}
-                                                onRefresh={() => {
-                                                        this.onRefresh();
-                                                }}
-                                                renderItem={(item) => {
-                                                        return (
-                                                                <ItemFriend
-                                                                        item={item.item}
-                                                                        onClickItem={this.onClickItem}
+                                <ScrollView
+                                        showsVerticalScrollIndicator={false}
+                                        refreshControl={
+                                                <RefreshControl
+                                                        refreshing={this.state.isLoading}
+                                                        onRefresh={() => {
+                                                                this.onRefresh();
+                                                        }}
+                                                />
+                                        }
+                                >
+                                        <View style={styles.containerButtonInvitation}>
+                                                <TouchableOpacity
+                                                        style={styles.buttonContacts}
+                                                        onPress={() => {
+                                                                this.onOpenModalInvitation();
+                                                        }}
+                                                >
+                                                        <TouchableOpacity style={styles.containerAddFriend}>
+                                                                <Icon
+                                                                        name='adduser'
+                                                                        size={25}
+                                                                        color='white'
                                                                 />
-                                                        );
-                                                }}
+                                                        </TouchableOpacity>
+                                                        <Text style={styles.textButtonUpdateContacts}>lời mời kết bạn</Text>
+                                                </TouchableOpacity>
+                                        </View>
+                                        <View style={styles.containerButtonUpdateContacts}>
+                                                <TouchableOpacity
+                                                        style={styles.buttonContacts}
+                                                        onPress={() => {
+                                                                this.onClickButtonUpdateContacts();
+                                                        }}
+                                                >
+                                                        <TouchableOpacity style={styles.containerContacts}>
+                                                                <Icon
+                                                                        name='contacts'
+                                                                        size={25}
+                                                                        color='white'
+                                                                />
+                                                        </TouchableOpacity>
+                                                        <Text style={styles.textButtonUpdateContacts}>cập nhật danh bạ</Text>
+                                                </TouchableOpacity>
+                                        </View>
+                                        <Text style={styles.title}>danh sách bạn bè</Text>
+                                        <View style={styles.flatList}>
+                                                <FlatList
+                                                        data={this.state.friendList}
+                                                        extraData={this.state}
+                                                        keyExtractor={(item, index) => index.toString()}
+                                                        showsVerticalScrollIndicator={false}
+                                                        renderItem={(item) => {
+                                                                return (
+                                                                        <ItemFriend
+                                                                                item={item.item}
+                                                                                onClickItem={this.onClickItem}
+                                                                        />
+                                                                );
+                                                        }}
+                                                />
+                                        </View>
+                                </ScrollView>
+                                <Modal
+                                        visible={this.state.visibleModalInvitation}
+                                        animationType='slide'
+                                        animated={true}
+                                        onRequestClose={() => {
+                                                this.onCloseModalInvitation();
+                                        }}
+                                >
+                                        <FriendRequest
+                                                onCloseModalInvitation={this.onCloseModalInvitation}
+                                                account={this.state.account}
                                         />
-                                </View>
+                                </Modal>
                         </View>
                 );
         }
@@ -169,15 +234,16 @@ export default class Friend extends Component {
 const styles = StyleSheet.create({
         container: {
                 flex: 1,
-                backgroundColor: background
+                backgroundColor: 'white'
         },
         header: {
                 height: 50,
-                width: width,
+                width: '100%',
                 justifyContent: 'space-between',
                 paddingHorizontal: 20,
                 flexDirection: 'row',
-                alignItems: 'center'
+                alignItems: 'center',
+                backgroundColor: 'white'
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
@@ -185,16 +251,46 @@ const styles = StyleSheet.create({
                 fontSize: 16
         },
         containerButtonUpdateContacts: {
-                alignItems: 'flex-end',
-                paddingHorizontal: 20
+                paddingHorizontal: 20,
         },
         textButtonUpdateContacts: {
                 fontFamily: 'UVN-Baisau-Bold',
                 textTransform: 'capitalize',
-                color: 'blue',
-                fontSize: 12
+                fontSize: 16,
+                marginLeft: 10
         },
         flatList: {
                 flex: 1
+        },
+        buttonContacts: {
+                flexDirection: 'row',
+                alignItems: 'center'
+        },
+        containerContacts: {
+                width: 40,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#4c8dd8',
+                borderRadius: 20
+        },
+        containerAddFriend: {
+                width: 40,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#ee5a31',
+                borderRadius: 20
+        },
+        containerButtonInvitation: {
+                paddingHorizontal: 20,
+                marginVertical: 5
+        },
+        title: {
+                fontFamily: 'UVN-Baisau-Regular',
+                marginTop: 10,
+                textTransform: 'capitalize',
+                marginHorizontal: 20,
+                fontSize: 12
         }
 });

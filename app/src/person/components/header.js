@@ -1,20 +1,67 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
 const { width, height } = Dimensions.get('window');
 import { urlServer, colorMain } from '../../config';
 import Icon from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AccountModel } from '../../models/account';
 
 export default class Header extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
                         account: props.account,
-                        type: props.type
+                        type: props.type,
+                        accountClient: null,
+                        isFriended: null
                 };
         }
 
+        async fetchAccountClientFromLocal () {
+                const result = await AccountModel.FetchInfoAccountFromDatabaseLocal();
+                if (result.error) {
+                        Alert.alert('Thông Báo Lỗi',
+                                result.message);
+                        return null;
+                } else {
+                        this.setState({
+                                accountClient: result.data
+                        });
+                        return result.data.id;
+                }
+        }
+
+        async   componentDidMount () {
+                if (this.state.type === 'visit') {
+                        const idAccountClient = await this.fetchAccountClientFromLocal();
+                        this.props.onCheckIsFriend(idAccountClient, this.state.account._id);
+                }
+        }
+
+        static getDerivedStateFromProps (nextProps, prevState) {
+                if (nextProps.isFriended !== prevState.isFriended && nextProps.isFriended !== undefined) {
+                        prevState.isFriended = nextProps.isFriended;
+                }
+                if (nextProps.message !== undefined) {
+                        Alert.alert(
+                                'Thông Báo',
+                                nextProps.message,
+                                [
+                                        {
+                                                text: 'OK',
+                                                onPress: () => nextProps.onResetPropsMessageHeader()
+                                        },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+                return null;
+        }
+
+        componentWillUnmount () {
+                this.props.onResetPropsHeader();
+        }
         render () {
                 return (
                         <View style={styles.container}>
@@ -39,7 +86,7 @@ export default class Header extends Component {
                                                 <Icon name='arrow-left' size={25} color='white' />
                                         </TouchableOpacity>
                                         <View style={{
-                                                height: 100,
+                                                height: 50,
                                                 width: width,
                                         }}>
                                                 {
@@ -63,19 +110,39 @@ export default class Header extends Component {
                                                                         <View style={styles.containerName}>
                                                                                 <Text style={styles.name}>{this.state.account.name}</Text>
                                                                                 <View style={styles.containerOptions}>
-                                                                                        <View style={styles.options}>
-                                                                                                <TouchableOpacity>
-                                                                                                        <FontAwesome5 name='user-plus' size={30} color='gray' />
-                                                                                                </TouchableOpacity>
-                                                                                                <Text style={styles.titleOptions}>kết bạn</Text>
-                                                                                        </View>
+                                                                                        {
+                                                                                                this.state.isFriended === null ?
+                                                                                                        <View style={styles.options}>
+                                                                                                                <TouchableOpacity
+                                                                                                                        onPress={() => {
+                                                                                                                                this.props.onAddFriend(this.state.accountClient.id, this.state.account._id);
+                                                                                                                        }}
+                                                                                                                >
+                                                                                                                        <FontAwesome5 name='user-plus' size={20} color='gray' />
+                                                                                                                </TouchableOpacity>
+                                                                                                                <Text style={styles.titleOptions}>kết bạn</Text>
+                                                                                                        </View> :
+                                                                                                        this.state.isFriended === 'waiting' ?
+                                                                                                                <View style={styles.options}>
+                                                                                                                        <TouchableOpacity>
+                                                                                                                                <FontAwesome5 name='user-clock' size={20} color='#2977e5' />
+                                                                                                                        </TouchableOpacity>
+                                                                                                                        <Text style={styles.titleOptions}>đã gửi</Text>
+                                                                                                                </View> :
+                                                                                                                <View style={styles.options}>
+                                                                                                                        <TouchableOpacity>
+                                                                                                                                <FontAwesome5 name='user-check' size={20} color='#2977e5' />
+                                                                                                                        </TouchableOpacity>
+                                                                                                                        <Text style={styles.titleOptions}>bạn bè</Text>
+                                                                                                                </View>
+                                                                                        }
                                                                                         <View style={styles.options}>
                                                                                                 <TouchableOpacity
                                                                                                         onPress={() => {
                                                                                                                 this.props.onClickChat(this.state.account._id);
                                                                                                         }}
                                                                                                 >
-                                                                                                        <MaterialCommunityIcons name='chat' size={30} color='gray' />
+                                                                                                        <MaterialCommunityIcons name='chat' size={20} color='#2977e5' />
                                                                                                 </TouchableOpacity>
                                                                                                 <Text style={styles.titleOptions}>nhắn tin</Text>
                                                                                         </View>
@@ -111,7 +178,7 @@ const styles = StyleSheet.create({
                 height: 100,
                 alignItems: 'center',
                 position: 'absolute',
-                top: -50
+                top: -50,
         },
         containerName: {
                 width: 250,
@@ -122,7 +189,7 @@ const styles = StyleSheet.create({
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 25,
+                fontSize: 20,
         },
         containerOptions: {
                 flexDirection: 'row',

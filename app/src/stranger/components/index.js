@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, PermissionsAndroid, Alert, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, PermissionsAndroid, Alert, Dimensions, TouchableOpacity, StatusBar } from 'react-native';
 import { AccountModel } from '../../models/account';
 const { width, height } = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -132,11 +132,16 @@ export default class Stranger extends Component {
         render () {
                 return (
                         <View style={styles.container}>
+                                <StatusBar
+                                        backgroundColor='white'
+                                        barStyle='dark-content'
+                                        translucent={false}
+                                />
                                 <View style={styles.header}>
                                         <TouchableOpacity onPress={() => {
                                                 this.props.navigation.goBack();
                                         }}>
-                                                <Icon name='arrowleft' size={25} color='white' />
+                                                <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
                                         <Text style={styles.textHeader}>người lạ quanh đây</Text>
                                 </View>
@@ -188,14 +193,14 @@ const styles = StyleSheet.create({
                 paddingHorizontal: 20,
                 flexDirection: 'row',
                 alignItems: 'center',
-                backgroundColor: colorMain
+                backgroundColor: 'white'
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',
                 textTransform: 'capitalize',
                 fontSize: 16,
                 marginLeft: 10,
-                color: 'white'
+                color: 'black'
         },
         flatList: {
                 flex: 1

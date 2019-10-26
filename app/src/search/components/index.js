@@ -20,6 +20,7 @@ export default class Search extends Component {
                 this.onCloseModalListSearch = this.onCloseModalListSearch.bind(this);
                 this.onOpenModalListSearch = this.onOpenModalListSearch.bind(this);
                 this._onClickItemRestaurant = this._onClickItemRestaurant.bind(this);
+                this.onClickPerson = this.onClickPerson.bind(this);
         }
 
 
@@ -80,6 +81,12 @@ export default class Search extends Component {
         onCloseModalListSearch () {
                 this.setState({
                         visibleModalListSearch: !this.state.visibleModalListSearch
+                });
+        }
+
+        onClickPerson (idAccount) {
+                this.props.navigation.navigate('Person', {
+                        idAccountView: idAccount
                 });
         }
 
@@ -180,7 +187,13 @@ export default class Search extends Component {
                                                                                                 {
                                                                                                         this.state.listClient.map(item => {
                                                                                                                 return (
-                                                                                                                        <View key={item._id}
+                                                                                                                        <TouchableOpacity
+                                                                                                                                onPress={() => {
+                                                                                                                                        this.props.navigation.navigate('Person', {
+                                                                                                                                                idAccountView: item._id
+                                                                                                                                        });
+                                                                                                                                }}
+                                                                                                                                key={item._id}
                                                                                                                                 style={styles.containerItem}
                                                                                                                         >
                                                                                                                                 {
@@ -198,7 +211,7 @@ export default class Search extends Component {
                                                                                                                                         <Text style={styles.name}>{item.name}</Text>
                                                                                                                                         <Text style={styles.address}>{item.email}</Text>
                                                                                                                                 </View>
-                                                                                                                        </View>
+                                                                                                                        </TouchableOpacity>
                                                                                                                 );
                                                                                                         })
                                                                                                 }
@@ -232,6 +245,7 @@ export default class Search extends Component {
                                                 type={this.state.type}
                                                 contentSearch={this.state.textSearch}
                                                 _onClickItemRestaurant={this._onClickItemRestaurant}
+                                                onClickPerson={this.onClickPerson}
                                         />
                                 </Modal>
                         </View>
@@ -284,7 +298,8 @@ const styles = StyleSheet.create({
         containerItem: {
                 flexDirection: 'row',
                 paddingHorizontal: 20,
-                paddingVertical: 5
+                paddingVertical: 5,
+                alignItems: 'center'
         },
         image: {
                 width: 30,

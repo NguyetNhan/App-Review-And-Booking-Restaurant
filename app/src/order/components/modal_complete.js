@@ -20,6 +20,7 @@ export default class Complete extends Component {
                         totalMoneyFood: props.complete.totalMoneyFood,
                         note: props.complete.note,
                         discount: props.complete.discount,
+                        guests: props.complete.guests
                 };
         }
 
@@ -145,6 +146,21 @@ export default class Complete extends Component {
                                                                         {convertTime}
                                                                 </Text>
                                                         </View>
+                                                        {
+                                                                this.state.guests.length === 0 ? null :
+                                                                        <View style={styles.formatValue}>
+                                                                                <Text style={styles.textTitleValue}>khách mời : </Text>
+                                                                                <View style={{ flex: 1 }}>
+                                                                                        {
+                                                                                                this.state.guests.map(item =>
+                                                                                                        <Text key={item.idAccount} style={styles.textValue}>
+                                                                                                                {item.name}
+                                                                                                        </Text>
+                                                                                                )
+                                                                                        }
+                                                                                </View>
+                                                                        </View>
+                                                        }
                                                         <View style={styles.formatValue}>
                                                                 <Text style={styles.textTitleValue}>số lượng người: </Text>
                                                                 <Text style={styles.textValue}>

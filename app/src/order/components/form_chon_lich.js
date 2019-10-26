@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { urlServer, colorMain, background } from '../../config';
-
+import Feather from 'react-native-vector-icons/Feather';
+import FriendList from './friend_list';
 export default class FormChonLich extends Component {
         constructor (props) {
                 super(props);
@@ -15,7 +16,11 @@ export default class FormChonLich extends Component {
                         totalMoney: 0,
                         amount: '1',
                         note: '',
+                        visibleModalFriendList: false,
+                        guests: [],
                 };
+                this.onCloseModalFriendList = this.onCloseModalFriendList.bind(this);
+                this.onCompleteInvite = this.onCompleteInvite.bind(this);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -25,6 +30,7 @@ export default class FormChonLich extends Component {
                                         receptionTime: prevState.date,
                                         note: prevState.note,
                                         amountPerson: prevState.amount,
+                                        guests: prevState.guests,
                                 });
                         }
                 }
@@ -104,6 +110,24 @@ export default class FormChonLich extends Component {
                 }
         }
 
+        onCloseModalFriendList () {
+                this.setState({
+                        visibleModalFriendList: !this.state.visibleModalFriendList
+                });
+        }
+        onOpenModalFriendList () {
+                this.setState({
+                        visibleModalFriendList: !this.state.visibleModalFriendList
+                });
+        }
+
+        onCompleteInvite (list) {
+                this.setState({
+                        guests: list,
+                        amount: (list.length + 1).toString(),
+                });
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsFormChonLich();
         }
@@ -134,6 +158,27 @@ export default class FormChonLich extends Component {
                                                         <Text style={styles.textTime} >{convertDate}</Text>
                                                 </View>
                                         </TouchableOpacity>
+                                        <Text style={styles.title}>mời bạn bè</Text>
+                                        <TouchableOpacity
+                                                onPress={() => {
+                                                        this.onOpenModalFriendList();
+                                                }}
+                                        >
+                                                <Feather
+                                                        name='user-plus'
+                                                        size={20}
+                                                        color='black'
+                                                />
+                                        </TouchableOpacity>
+                                        {
+                                                this.state.guests.map(item =>
+                                                        <Text key={item.idAccount}
+                                                                style={styles.nameInvite}
+                                                        >
+                                                                {item.name}
+                                                        </Text>
+                                                )
+                                        }
                                         <Text style={styles.title}>số lượng người</Text>
                                         <TextInput
                                                 style={styles.textInput}
@@ -193,6 +238,19 @@ export default class FormChonLich extends Component {
                                                         }}
                                                 /> : null
                                 }
+                                <Modal
+                                        visible={this.state.visibleModalFriendList}
+                                        animated={true}
+                                        animationType='slide'
+                                        onRequestClose={() => {
+                                                this.onCloseModalFriendList();
+                                        }}
+                                >
+                                        <FriendList
+                                                onCloseModalFriendList={this.onCloseModalFriendList}
+                                                onCompleteInvite={this.onCompleteInvite}
+                                        />
+                                </Modal>
                         </View>
                 );
         }
@@ -258,5 +316,10 @@ const styles = StyleSheet.create({
                 color: 'white',
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'uppercase'
+        },
+        nameInvite: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 16,
+                color: colorMain
         }
 });

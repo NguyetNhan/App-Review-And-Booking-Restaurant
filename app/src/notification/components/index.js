@@ -140,11 +140,23 @@ export default class Notification extends Component {
         _onClickItem (item) {
                 if (item.item.type === 'order') {
                         this.props.navigation.navigate('DetailDeal', {
-                                idOrder: item.item.idOrder
+                                idOrder: item.item.idDetail,
+                                navigationFrom: 'notification'
                         })
                 } else if (item.item.type === 'review') {
                         var data = {
-                                idRestaurant: item.item.idRestaurant,
+                                idRestaurant: item.item.idDetail,
+                                idAdmin: this.state.account.id
+                        }
+                        this.props.navigation.navigate('DetailRestaurant', {
+                                IdConfigDetailRestaurant: data,
+                                GoBack: 'Notification'
+                        });
+                } else if (item.item.type === 'friend') {
+                        this.props.navigation.navigate('Friend');
+                } else if (item.item.type === 'restaurant') {
+                        var data = {
+                                idRestaurant: item.item.idDetail,
                                 idAdmin: this.state.account.id
                         }
                         this.props.navigation.navigate('DetailRestaurant', {
@@ -206,8 +218,6 @@ export default class Notification extends Component {
                                                                                 type={item.item.type}
                                                                                 createDate={item.item.createDate}
                                                                                 idAccount={item.item.idAccount}
-                                                                                idRestaurant={item.item.idRestaurant}
-                                                                                idOrder={item.item.idOrder}
                                                                                 _onClickItem={this._onClickItem}
                                                                         />
                                                                 );
