@@ -154,11 +154,10 @@ const styles = StyleSheet.create({
         },
         address: {
                 fontFamily: 'UVN-Baisau-Regular',
-                fontSize: 12
+                fontSize: 10
         },
         price: {
-                fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 12,
-                color: 'red'
+                fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 10,
         }
 })

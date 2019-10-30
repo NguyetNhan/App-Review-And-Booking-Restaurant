@@ -25,8 +25,9 @@ import Person from './person/containers';
 import DetailChat from './detail_chat/containers';
 import Friend from './friend/containers';
 import Stranger from './stranger/containers';
-import AddPost from './add_post/components/main';
+import AddPost from './add_post/containers';
 import Invite from './invite/containers';
+import PostRestaurant from './detail_restaurant/post/components/main';
 
 
 const RouteBottomTabConfig = {
@@ -67,6 +68,9 @@ const DetailRestaurant = createMaterialTopTabNavigator(
                 },
                 Review: {
                         screen: Review
+                },
+                PostRestaurant: {
+                        screen: PostRestaurant
                 }
         }, {
         initialRouteName: 'Overview',
@@ -74,14 +78,19 @@ const DetailRestaurant = createMaterialTopTabNavigator(
                 inactiveTintColor: 'gray',
                 activeTintColor: colorMain,
                 labelStyle: {
-                        fontFamily: 'OpenSans-Bold',
+                        fontFamily: 'UVN-Baisau-Bold',
                         textTransform: 'capitalize'
                 },
                 style: {
                         backgroundColor: 'white'
                 },
+                pressColor: colorMain,
+                indicatorStyle: {
+                        backgroundColor: 'white',
+                },
         },
         tabBarPosition: 'bottom',
+
 }
 );
 
@@ -231,6 +240,12 @@ const MainNavigatorAdminRestaurant = createStackNavigator(
                 },
                 DetailChat: {
                         screen: DetailChat,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                AddPost: {
+                        screen: AddPost,
                         navigationOptions: {
                                 header: null,
                         },

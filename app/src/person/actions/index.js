@@ -14,8 +14,104 @@ import {
         CHECK_IS_FRIEND_FAILED,
         CHECK_IS_FRIEND_SUCCEEDED,
         RESET_PROPS_HEADER_PERSON,
-        RESET_PROPS_MESSAGE_HEADER_PERSON
+        RESET_PROPS_MESSAGE_HEADER_PERSON,
+        FETCH_POST_LIST_FOR_PERSON,
+        FETCH_POST_LIST_FOR_PERSON_FAILED,
+        FETCH_POST_LIST_FOR_PERSON_SUCCEEDED,
+        RESET_PROPS_MESSAGE_POST_LIST,
+        RESET_PROPS_POST_LIST,
+        REFRESH_POST_LIST,
+        CHECK_HAS_LIKE_POST_FOR_PERSON,
+        CHECK_HAS_LIKE_POST_FOR_PERSON_FAILED,
+        CHECK_HAS_LIKE_POST_FOR_PERSON_SUCCEEDED,
+        LIKE_POST_FOR_PERSON,
+        RESET_PROPS_ITEM_POST_LIST,
+        RESET_PROPS_MESSAGE_ITEM_POST_LIST,
+        ACCESS_PLACE_IN_POST
 } from './types';
+
+export const onAccessPlaceInPost = (idPost, idAccountView) => {
+        return {
+                type: ACCESS_PLACE_IN_POST,
+                idPost, idAccountView
+        };
+};
+
+export const onResetPropsMessageItemPostList = () => {
+        return {
+                type: RESET_PROPS_MESSAGE_ITEM_POST_LIST
+        };
+};
+
+export const onResetPropsItemPostList = () => {
+        return {
+                type: RESET_PROPS_ITEM_POST_LIST
+        };
+};
+export const onCheckHasLikePostFailed = (message) => {
+        return {
+                type: CHECK_HAS_LIKE_POST_FOR_PERSON_FAILED,
+                message
+        };
+};
+export const onCheckHasLikePostSucceeded = (data) => {
+        return {
+                type: CHECK_HAS_LIKE_POST_FOR_PERSON_SUCCEEDED,
+                data
+        };
+};
+export const onCheckHasLikePost = (idPost, idAccount) => {
+        return {
+                type: CHECK_HAS_LIKE_POST_FOR_PERSON,
+                idPost, idAccount
+        };
+};
+
+export const onLikePost = (idPost, idAccount, isLiked) => {
+        return {
+                type: LIKE_POST_FOR_PERSON,
+                idPost, idAccount, isLiked
+        };
+};
+
+export const onRefreshPostList = () => {
+        return {
+                type: REFRESH_POST_LIST
+        };
+};
+
+export const onResetPropsMessagePostList = () => {
+        return {
+                type: RESET_PROPS_MESSAGE_POST_LIST
+        };
+};
+
+export const onResetPropsPostList = () => {
+        return {
+                type: RESET_PROPS_POST_LIST
+        };
+};
+
+export const onFetchPostList = (idAccount, page) => {
+        return {
+                type: FETCH_POST_LIST_FOR_PERSON,
+                idAccount,
+                page
+        };
+};
+
+export const onFetchPostListSucceeded = (data) => {
+        return {
+                type: FETCH_POST_LIST_FOR_PERSON_SUCCEEDED,
+                data
+        };
+};
+export const onFetchPostListFailed = (message) => {
+        return {
+                type: FETCH_POST_LIST_FOR_PERSON_FAILED,
+                message
+        };
+};
 
 export const onResetPropsHeader = () => {
         return {

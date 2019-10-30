@@ -68,11 +68,19 @@ import {
 import {
         watchFetchInfoAccountViewFromAPIForPerson,
         watchCheckIsFriend,
-        watchSendFriendRequest
+        watchSendFriendRequest,
+        watchFetchPostListFromApiForPerson,
+        watchCheckLikePostFromApiForPerson,
+        watchLikePostForPerson,
+        watchAccessPlaceInPost
 } from '../person/sagas';
 import {
         watchFetchInviteList
 } from '../invite/sagas';
+import {
+        watchFetchPlaceListFromAPIForAddPost,
+        watchAddPost
+} from '../add_post/sagas';
 
 export default function* RootSaga () {
         yield all([
@@ -123,7 +131,12 @@ export default function* RootSaga () {
                 watchFetchInfoAccountViewFromAPIForPerson(),
                 watchCheckIsFriend(),
                 watchSendFriendRequest(),
-                watchFetchInviteList()
-
+                watchFetchInviteList(),
+                watchFetchPlaceListFromAPIForAddPost(),
+                watchAddPost(),
+                watchFetchPostListFromApiForPerson(),
+                watchCheckLikePostFromApiForPerson(),
+                watchLikePostForPerson(),
+                watchAccessPlaceInPost()
         ]);
 }

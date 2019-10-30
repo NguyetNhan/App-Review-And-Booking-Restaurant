@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import {
         onFetchAccountView,
         onResetPropsMain,
-        onResetPropsMessageMain
+        onResetPropsMessageMain,
+        onRefreshPostList
 } from '../actions';
 import Component from '../components/main';
 
@@ -41,7 +42,10 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onResetPropsMessageMain: () => {
                         dispatch(onResetPropsMessageMain());
-                }
+                },
+                onRefreshPostList: () => {
+                        dispatch(onRefreshPostList());
+                },
         };
 };
 

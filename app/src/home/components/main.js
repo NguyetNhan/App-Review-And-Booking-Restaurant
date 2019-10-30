@@ -228,7 +228,8 @@ const styles = StyleSheet.create({
         },
         textNavigatorPageSelect: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 16
+                fontSize: 16,
+                color: colorMain
         },
         textNavigatorPageUnSelect: {
                 fontFamily: 'UVN-Baisau-Regular',

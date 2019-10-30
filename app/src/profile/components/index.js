@@ -358,6 +358,7 @@ const styles = StyleSheet.create({
         },
         textName: {
                 fontFamily: 'UVN-Baisau-Bold',
+                color: colorMain
         },
         textScore: {
                 fontFamily: 'UVN-Baisau-Bold',

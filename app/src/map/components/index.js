@@ -260,18 +260,18 @@ export default class Map extends Component {
                 }
         }
 
-        onClickButtonChat(idAccount){
+        onClickButtonChat (idAccount) {
                 this.props.navigation.navigate('DetailChat', {
                         idAccountReceiver: idAccount
                 })
         }
 
-        onClickInfoAccount(idAccount){
+        onClickInfoAccount (idAccount) {
                 this.props.navigation.navigate('Person', {
                         idAccountView: idAccount
                 })
         }
-        
+
 
         componentWillUnmount () {
                 this.props.onResetProps();
@@ -476,7 +476,8 @@ const styles = StyleSheet.create({
         textButtonOptionSelect: {
                 fontFamily: 'UVN-Baisau-Bold',
                 fontSize: 16,
-                textTransform: 'capitalize'
+                textTransform: 'capitalize',
+                color: colorMain
         },
         textButtonOptionUnSelect: {
                 fontFamily: 'UVN-Baisau-Regular',

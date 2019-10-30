@@ -56,10 +56,86 @@ checkIsFriend = async (idAccountClient, idAccountFriend) => {
                         message: error.message
                 };
         }
-}
+};
+
+fetchPostList = async (idAccount, page) => {
+        try {
+                const response = await fetch(`${urlServer}/post/post-list/idAccount/${idAccount}/page/${page}`, {
+                        method: 'GET',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        }
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
+
+likePost = async (idPost, idAccount) => {
+        try {
+                const response = await fetch(`${urlServer}/post/like-post/idPost/${idPost}/idAccount/${idAccount}`, {
+                        method: 'PUT',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        }
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
+
+checkLikePost = async (idPost, idAccount) => {
+        try {
+                const response = await fetch(`${urlServer}/post/check-has-liked/idPost/${idPost}/idAccount/${idAccount}`, {
+                        method: 'GET',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        }
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
+
+accessPlaceInPost = async (idPost, idAccountView) => {
+        try {
+                const response = await fetch(`${urlServer}/post/update-view-restaurant/idPost/${idPost}/idAccountView/${idAccountView}`, {
+                        method: 'PUT',
+                        headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                        }
+                }).then(value => value.json());
+                return response;
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
 
 export const API = {
         fetchInfoAccount,
         sendFriendRequest,
-        checkIsFriend
+        checkIsFriend,
+        fetchPostList,
+        checkLikePost,
+        likePost,
+        accessPlaceInPost
 };

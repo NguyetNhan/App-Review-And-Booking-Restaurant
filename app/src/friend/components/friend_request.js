@@ -102,7 +102,6 @@ const styles = StyleSheet.create({
                 paddingHorizontal: 20,
                 flexDirection: 'row',
                 alignItems: 'center',
-                backgroundColor: colorMain
         },
         textHeader: {
                 fontFamily: 'UVN-Baisau-Bold',

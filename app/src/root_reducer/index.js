@@ -21,6 +21,7 @@ import FriendReducers from '../friend/reducers';
 import StrangerReducers from '../stranger/reducers';
 import PersonReducers from '../person/reducers';
 import InviteReducers from '../invite/reducers';
+import AddPostReducers from '../add_post/reducers';
 
 const RootReducer = combineReducers({
         LoginReducers,
@@ -44,7 +45,8 @@ const RootReducer = combineReducers({
         FriendReducers,
         StrangerReducers,
         PersonReducers,
-        InviteReducers
+        InviteReducers,
+        AddPostReducers
 });
 
 export default RootReducer;

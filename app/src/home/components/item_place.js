@@ -88,11 +88,11 @@ export default class ItemPlace extends Component {
                                                         this.state.score === null ? null :
                                                                 listStar.map(item => {
                                                                         if (item.value === 1)
-                                                                                return (<Star key={item.index.toString()} name='star' size={20} color={colorMain} />);
+                                                                                return (<Star key={item.index.toString()} name='star' size={15} color={colorMain} />);
                                                                         else if (item.value === 0)
-                                                                                return (<Star key={item.index.toString()} name='star-half' size={20} color={colorMain} />);
+                                                                                return (<Star key={item.index.toString()} name='star-half' size={15} color={colorMain} />);
                                                                         else if (item.value === -1)
-                                                                                return (<Star key={item.index.toString()} name='star-outline' size={20} color={colorMain} />);
+                                                                                return (<Star key={item.index.toString()} name='star-outline' size={15} color={colorMain} />);
                                                                 })
                                                 }
                                         </View>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
                 paddingBottom: 10
         },
         image: {
-                width: width / 2 - 6,
+                width: width / 2 - 20,
                 height: width / 3,
         },
         star: {
@@ -134,6 +134,6 @@ const styles = StyleSheet.create({
         },
         address: {
                 fontFamily: 'UVN-Baisau-Regular',
-                fontSize: 12
+                fontSize: 10
         }
 });

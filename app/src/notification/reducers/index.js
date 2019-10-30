@@ -20,7 +20,7 @@ const NotificationReducers = (state = null, action) => {
                                 resetProps: {
                                         messages: undefined,
                                         listNotification: undefined,
-                                        isLoading: false
+                                        isLoading: true
                                 }
                         };
                 default:

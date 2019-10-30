@@ -19,7 +19,7 @@ export default class Notification extends Component {
                 this.state = {
                         account: null,
                         listNotification: [],
-                        isLoading: false,
+                        isLoading: true,
                         isRefresh: false,
                         page: 1,
                         total_page: 1,
@@ -73,7 +73,7 @@ export default class Notification extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+                if (nextProps.listNotification !== prevState.listNotification && nextProps.listNotification !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
                         if (nextProps.listNotification.length === 0) {
                                 let list = ['1', ...nextProps.listNotification];
                                 prevState.listNotification = list;

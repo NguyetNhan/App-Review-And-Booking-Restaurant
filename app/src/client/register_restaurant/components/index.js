@@ -672,13 +672,19 @@ export default class RegisterRestaurant extends Component {
                                                                                                         style={{
                                                                                                                 height: width / 3,
                                                                                                                 width: width / 3,
-                                                                                                                borderWidth: 5,
-                                                                                                                borderColor: 'white'
+                                                                                                                borderWidth: 2,
+                                                                                                                borderColor: colorMain
                                                                                                         }} />
-                                                                                                <Icon name='checkcircle' size={30} color='#22D499' style={{
+                                                                                                <View style={{
                                                                                                         position: 'absolute',
-                                                                                                        right: 0
-                                                                                                }} />
+                                                                                                        height: width / 3,
+                                                                                                        width: width / 3,
+                                                                                                        alignItems: 'center',
+                                                                                                        justifyContent: 'center'
+                                                                                                }} >
+                                                                                                        <Icon name='checkcircle' size={30} color='#22D499' />
+                                                                                                </View>
+
                                                                                         </View> : <Image source={{ uri: item.item.node.image.uri }}
                                                                                                 style={{
                                                                                                         height: width / 3,

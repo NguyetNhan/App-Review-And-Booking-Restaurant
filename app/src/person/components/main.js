@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, StatusBar, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, StatusBar, Alert } from 'react-native';
 import { AccountModel } from '../../models/account';
 import { urlServer, colorMain, background } from '../../config';
 import Header from '../containers/header';
 import AddPost from './add_post';
-import PostList from './post_list';
+import PostList from '../containers/post_list';
 
 export default class Person extends Component {
         constructor (props) {
@@ -19,6 +19,7 @@ export default class Person extends Component {
                 this.onClickChat = this.onClickChat.bind(this);
                 this.onClickButtonBack = this.onClickButtonBack.bind(this);
                 this.onClickAddPost = this.onClickAddPost.bind(this);
+                this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
         }
 
         async fetchInfoAccountFromLocal () {
@@ -92,6 +93,39 @@ export default class Person extends Component {
                 this.props.navigation.navigate('AddPost');
         }
 
+        onRefresh () {
+                if (this.state.idAccountView !== null) {
+                        if (this.state.idAccountView === this.state.account._id) {
+                                this.props.onFetchAccountView(this.state.account._id);
+                                this.setState({
+                                        type: 'host'
+                                });
+                        } else {
+                                this.props.onFetchAccountView(this.state.idAccountView);
+                                this.setState({
+                                        type: 'visit'
+                                });
+                        }
+                } else {
+                        this.props.onFetchAccountView(this.state.account._id);
+                        this.setState({
+                                type: 'host'
+                        });
+                }
+                this.props.onRefreshPostList();
+        }
+
+        onChangeScreenDetailPlace (idRestaurant, idAdmin) {
+                let data = {
+                        idRestaurant: idRestaurant,
+                        idAdmin: idAdmin
+                };
+                this.props.navigation.navigate('DetailRestaurant', {
+                        IdConfigDetailRestaurant: data,
+                        GoBack: 'Person'
+                });
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsMain();
         }
@@ -116,6 +150,12 @@ export default class Person extends Component {
                                         />
                                         <ScrollView
                                                 showsVerticalScrollIndicator={false}
+                                                refreshControl={
+                                                        <RefreshControl
+                                                                refreshing={this.state.isLoading}
+                                                                onRefresh={() => this.onRefresh()}
+                                                        />
+                                                }
                                         >
                                                 <Header
                                                         account={this.state.account}
@@ -129,8 +169,11 @@ export default class Person extends Component {
                                                                         onClickAddPost={this.onClickAddPost}
                                                                 /> : null
                                                 }
-
-                                                <PostList />
+                                                <PostList
+                                                        account={this.state.account}
+                                                        type={this.state.type}
+                                                        onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
+                                                />
                                         </ScrollView>
                                 </View>
                         );

@@ -172,7 +172,9 @@ export default class FormChonLich extends Component {
                                         </TouchableOpacity>
                                         {
                                                 this.state.guests.map(item =>
-                                                        <Text key={item.idAccount}
+
+                                                        <Text
+                                                                key={item.idAccount}
                                                                 style={styles.nameInvite}
                                                         >
                                                                 {item.name}

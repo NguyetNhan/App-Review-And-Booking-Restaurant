@@ -93,7 +93,12 @@ export default class Header extends Component {
                                                         this.state.type === 'host' ?
                                                                 <View style={styles.containerValue}>
                                                                         <View style={styles.containerName}>
-                                                                                <Text style={styles.name}>{this.state.account.name}</Text>
+                                                                                <View style={{
+                                                                                        flex: 1,
+                                                                                        justifyContent: 'center'
+                                                                                }}>
+                                                                                        <Text style={styles.name}>{this.state.account.name}</Text>
+                                                                                </View>
                                                                                 <View style={styles.containerOptions}>
                                                                                         <View style={styles.options}>
                                                                                                 <Text style={styles.score}>{this.state.account.score}</Text>
@@ -108,7 +113,12 @@ export default class Header extends Component {
                                                                 </View> :
                                                                 <View style={styles.containerValue}>
                                                                         <View style={styles.containerName}>
-                                                                                <Text style={styles.name}>{this.state.account.name}</Text>
+                                                                                <View style={{
+                                                                                        flex: 1,
+                                                                                        justifyContent: 'center'
+                                                                                }}>
+                                                                                        <Text style={styles.name}>{this.state.account.name}</Text>
+                                                                                </View>
                                                                                 <View style={styles.containerOptions}>
                                                                                         {
                                                                                                 this.state.isFriended === null ?
@@ -185,7 +195,7 @@ const styles = StyleSheet.create({
                 height: 100,
                 alignItems: 'center',
                 backgroundColor: 'white',
-                borderRadius: 10
+                borderRadius: 10,
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',

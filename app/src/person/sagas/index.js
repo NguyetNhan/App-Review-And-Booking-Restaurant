@@ -1,9 +1,13 @@
-import { put, takeLatest } from 'redux-saga/effects';
+import { put, takeLatest, takeEvery } from 'redux-saga/effects';
 import {
         FETCH_ACCOUNT_VIEW,
         CHECK_IS_FRIEND,
         ADD_FRIEND,
-        REMOVE_FRIEND
+        REMOVE_FRIEND,
+        FETCH_POST_LIST_FOR_PERSON,
+        CHECK_HAS_LIKE_POST_FOR_PERSON,
+        LIKE_POST_FOR_PERSON,
+        ACCESS_PLACE_IN_POST
 } from '../actions/types';
 import {
         onFetchAccountViewFailed,
@@ -13,9 +17,63 @@ import {
         onAddFriendFailed,
         onAddFriendSucceeded,
         onRemoveFriendFailed,
-        onRemoveFriendSucceeded
+        onRemoveFriendSucceeded,
+        onFetchPostListFailed,
+        onFetchPostListSucceeded,
+        onCheckHasLikePostFailed,
+        onCheckHasLikePostSucceeded
 } from '../actions';
 import { API } from './api';
+
+function* accessPlaceInPost (action) {
+        yield API.accessPlaceInPost(action.idPost, action.idAccountView);
+}
+
+export function* watchAccessPlaceInPost(){
+        yield takeEvery(ACCESS_PLACE_IN_POST,accessPlaceInPost);
+}
+
+function* likePostForPerson (action) {
+        yield API.likePost(action.idPost, action.idAccount);
+}
+
+export function* watchLikePostForPerson () {
+        yield takeEvery(LIKE_POST_FOR_PERSON, likePostForPerson);
+}
+
+function* checkLikePostFromApi (action) {
+        try {
+                const result = yield API.checkLikePost(action.idPost, action.idAccount);
+                if (result.error) {
+                        yield put(onCheckHasLikePostFailed(result.message));
+                } else {
+                        yield put(onCheckHasLikePostSucceeded(result.data));
+                }
+        } catch (error) {
+                yield put(onCheckHasLikePostFailed(error.message));
+        }
+}
+
+export function* watchCheckLikePostFromApiForPerson () {
+        yield takeEvery(CHECK_HAS_LIKE_POST_FOR_PERSON, checkLikePostFromApi);
+}
+
+function* fetchPostListFromAPI (action) {
+        try {
+                const result = yield API.fetchPostList(action.idAccount, action.page);
+                if (result.error) {
+                        yield put(onFetchPostListFailed(result.message));
+                } else {
+                        yield put(onFetchPostListSucceeded(result));
+                }
+        } catch (error) {
+                yield put(onFetchPostListFailed(error.message));
+        }
+}
+
+export function* watchFetchPostListFromApiForPerson () {
+        yield takeLatest(FETCH_POST_LIST_FOR_PERSON, fetchPostListFromAPI);
+}
 
 function* fetchInfoAccountView (action) {
         try {
