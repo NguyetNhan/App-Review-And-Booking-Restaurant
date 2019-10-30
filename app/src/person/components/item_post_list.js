@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, Alert, ActivityIndicator, TouchableOpacity, Modal } from 'react-native';
 import { urlServer, colorMain } from '../../config';
 const { width, height } = Dimensions.get('window');
 import Entypo from 'react-native-vector-icons/Entypo';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AccountModel } from '../../models/account';
+import CommentList from './comment_list';
 
 export default class ItemPostList extends Component {
         constructor (props) {
@@ -17,9 +18,12 @@ export default class ItemPostList extends Component {
                         isLiked: false,
                         numberLike: props.item.like.length,
                         numberComment: props.item.comment.length,
-                        accountLocal: null
+                        accountLocal: null,
+                        visibleComment: false
                 };
                 this.fetchInfoAccountFromLocal();
+                this.onCloseCommentList = this.onCloseCommentList.bind(this);
+                this.onClickButtonLike = this.onClickButtonLike.bind(this);
         }
 
         async fetchInfoRestaurant () {
@@ -129,6 +133,17 @@ export default class ItemPostList extends Component {
         onChangeScreenDetailPlace () {
                 this.props.onAccessPlaceInPost(this.state.item._id, this.state.accountLocal.id);
                 this.props.onChangeScreenDetailPlace(this.state.restaurant._id, this.state.restaurant.idAdmin);
+        }
+
+        onOpenCommentList () {
+                this.setState({
+                        visibleComment: !this.state.visibleComment
+                });
+        }
+        onCloseCommentList () {
+                this.setState({
+                        visibleComment: !this.state.visibleComment
+                });
         }
 
         render () {
@@ -359,11 +374,30 @@ export default class ItemPostList extends Component {
                                                                         <Text style={styles.textButtonUnLike}><Text style={styles.textNumberUnLike}>{this.state.numberLike}</Text>  Thích</Text>
                                                         }
                                                 </TouchableOpacity>
-                                                <TouchableOpacity>
+                                                <TouchableOpacity
+                                                        onPress={() => this.onOpenCommentList()}
+                                                >
                                                         <Text style={styles.textButtonComment}><Text style={styles.textNumberUnLike}>{this.state.numberComment}</Text>   Bình luận</Text>
                                                 </TouchableOpacity>
                                         </View>
                                 </View>
+                                <Modal
+                                        visible={this.state.visibleComment}
+                                        animated={true}
+                                        animationType='slide'
+                                        onRequestClose={() => {
+                                                this.onCloseCommentList();
+                                        }}
+                                >
+                                        <CommentList
+                                                post={this.state.item}
+                                                onCloseCommentList={this.onCloseCommentList}
+                                                isLiked={this.state.isLiked}
+                                                numberLike={this.state.numberLike}
+                                                onClickButtonLike={this.onClickButtonLike}
+                                                accountLocal={this.state.accountLocal}
+                                        />
+                                </Modal>
                         </View >
                 );
         }
@@ -529,7 +563,8 @@ const styles = StyleSheet.create({
         },
         textButtonLike: {
                 fontFamily: 'UVN-Baisau-Regular',
-                color: colorMain
+                color: colorMain,
+          
         },
         textButtonUnLike: {
                 fontFamily: 'UVN-Baisau-Regular',

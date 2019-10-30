@@ -185,6 +185,8 @@ export default class OverView extends Component {
                                         value: -1
                                 })
                 }
+                const date = Date.now();
+                const hours = date.getHours();
                 return (
                         <View style={styles.container}>
                                 <StatusBar
