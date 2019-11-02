@@ -5,7 +5,8 @@ import {
         FETCH_PLACE_THE_BEST,
         FETCH_PLACE_THE_BEST_FOR_MODAL,
         FETCH_FOOD_THE_BEST,
-        FETCH_FOOD_THE_BEST_FOR_MODAL
+        FETCH_FOOD_THE_BEST_FOR_MODAL,
+        FETCH_POST_LIST_FOR_HOME
 } from '../actions/types';
 import {
         onFetchNearbyLocationPlaceFailed,
@@ -19,12 +20,30 @@ import {
         onFetchFoodTheBestFailed,
         onFetchFoodTheBestSucceeded,
         onFetchFoodTheBestForModalFailed,
-        onFetchFoodTheBestForModalSucceeded
+        onFetchFoodTheBestForModalSucceeded,
+        onFetchPostListSucceeded,
+        onFetchPostListFailed
 } from '../actions';
 import { API as mapAPI } from '../../map/sagas/API';
 import { API as overviewAPI } from '../../detail_restaurant/overview/sagas/API';
 import { API } from './api';
 
+function* fetchPostListForHome (action) {
+        try {
+                const result = yield API.fetchPostList(action.page);
+                if (result.error) {
+                        yield put(onFetchPostListFailed(result.message));
+                } else {
+                        yield put(onFetchPostListSucceeded(result));
+                }
+        } catch (error) {
+                yield put(onFetchPostListFailed(error.message));
+        }
+}
+
+export function* watchFetchPostListForHome () {
+        yield takeLatest(FETCH_POST_LIST_FOR_HOME, fetchPostListForHome);
+}
 
 function* fetchListFoodTheBestModal (action) {
         try {
@@ -91,42 +110,6 @@ function* fetchListPlaceTheBest (action) {
 export function* watchFetchListPlaceTheBest () {
         yield takeLatest(FETCH_PLACE_THE_BEST, fetchListPlaceTheBest);
 }
-
-
-/* function* fetchListRestaurantFromAPI (action) {
-        try {
-                const results = yield API.fetchListRestaurantFormAPI(action.data);
-                if (results.error) {
-                        yield put(onFetchListRestaurantFailed(results.message));
-                } else {
-                        yield put(onFetchListRestaurantSucceeded(results));
-                }
-        } catch (error) {
-                yield put(onFetchListRestaurantFailed(error.message));
-        }
-}
-
-export function* watchFetchListRestaurantFromAPI () {
-        yield takeLatest(FETCH_LIST_RESTAURANT, fetchListRestaurantFromAPI);
-}
-
-function* fetchListCoffeeFromAPI (action) {
-        try {
-                const results = yield API.fetchListCoffeeFormAPI(action.data);
-                if (results.error) {
-                        yield put(onFetchListCoffeeFailed(results.message));
-                } else {
-                        yield put(onFetchListCoffeeSucceeded(results));
-                }
-        } catch (error) {
-                yield put(onFetchListCoffeeFailed(error.message));
-        }
-}
-
-export function* watchFetchListCoffeeFromAPI () {
-        yield takeLatest(FETCH_LIST_COFFEE, fetchListCoffeeFromAPI);
-} */
-
 
 
 function* fetchNearbyLocationPlaceFromAPI (action) {

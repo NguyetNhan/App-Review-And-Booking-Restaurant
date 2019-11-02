@@ -6,6 +6,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AccountModel } from '../../models/account';
 import CommentList from './comment_list';
+import DetailPost from './detail_post';
 
 export default class ItemPostList extends Component {
         constructor (props) {
@@ -19,11 +20,15 @@ export default class ItemPostList extends Component {
                         numberLike: props.item.like.length,
                         numberComment: props.item.comment.length,
                         accountLocal: null,
-                        visibleComment: false
+                        visibleComment: false,
+                        visibleDetailPost: false
                 };
                 this.fetchInfoAccountFromLocal();
                 this.onCloseCommentList = this.onCloseCommentList.bind(this);
                 this.onClickButtonLike = this.onClickButtonLike.bind(this);
+                this.onCloseDetailPost = this.onCloseDetailPost.bind(this);
+                this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
+                this.onOpenCommentList = this.onOpenCommentList.bind(this);
         }
 
         async fetchInfoRestaurant () {
@@ -141,8 +146,25 @@ export default class ItemPostList extends Component {
                 });
         }
         onCloseCommentList () {
+                this.props.onRefreshMain();
                 this.setState({
                         visibleComment: !this.state.visibleComment
+                });
+                if (this.state.visibleDetailPost) {
+                        this.setState({
+                                visibleDetailPost: !this.state.visibleDetailPost
+                        });
+                }
+        }
+
+        onOpenDetailPost () {
+                this.setState({
+                        visibleDetailPost: !this.state.visibleDetailPost
+                });
+        }
+        onCloseDetailPost () {
+                this.setState({
+                        visibleDetailPost: !this.state.visibleDetailPost
                 });
         }
 
@@ -204,165 +226,167 @@ export default class ItemPostList extends Component {
                                         </View>
                                 </View>
                                 <View style={styles.contentPost}>
-                                        <Text style={styles.textContentPost}>{item.content}</Text>
-                                        {
-                                                this.state.isLoadingRestaurant ?
-                                                        <View style={styles.containerLoadingRestaurant}>
-                                                                <ActivityIndicator
-                                                                        animating={true}
-                                                                        size={30}
-                                                                        color={colorMain}
-                                                                />
-                                                        </View> :
-                                                        this.state.restaurant === null ? null :
-                                                                <TouchableOpacity
-                                                                        onPress={() => this.onChangeScreenDetailPlace()}
-                                                                        style={styles.containerRestaurant}>
-                                                                        <Image
-                                                                                source={{ uri: `${urlServer}${this.state.restaurant.imageRestaurant[0]}` }}
-                                                                                style={styles.imageRestaurant}
+                                        <TouchableOpacity onPress={() => this.onOpenDetailPost()}>
+                                                <Text style={styles.textContentPost}>{item.content}</Text>
+                                                {
+                                                        this.state.isLoadingRestaurant ?
+                                                                <View style={styles.containerLoadingRestaurant}>
+                                                                        <ActivityIndicator
+                                                                                animating={true}
+                                                                                size={30}
+                                                                                color={colorMain}
                                                                         />
-                                                                        <View style={styles.contentRestaurant}>
-                                                                                <Text style={styles.name}>{this.state.restaurant.name}</Text>
-                                                                                <View
-                                                                                        style={styles.star}
-                                                                                >
-                                                                                        {
-                                                                                                this.state.score === null ? null :
-                                                                                                        listStar.map(item => {
-                                                                                                                if (item.value === 1)
-                                                                                                                        return (<Star key={item.index.toString()} name='star' size={15} color={colorMain} />);
-                                                                                                                else if (item.value === 0)
-                                                                                                                        return (<Star key={item.index.toString()} name='star-half' size={15} color={colorMain} />);
-                                                                                                                else if (item.value === -1)
-                                                                                                                        return (<Star key={item.index.toString()} name='star-outline' size={15} color={colorMain} />);
-                                                                                                        })
-                                                                                        }
+                                                                </View> :
+                                                                this.state.restaurant === null ? null :
+                                                                        <TouchableOpacity
+                                                                                onPress={() => this.onChangeScreenDetailPlace()}
+                                                                                style={styles.containerRestaurant}>
+                                                                                <Image
+                                                                                        source={{ uri: `${urlServer}${this.state.restaurant.imageRestaurant[0]}` }}
+                                                                                        style={styles.imageRestaurant}
+                                                                                />
+                                                                                <View style={styles.contentRestaurant}>
+                                                                                        <Text style={styles.name}>{this.state.restaurant.name}</Text>
+                                                                                        <View
+                                                                                                style={styles.star}
+                                                                                        >
+                                                                                                {
+                                                                                                        this.state.score === null ? null :
+                                                                                                                listStar.map(item => {
+                                                                                                                        if (item.value === 1)
+                                                                                                                                return (<Star key={item.index.toString()} name='star' size={15} color={colorMain} />);
+                                                                                                                        else if (item.value === 0)
+                                                                                                                                return (<Star key={item.index.toString()} name='star-half' size={15} color={colorMain} />);
+                                                                                                                        else if (item.value === -1)
+                                                                                                                                return (<Star key={item.index.toString()} name='star-outline' size={15} color={colorMain} />);
+                                                                                                                })
+                                                                                                }
+                                                                                        </View>
+                                                                                        <Text style={styles.address}>{this.state.restaurant.address}</Text>
                                                                                 </View>
-                                                                                <Text style={styles.address}>{this.state.restaurant.address}</Text>
-                                                                        </View>
-                                                                </TouchableOpacity>
-                                        }
-                                        {
-                                                item.image.length === 0 ? null :
-                                                        item.image.length === 1 ?
-                                                                <Image
-                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                        style={styles.image1}
-                                                                /> :
-                                                                item.image.length === 2 ?
-                                                                        <View style={styles.containerImage2}>
-                                                                                <Image
-                                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                        style={styles.image2}
-                                                                                />
-                                                                                <Image
-                                                                                        source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                        style={styles.image2}
-                                                                                />
-                                                                        </View> :
-                                                                        item.image.length === 3 ?
-                                                                                <View style={styles.containerImage3}>
+                                                                        </TouchableOpacity>
+                                                }
+                                                {
+                                                        item.image.length === 0 ? null :
+                                                                item.image.length === 1 ?
+                                                                        <Image
+                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                style={styles.image1}
+                                                                        /> :
+                                                                        item.image.length === 2 ?
+                                                                                <View style={styles.containerImage2}>
                                                                                         <Image
                                                                                                 source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                style={styles.image3Row1}
+                                                                                                style={styles.image2}
                                                                                         />
-                                                                                        <View style={styles.containerImage3Row2}>
-                                                                                                <Image
-                                                                                                        source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                        style={styles.image3Row2}
-                                                                                                />
-                                                                                                <Image
-                                                                                                        source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                        style={styles.image3Row2}
-                                                                                                />
-                                                                                        </View>
+                                                                                        <Image
+                                                                                                source={{ uri: `${urlServer}${item.image[1]}` }}
+                                                                                                style={styles.image2}
+                                                                                        />
                                                                                 </View> :
-                                                                                item.image.length === 4 ?
-                                                                                        <View style={styles.containerImage4}>
-                                                                                                <View style={styles.containerImage4Row}>
-                                                                                                        <Image
-                                                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                                style={styles.image4Row}
-                                                                                                        />
+                                                                                item.image.length === 3 ?
+                                                                                        <View style={styles.containerImage3}>
+                                                                                                <Image
+                                                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                                        style={styles.image3Row1}
+                                                                                                />
+                                                                                                <View style={styles.containerImage3Row2}>
                                                                                                         <Image
                                                                                                                 source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                                style={styles.image4Row}
+                                                                                                                style={styles.image3Row2}
                                                                                                         />
-                                                                                                </View>
-                                                                                                <View style={styles.containerImage4Row}>
                                                                                                         <Image
                                                                                                                 source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                                style={styles.image4Row}
-                                                                                                        />
-                                                                                                        <Image
-                                                                                                                source={{ uri: `${urlServer}${item.image[3]}` }}
-                                                                                                                style={styles.image4Row}
+                                                                                                                style={styles.image3Row2}
                                                                                                         />
                                                                                                 </View>
                                                                                         </View> :
-                                                                                        item.image.length === 5 ?
-                                                                                                <View style={styles.containerImage5}>
-                                                                                                        <View style={styles.containerImage5Row}>
+                                                                                        item.image.length === 4 ?
+                                                                                                <View style={styles.containerImage4}>
+                                                                                                        <View style={styles.containerImage4Row}>
                                                                                                                 <Image
                                                                                                                         source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                                        style={styles.containerImage5Row1}
+                                                                                                                        style={styles.image4Row}
                                                                                                                 />
                                                                                                                 <Image
                                                                                                                         source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                                        style={styles.containerImage5Row1}
+                                                                                                                        style={styles.image4Row}
                                                                                                                 />
                                                                                                         </View>
-                                                                                                        <View style={styles.containerImage5Row}>
+                                                                                                        <View style={styles.containerImage4Row}>
                                                                                                                 <Image
                                                                                                                         source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                                        style={styles.containerImage5Row2}
+                                                                                                                        style={styles.image4Row}
                                                                                                                 />
                                                                                                                 <Image
                                                                                                                         source={{ uri: `${urlServer}${item.image[3]}` }}
-                                                                                                                        style={styles.containerImage5Row2}
-                                                                                                                />
-                                                                                                                <Image
-                                                                                                                        source={{ uri: `${urlServer}${item.image[4]}` }}
-                                                                                                                        style={styles.containerImage5Row2}
+                                                                                                                        style={styles.image4Row}
                                                                                                                 />
                                                                                                         </View>
                                                                                                 </View> :
-                                                                                                <View style={styles.containerImage5}>
-                                                                                                        <View style={styles.containerImage5Row}>
-                                                                                                                <Image
-                                                                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                                        style={styles.containerImage5Row1}
-                                                                                                                />
-                                                                                                                <Image
-                                                                                                                        source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                                        style={styles.containerImage5Row1}
-                                                                                                                />
-                                                                                                        </View>
-                                                                                                        <View style={styles.containerImage5Row}>
-                                                                                                                <Image
-                                                                                                                        source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                                        style={styles.containerImage5Row2}
-                                                                                                                />
-                                                                                                                <Image
-                                                                                                                        source={{ uri: `${urlServer}${item.image[3]}` }}
-                                                                                                                        style={styles.containerImage5Row2}
-                                                                                                                />
-                                                                                                                <View style={{
-                                                                                                                        flex: 1
-                                                                                                                }}>
+                                                                                                item.image.length === 5 ?
+                                                                                                        <View style={styles.containerImage5}>
+                                                                                                                <View style={styles.containerImage5Row}>
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                                                                style={styles.containerImage5Row1}
+                                                                                                                        />
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[1]}` }}
+                                                                                                                                style={styles.containerImage5Row1}
+                                                                                                                        />
+                                                                                                                </View>
+                                                                                                                <View style={styles.containerImage5Row}>
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[2]}` }}
+                                                                                                                                style={styles.containerImage5Row2}
+                                                                                                                        />
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[3]}` }}
+                                                                                                                                style={styles.containerImage5Row2}
+                                                                                                                        />
                                                                                                                         <Image
                                                                                                                                 source={{ uri: `${urlServer}${item.image[4]}` }}
                                                                                                                                 style={styles.containerImage5Row2}
                                                                                                                         />
-                                                                                                                        <View style={styles.containerImagePlus}>
-                                                                                                                                <Text style={styles.textImagePlus}>{item.image.length - 5}</Text>
-                                                                                                                                <Entypo name='plus' size={20} color={colorMain} />
+                                                                                                                </View>
+                                                                                                        </View> :
+                                                                                                        <View style={styles.containerImage5}>
+                                                                                                                <View style={styles.containerImage5Row}>
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                                                                style={styles.containerImage5Row1}
+                                                                                                                        />
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[1]}` }}
+                                                                                                                                style={styles.containerImage5Row1}
+                                                                                                                        />
+                                                                                                                </View>
+                                                                                                                <View style={styles.containerImage5Row}>
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[2]}` }}
+                                                                                                                                style={styles.containerImage5Row2}
+                                                                                                                        />
+                                                                                                                        <Image
+                                                                                                                                source={{ uri: `${urlServer}${item.image[3]}` }}
+                                                                                                                                style={styles.containerImage5Row2}
+                                                                                                                        />
+                                                                                                                        <View style={{
+                                                                                                                                flex: 1
+                                                                                                                        }}>
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[4]}` }}
+                                                                                                                                        style={styles.containerImage5Row2}
+                                                                                                                                />
+                                                                                                                                <View style={styles.containerImagePlus}>
+                                                                                                                                        <Text style={styles.textImagePlus}>{item.image.length - 5}</Text>
+                                                                                                                                        <Entypo name='plus' size={20} color={colorMain} />
+                                                                                                                                </View>
                                                                                                                         </View>
                                                                                                                 </View>
                                                                                                         </View>
-                                                                                                </View>
-                                        }
+                                                }
+                                        </TouchableOpacity>
                                         <View style={styles.containerButton}>
                                                 <TouchableOpacity
                                                         onPress={() => this.onClickButtonLike()}
@@ -396,6 +420,27 @@ export default class ItemPostList extends Component {
                                                 numberLike={this.state.numberLike}
                                                 onClickButtonLike={this.onClickButtonLike}
                                                 accountLocal={this.state.accountLocal}
+                                        />
+                                </Modal>
+                                <Modal
+                                        visible={this.state.visibleDetailPost}
+                                        animated={true}
+                                        animationType='slide'
+                                        onRequestClose={() => {
+                                                this.onCloseDetailPost();
+                                        }}
+                                >
+                                        <DetailPost
+                                                onCloseDetailPost={this.onCloseDetailPost}
+                                                item={this.state.item}
+                                                isLiked={this.state.isLiked}
+                                                accountPost={this.state.account}
+                                                restaurant={this.state.restaurant}
+                                                numberComment={this.state.numberComment}
+                                                numberLike={this.state.numberLike}
+                                                onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
+                                                onClickButtonLike={this.onClickButtonLike}
+                                                onOpenCommentList={this.onOpenCommentList}
                                         />
                                 </Modal>
                         </View >
@@ -564,7 +609,7 @@ const styles = StyleSheet.create({
         textButtonLike: {
                 fontFamily: 'UVN-Baisau-Regular',
                 color: colorMain,
-          
+
         },
         textButtonUnLike: {
                 fontFamily: 'UVN-Baisau-Regular',

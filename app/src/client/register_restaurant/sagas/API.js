@@ -14,7 +14,8 @@ RegisterRestaurant = async (data) => {
                 formData.append('phone', data.phone);
                 formData.append('idAdmin', data.idAdmin);
                 formData.append('type', data.type);
-                formData.append('time_activity', data.time);
+                formData.append('timeOpen', data.timeOpen);
+                formData.append('timeClose', data.timeClose);
                 formData.append('latitude', data.position.latitude);
                 formData.append('longitude', data.position.longitude);
                 const response = await fetch(urlRegisterRestaurant, {

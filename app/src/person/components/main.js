@@ -20,6 +20,7 @@ export default class Person extends Component {
                 this.onClickButtonBack = this.onClickButtonBack.bind(this);
                 this.onClickAddPost = this.onClickAddPost.bind(this);
                 this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
+                this.onRefresh = this.onRefresh.bind(this);
         }
 
         async fetchInfoAccountFromLocal () {
@@ -173,6 +174,7 @@ export default class Person extends Component {
                                                         account={this.state.account}
                                                         type={this.state.type}
                                                         onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
+                                                        onRefresh={this.onRefresh}
                                                 />
                                         </ScrollView>
                                 </View>

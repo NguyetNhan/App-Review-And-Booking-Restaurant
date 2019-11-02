@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, Alert, ActivityIndicator, StatusBar } from 'react-native';
 import Header from '../containers/header';
 import ListMessage from '../containers/list_message';
 import SendMessage from '../containers/send_message';
@@ -102,6 +102,11 @@ export default class DetailChat extends Component {
                 if (!this.state.isLoadingIdConversation && !this.state.isLoadingAccountReceiver)
                         return (
                                 <View style={styles.container}>
+                                        <StatusBar
+                                                translucent={false}
+                                                barStyle='dark-content'
+                                                backgroundColor='white'
+                                        />
                                         <Header
                                                 accountReceiver={this.state.accountReceiver}
                                                 onGoBack={this.onGoBack}

@@ -166,7 +166,7 @@ export default class ItemInviteList extends Component {
                                         <View style={styles.containerValue}>
                                                 <Text style={styles.name}>{this.state.account.name}</Text>
                                                 <Text style={styles.textInvite}>đã mời bạn dự tiệc tại địa điểm <Text style={styles.nameRestaurant}>{this.state.restaurant.name}</Text> vào lúc <Text style={styles.time}>{convertTimeReceptionTime}</Text> ngày <Text style={styles.time}>{convertDateReceptionTime}</Text>.</Text>
-
+                                                <Text style={styles.timeCreate}>{convertTimeCreateDate}  <Text style={styles.timeCreate}>{convertDateCreateDate}</Text></Text>
                                                 {
                                                         this.state.item.status === 'waiting' ?
                                                                 timeNow > dateReceptionTime ? null :
@@ -193,7 +193,7 @@ export default class ItemInviteList extends Component {
                                                                         this.state.item.status === 'cancel' ?
                                                                                 <Text style={styles.textConfirm}>Bạn đã từ chối tham gia !</Text> : null
                                                 }
-                                                <Text style={styles.timeCreate}>{convertTimeCreateDate}  <Text style={styles.timeCreate}>{convertDateCreateDate}</Text></Text>
+
                                         </View>
                                 </View>
                         );

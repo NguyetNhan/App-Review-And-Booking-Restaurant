@@ -13,7 +13,8 @@ import {
         watchFetchListPlaceTheBest,
         watchFetchListPlaceTheBestModal,
         watchFetchListFoodTheBest,
-        watchFetchListFoodTheBestModal
+        watchFetchListFoodTheBestModal,
+        watchFetchPostListForHome
 } from '../home/sagas';
 import {
         watchSearchFollowTypeFromAPI,
@@ -137,6 +138,7 @@ export default function* RootSaga () {
                 watchFetchPostListFromApiForPerson(),
                 watchCheckLikePostFromApiForPerson(),
                 watchLikePostForPerson(),
-                watchAccessPlaceInPost()
+                watchAccessPlaceInPost(),
+                watchFetchPostListForHome()
         ]);
 }

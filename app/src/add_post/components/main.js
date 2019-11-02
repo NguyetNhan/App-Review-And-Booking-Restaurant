@@ -36,6 +36,23 @@ export default class AddPost extends Component {
                                 account: resultAccount.data,
                                 isLoading: false
                         });
+                        if (resultAccount.data.authorities === 'admin-restaurant') {
+                                try {
+                                        const response = await fetch(`${urlServer}/restaurant/idAdminRestaurant/${resultAccount.data.id}`, {
+                                                method: 'GET',
+                                                headers: {
+                                                        Accept: 'application/json',
+                                                        'Content-Type': 'application/json',
+                                                }
+                                        }).then(value => value.json());
+                                        if (!response.error)
+                                                this.setState({
+                                                        selectedPlace: response.data
+                                                });
+                                } catch (error) {
+                                        Alert.alert('Thông Báo Lỗi', error.message);
+                                }
+                        }
                 }
         }
 
@@ -119,19 +136,41 @@ export default class AddPost extends Component {
                 }
                 var data = {};
                 if (this.state.selectedPlace === null) {
-                        data = {
-                                idAccount: this.state.account.id,
-                                idRestaurant: null,
-                                image: image,
-                                content: this.state.content
-                        };
+                        if (this.state.account.authorities === 'admin-restaurant') {
+                                data = {
+                                        idAccount: this.state.account.id,
+                                        idRestaurant: this.state.selectedPlace._id,
+                                        image: image,
+                                        content: this.state.content,
+                                        typePost: 'restaurant'
+                                };
+                        } else {
+                                data = {
+                                        idAccount: this.state.account.id,
+                                        idRestaurant: null,
+                                        image: image,
+                                        content: this.state.content,
+                                        typePost: 'client'
+                                };
+                        }
                 } else {
-                        data = {
-                                idAccount: this.state.account.id,
-                                idRestaurant: this.state.selectedPlace._id,
-                                image: image,
-                                content: this.state.content
-                        };
+                        if (this.state.account.authorities === 'admin-restaurant') {
+                                data = {
+                                        idAccount: this.state.account.id,
+                                        idRestaurant: this.state.selectedPlace._id,
+                                        image: image,
+                                        content: this.state.content,
+                                        typePost: 'restaurant'
+                                };
+                        } else {
+                                data = {
+                                        idAccount: this.state.account.id,
+                                        idRestaurant: this.state.selectedPlace._id,
+                                        image: image,
+                                        content: this.state.content,
+                                        typePost: 'client'
+                                };
+                        }
                 }
 
                 this.props.onAddPost(data);
@@ -286,15 +325,18 @@ export default class AddPost extends Component {
                                                                         </View>
                                                         }
                                                         <View style={styles.containerOptions}>
-                                                                <TouchableOpacity
-                                                                        style={styles.options}
-                                                                        onPress={() => {
-                                                                                this.onOpenPlaceList();
-                                                                        }}
-                                                                >
-                                                                        <Entypo name='location-pin' size={30} color='red' />
-                                                                        <Text style={styles.textOptions}>Địa điểm</Text>
-                                                                </TouchableOpacity>
+                                                                {
+                                                                        this.state.account.authorities === 'admin-restaurant' ? null :
+                                                                                <TouchableOpacity
+                                                                                        style={styles.options}
+                                                                                        onPress={() => {
+                                                                                                this.onOpenPlaceList();
+                                                                                        }}
+                                                                                >
+                                                                                        <Entypo name='location-pin' size={30} color='red' />
+                                                                                        <Text style={styles.textOptions}>Địa điểm</Text>
+                                                                                </TouchableOpacity>
+                                                                }
                                                                 <View style={styles.line} />
                                                                 <TouchableOpacity
                                                                         style={styles.options}

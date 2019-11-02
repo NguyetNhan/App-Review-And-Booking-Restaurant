@@ -18,8 +18,46 @@ import {
         FETCH_FOOD_THE_BEST_SUCCEEDED,
         FETCH_FOOD_THE_BEST_FOR_MODAL,
         FETCH_FOOD_THE_BEST_FOR_MODAL_FAILED,
-        FETCH_FOOD_THE_BEST_FOR_MODAL_SUCCEEDED
+        FETCH_FOOD_THE_BEST_FOR_MODAL_SUCCEEDED,
+        FETCH_POST_LIST_FOR_HOME,
+        FETCH_POST_LIST_FOR_HOME_FAILED,
+        FETCH_POST_LIST_FOR_HOME_SUCCEEDED,
+        RESET_PROPS_MESSAGE_POST_FOR_HOME,
+        RESET_PROPS_POST_FOR_HOME
 } from './types';
+
+export const onResetPropsPost = () => {
+        return {
+                type: RESET_PROPS_POST_FOR_HOME,
+        };
+};
+
+export const onResetPropsMessagePost = () => {
+        return {
+                type: RESET_PROPS_MESSAGE_POST_FOR_HOME,
+        };
+};
+
+export const onFetchPostList = (page) => {
+        return {
+                type: FETCH_POST_LIST_FOR_HOME,
+                page
+        };
+};
+
+export const onFetchPostListSucceeded = (data) => {
+        return {
+                type: FETCH_POST_LIST_FOR_HOME_SUCCEEDED,
+                data
+        };
+};
+
+export const onFetchPostListFailed = (message) => {
+        return {
+                type: FETCH_POST_LIST_FOR_HOME_FAILED,
+                message
+        };
+};
 
 export const onFetchFoodTheBestForModal = (page) => {
         return {

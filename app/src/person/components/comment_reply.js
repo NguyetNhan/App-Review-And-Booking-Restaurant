@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
-import { urlServer, background } from '../../config';
+import { urlServer, background, colorMain } from '../../config';
 
 export default class CommentReply extends Component {
         constructor (props) {
@@ -9,11 +9,52 @@ export default class CommentReply extends Component {
                         item: props.item,
                         isLoading: true,
                         account: null,
+                        isLiked: false,
+                        accountLocal: props.accountLocal,
+                        idPost: props.idPost,
+                        idComment: props.idComment
                 };
         }
 
         componentDidMount () {
                 this.fetchInfoAccount();
+                let isLiked = false;
+                for (like of this.state.item.like) {
+                        if (like.idAccount === this.state.accountLocal.id) {
+                                isLiked = true;
+                                break;
+                        }
+                }
+                this.setState({
+                        isLiked: isLiked
+                });
+        }
+
+        async  onClickButtonLike () {
+                this.setState({
+                        isLiked: !this.state.isLiked
+                });
+                try {
+                        const response = await fetch(`${urlServer}/post/like-comment/idPost/${this.state.idPost}/idAccount/${this.state.accountLocal.id}/idComment/${this.state.idComment}`, {
+                                method: 'PUT',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                        idCommentReply: this.state.item._id,
+                                })
+                        }).then(value => value.json());
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                }
         }
         async fetchInfoAccount () {
                 try {
@@ -91,8 +132,15 @@ export default class CommentReply extends Component {
                                                         <Text style={styles.time}>{formatDate}</Text>
                                                 </View>
                                                 <View style={styles.containerButton}>
-                                                        <TouchableOpacity>
-                                                                <Text style={styles.textButton}>Thích</Text>
+                                                        <TouchableOpacity
+                                                                onPress={() => this.onClickButtonLike()}
+                                                        >
+                                                                {
+                                                                        this.state.isLiked ?
+                                                                                <Text style={styles.textButtonLike}>Đã thích</Text> :
+                                                                                <Text style={styles.textButton}>Thích</Text>
+                                                                }
+
                                                         </TouchableOpacity>
                                                         <TouchableOpacity
                                                                 onPress={() => this.props.onClickButtonReply(this.state.account.name)}
@@ -151,6 +199,10 @@ const styles = StyleSheet.create({
         },
         textButton: {
                 fontFamily: 'UVN-Baisau-Regular',
+        },
+        textButtonLike: {
+                fontFamily: 'UVN-Baisau-Regular',
+                color: colorMain
         },
         time: {
                 fontFamily: 'UVN-Baisau-Regular',

@@ -35,7 +35,8 @@ export default class OverView extends Component {
                         screenGoBack: null,
                         visibleModalMap: false,
                         score: null,
-                        isCheckedFollow: false
+                        isCheckedFollow: false,
+                        statusActivity: false
                 }
                 this._onClickCloseModalMap = this._onClickCloseModalMap.bind(this);
         }
@@ -89,13 +90,20 @@ export default class OverView extends Component {
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.restaurant !== prevState.restaurant && nextProps.restaurant !== undefined) {
-                        prevState.restaurant = nextProps.restaurant
-                        prevState.imageRestaurant = nextProps.restaurant.imageRestaurant
-                        prevState.name = nextProps.restaurant.name
-                        prevState.type = nextProps.restaurant.type
-                        prevState.phone = nextProps.restaurant.phone
-                        prevState.address = nextProps.restaurant.address
-                        prevState.introduce = nextProps.restaurant.introduce
+                        prevState.restaurant = nextProps.restaurant;
+                        prevState.imageRestaurant = nextProps.restaurant.imageRestaurant;
+                        prevState.name = nextProps.restaurant.name;
+                        prevState.type = nextProps.restaurant.type;
+                        prevState.phone = nextProps.restaurant.phone;
+                        prevState.address = nextProps.restaurant.address;
+                        prevState.introduce = nextProps.restaurant.introduce;
+                        const date = new Date;
+                        const hours = date.getHours();
+                        if (hours >= nextProps.restaurant.timeOpen && hours <= nextProps.restaurant.timeClose) {
+                                prevState.statusActivity = true;
+                        } else {
+                                prevState.statusActivity = false;
+                        }
                 }
                 if (nextProps.message !== undefined) {
                         Alert.alert(
@@ -185,8 +193,6 @@ export default class OverView extends Component {
                                         value: -1
                                 })
                 }
-                const date = Date.now();
-                const hours = date.getHours();
                 return (
                         <View style={styles.container}>
                                 <StatusBar
@@ -271,10 +277,18 @@ export default class OverView extends Component {
                                                         flexDirection: 'row',
                                                         alignItems: 'center',
                                                 }}>
-                                                        <View>
-                                                                <Text style={styles.textStatus}>đang mở cửa</Text>
-                                                                <Text style={styles.textTime}>8am - 10pm</Text>
-                                                        </View>
+                                                        {
+                                                                this.state.restaurant === null ? null :
+                                                                        <View>
+                                                                                {
+                                                                                        this.state.statusActivity ?
+                                                                                                <Text style={styles.textStatusOpen}>đang mở cửa</Text> :
+                                                                                                <Text style={styles.textStatusClose}>đóng cửa</Text>
+                                                                                }
+
+                                                                                <Text style={styles.textTime}>{this.state.restaurant.timeOpen}H - {this.state.restaurant.timeClose}H</Text>
+                                                                        </View>
+                                                        }
                                                         <View style={{
                                                                 width: 4,
                                                                 height: 4,
@@ -428,9 +442,15 @@ const styles = StyleSheet.create({
                 textTransform: 'uppercase',
                 fontSize: 12,
         },
-        textStatus: {
+        textStatusOpen: {
                 fontFamily: 'UVN-Baisau-Regular',
                 color: colorMain,
+                textTransform: 'capitalize',
+                fontSize: 12,
+        },
+        textStatusClose: {
+                fontFamily: 'UVN-Baisau-Regular',
+                color: 'red',
                 textTransform: 'capitalize',
                 fontSize: 12,
         },
@@ -454,7 +474,8 @@ const styles = StyleSheet.create({
         },
         textIntroduce: {
                 fontFamily: 'UVN-Baisau-Regular',
-                marginVertical: 20, fontSize: 12,
+                marginVertical: 20, fontSize: 16,
+                textAlign: 'center'
         },
         button: {
                 backgroundColor: 'white',

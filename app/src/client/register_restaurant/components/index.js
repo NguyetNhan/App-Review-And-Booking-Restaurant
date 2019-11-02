@@ -26,8 +26,8 @@ export default class RegisterRestaurant extends Component {
                         introduce: 'Có nhiều gái đẹp',
                         type: 'restaurant',
                         isLoading: false,
-                        timeOpen: '8',
-                        timeClose: '22',
+                        timeOpen: 8,
+                        timeClose: 22,
                         changeScreen: false,
                         amount: 30,
                         visibleModalSelectPlaceOnMap: false,
@@ -249,7 +249,8 @@ export default class RegisterRestaurant extends Component {
                         image: image,
                         phone: this.state.phone,
                         type: this.state.type,
-                        time: `${this.state.timeOpen}-${this.state.timeClose}`,
+                        timeOpen: this.state.timeOpen,
+                        timeClose: this.state.timeClose,
                         position: {
                                 latitude: this.state.marker.latitude,
                                 longitude: this.state.marker.longitude,
@@ -321,7 +322,7 @@ export default class RegisterRestaurant extends Component {
                         );
                 } else {
                         this.setState({
-                                isLoading: !this.state.isLoading
+                                isLoading: true
                         });
                         this.props.onRegisterRestaurant(data);
                 }
@@ -503,30 +504,30 @@ export default class RegisterRestaurant extends Component {
                                                                 onValueChange={(itemValue, itemIndex) =>
                                                                         this.setState({ timeOpen: itemValue })
                                                                 }>
-                                                                <Picker.Item label="1h" value="1" />
-                                                                <Picker.Item label="2h" value="2" />
-                                                                <Picker.Item label="3h" value="3" />
-                                                                <Picker.Item label="4h" value="4" />
-                                                                <Picker.Item label="5h" value="5" />
-                                                                <Picker.Item label="6h" value="6" />
-                                                                <Picker.Item label="7h" value="7" />
-                                                                <Picker.Item label="8h" value="8" />
-                                                                <Picker.Item label="9h" value="9" />
-                                                                <Picker.Item label="10" value="10" />
-                                                                <Picker.Item label="11h" value="11" />
-                                                                <Picker.Item label="12h" value="12" />
-                                                                <Picker.Item label="13h" value="13" />
-                                                                <Picker.Item label="14h" value="14" />
-                                                                <Picker.Item label="15h" value="15" />
-                                                                <Picker.Item label="16h" value="16" />
-                                                                <Picker.Item label="17h" value="17" />
-                                                                <Picker.Item label="18" value="18" />
-                                                                <Picker.Item label="19h" value="19" />
-                                                                <Picker.Item label="20h" value="20" />
-                                                                <Picker.Item label="21h" value="21" />
-                                                                <Picker.Item label="22h" value="22" />
-                                                                <Picker.Item label="23h" value="23" />
-                                                                <Picker.Item label="24h" value="24" />
+                                                                <Picker.Item label="1h" value={1} />
+                                                                <Picker.Item label="2h" value={2} />
+                                                                <Picker.Item label="3h" value={3} />
+                                                                <Picker.Item label="4h" value={4} />
+                                                                <Picker.Item label="5h" value={5} />
+                                                                <Picker.Item label="6h" value={6} />
+                                                                <Picker.Item label="7h" value={7} />
+                                                                <Picker.Item label="8h" value={8} />
+                                                                <Picker.Item label="9h" value={9} />
+                                                                <Picker.Item label="10" value={10} />
+                                                                <Picker.Item label="11h" value={11} />
+                                                                <Picker.Item label="12h" value={12} />
+                                                                <Picker.Item label="13h" value={13} />
+                                                                <Picker.Item label="14h" value={14} />
+                                                                <Picker.Item label="15h" value={15} />
+                                                                <Picker.Item label="16h" value={16} />
+                                                                <Picker.Item label="17h" value={17} />
+                                                                <Picker.Item label="18" value={18} />
+                                                                <Picker.Item label="19h" value={19} />
+                                                                <Picker.Item label="20h" value={20} />
+                                                                <Picker.Item label="21h" value={21} />
+                                                                <Picker.Item label="22h" value={22} />
+                                                                <Picker.Item label="23h" value={23} />
+                                                                <Picker.Item label="24h" value={24} />
                                                         </Picker>
                                                         <Text style={{
                                                                 fontFamily: 'OpenSans-Regular',
@@ -540,30 +541,30 @@ export default class RegisterRestaurant extends Component {
                                                                 onValueChange={(itemValue, itemIndex) =>
                                                                         this.setState({ timeClose: itemValue })
                                                                 }>
-                                                                <Picker.Item label="1h" value="1" />
-                                                                <Picker.Item label="2h" value="2" />
-                                                                <Picker.Item label="3h" value="3" />
-                                                                <Picker.Item label="4h" value="4" />
-                                                                <Picker.Item label="5h" value="5" />
-                                                                <Picker.Item label="6h" value="6" />
-                                                                <Picker.Item label="7h" value="7" />
-                                                                <Picker.Item label="8h" value="8" />
-                                                                <Picker.Item label="9h" value="9" />
-                                                                <Picker.Item label="10" value="10" />
-                                                                <Picker.Item label="11h" value="11" />
-                                                                <Picker.Item label="12h" value="12" />
-                                                                <Picker.Item label="13h" value="13" />
-                                                                <Picker.Item label="14h" value="14" />
-                                                                <Picker.Item label="15h" value="15" />
-                                                                <Picker.Item label="16h" value="16" />
-                                                                <Picker.Item label="17h" value="17" />
-                                                                <Picker.Item label="18" value="18" />
-                                                                <Picker.Item label="19h" value="19" />
-                                                                <Picker.Item label="20h" value="20" />
-                                                                <Picker.Item label="21h" value="21" />
-                                                                <Picker.Item label="22h" value="22" />
-                                                                <Picker.Item label="23h" value="23" />
-                                                                <Picker.Item label="24h" value="24" />
+                                                                <Picker.Item label="1h" value={1} />
+                                                                <Picker.Item label="2h" value={2} />
+                                                                <Picker.Item label="3h" value={3} />
+                                                                <Picker.Item label="4h" value={4} />
+                                                                <Picker.Item label="5h" value={5} />
+                                                                <Picker.Item label="6h" value={6} />
+                                                                <Picker.Item label="7h" value={7} />
+                                                                <Picker.Item label="8h" value={8} />
+                                                                <Picker.Item label="9h" value={9} />
+                                                                <Picker.Item label="10" value={10} />
+                                                                <Picker.Item label="11h" value={11} />
+                                                                <Picker.Item label="12h" value={12} />
+                                                                <Picker.Item label="13h" value={13} />
+                                                                <Picker.Item label="14h" value={14} />
+                                                                <Picker.Item label="15h" value={15} />
+                                                                <Picker.Item label="16h" value={16} />
+                                                                <Picker.Item label="17h" value={17} />
+                                                                <Picker.Item label="18" value={18} />
+                                                                <Picker.Item label="19h" value={19} />
+                                                                <Picker.Item label="20h" value={20} />
+                                                                <Picker.Item label="21h" value={21} />
+                                                                <Picker.Item label="22h" value={22} />
+                                                                <Picker.Item label="23h" value={23} />
+                                                                <Picker.Item label="24h" value={24} />
                                                         </Picker>
                                                 </View>
                                                 <View style={{

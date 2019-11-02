@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, StatusBar, Dimensions, TouchableOpacity,
 import ViewPager from '@react-native-community/viewpager';
 import Icon from 'react-native-vector-icons/Feather';
 import { colorMain, urlServer, backgroundStatusBar } from '../../config';
-import Posts from './posts';
+import Posts from '../containers/post';
 import Suggestions from '../containers/suggestions';
 const { width, height } = Dimensions.get('window');
 import { AccountModel } from '../../models/account';
@@ -183,7 +183,9 @@ export default class Home extends Component {
                                                         />
                                                 </View>
                                                 <View key='2'>
-                                                        <Posts />
+                                                        <Posts
+                                                                onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
+                                                        />
                                                 </View>
                                         </ViewPager>
                                 </View>

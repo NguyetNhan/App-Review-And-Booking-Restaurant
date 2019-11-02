@@ -45,10 +45,10 @@ export default class CommentList extends Component {
         }
 
         async onClickButtonSend () {
+                this.setState({
+                        isLoading: true
+                });
                 try {
-                        this.setState({
-                                isLoading: true
-                        });
                         const response = await fetch(`${urlServer}/post/comment-post/idPost/${this.state.post._id}/idAccount/${this.state.accountLocal.id}`, {
                                 method: 'PUT',
                                 headers: {
@@ -101,7 +101,8 @@ export default class CommentList extends Component {
 
         async  onRefresh () {
                 this.setState({
-                        isLoading: true
+                        isLoading: true,
+                        post: null
                 });
                 const post = await fetch(`${urlServer}/post/get-post/idPost/${this.state.post._id}`, {
                         method: 'GET',
@@ -125,10 +126,12 @@ export default class CommentList extends Component {
 
         render () {
                 let commentList = [];
-                if (this.state.post.comment.length === 0) {
-                        commentList = ['1', ...commentList];
-                } else {
-                        commentList = this.state.post.comment;
+                if (this.state.post !== null) {
+                        if (this.state.post.comment.length === 0) {
+                                commentList = ['1', ...commentList];
+                        } else {
+                                commentList = this.state.post.comment;
+                        }
                 }
                 return (
                         <View style={styles.container}>
@@ -174,13 +177,16 @@ export default class CommentList extends Component {
                                                                 return (
                                                                         <Text style={styles.textNote}>hãy trở thành người bình luận đầu tiên nào !</Text>
                                                                 );
-                                                        else
+                                                        else {
                                                                 return (
                                                                         <Comment
                                                                                 item={item.item}
                                                                                 onClickButtonReply={this.onClickButtonReply}
+                                                                                idPost={this.state.post._id}
+                                                                                accountLocal={this.state.accountLocal}
                                                                         />
                                                                 );
+                                                        }
                                                 }}
                                         />
                                 </View>

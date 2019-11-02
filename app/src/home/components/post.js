@@ -1,30 +1,23 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, Alert, TouchableOpacity } from 'react-native';
-import ItemPostList from '../containers/item_post_list';
-
-export default class PostList extends Component {
+import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
+import ItemPostList from './item_post_list';
+export default class Posts extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        account: props.account,
+                        postList: [],
                         page: 1,
                         total_page: null,
-                        postList: [],
+                        isLoading: true,
                         isRefresh: false,
                         isLoadMore: false,
-                        isLoading: true,
-                        type: props.type
                 };
                 this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
                 this.onRefreshMain = this.onRefreshMain.bind(this);
         }
 
         componentDidMount () {
-                this.props.onFetchPostList(this.state.account._id, 1);
-        }
-
-        onChangeScreenDetailPlace (idRestaurant, idAdmin) {
-                this.props.onChangeScreenDetailPlace(idRestaurant, idAdmin);
+                this.props.onFetchPostList(1);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -58,7 +51,7 @@ export default class PostList extends Component {
                                 [
                                         {
                                                 text: 'OK',
-                                                onPress: () => nextProps.onResetPropsMessagePostList()
+                                                onPress: () => nextProps.onResetPropsMessagePost()
                                         },
                                 ],
                                 { cancelable: false },
@@ -70,21 +63,11 @@ export default class PostList extends Component {
                 if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page;
                 }
-                if (nextProps.refreshPostList !== undefined && nextProps.refreshPostList === true) {
-                        nextProps.onFetchPostList(prevState.account._id, 1);
-                        prevState.page = 1;
-                        prevState.postList = [];
-                        prevState.isLoading = true;
-                        prevState.isRefresh = true;
-                }
                 return null;
         }
 
-        onRefreshMain () {
-                this.props.onRefresh();
-        }
-
         onRefresh () {
+                this.props.onResetPropsPost();
                 if (!this.state.isLoading) {
                         this.setState({
                                 page: 1,
@@ -92,8 +75,12 @@ export default class PostList extends Component {
                                 isLoading: true,
                                 isRefresh: true
                         });
-                        this.props.onFetchPostList(this.state.account._id, 1);
+                        this.props.onFetchPostList(1);
                 }
+        }
+
+        onChangeScreenDetailPlace (idRestaurant, idAdmin) {
+                this.props.onChangeScreenDetailPlace(idRestaurant, idAdmin);
         }
 
         onLoadMore () {
@@ -105,14 +92,20 @@ export default class PostList extends Component {
                                         isLoading: true,
                                         isLoadMore: true
                                 });
-                                this.props.onFetchPostList(this.state.account._id, page + 1);
+                                this.props.onFetchPostList(page + 1);
                         }
                 }
         }
 
-        componentWillUnmount () {
-                this.props.onResetPropsPostList();
+        onRefreshMain () {
+                this.onRefresh();
         }
+
+
+        componentWillUnmount () {
+                this.props.onResetPropsPost();
+        }
+
         render () {
                 return (
                         <View style={styles.container}>
@@ -130,20 +123,14 @@ export default class PostList extends Component {
                                         }}
                                         renderItem={(item) => {
                                                 if (item.item === '1') {
-                                                        if (this.state.type === 'visit')
-                                                                return (
-                                                                        <Text style={styles.textNote}>chưa có bài viết nào !</Text>
-                                                                );
-                                                        else
-                                                                return (
-                                                                        <Text style={styles.textNote}>hãy tạo bài viết đầu tiên của bạn nào !</Text>
-                                                                );
+                                                        return (
+                                                                <Text style={styles.textNote}>chưa có bài viết nào !</Text>
+                                                        );
                                                 }
                                                 else
                                                         return (
                                                                 <ItemPostList
                                                                         item={item.item}
-                                                                        account={this.state.account}
                                                                         onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
                                                                         onRefreshMain={this.onRefreshMain}
                                                                 />
