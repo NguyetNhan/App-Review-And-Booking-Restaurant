@@ -28,16 +28,16 @@ const ListMessageReducers = (state = null, action) => {
                         return {
                                 resetPropsListMessage: {
                                         isLoading: false,
-                                        listMessage: undefined,
+                                        listMessage: [],
                                         page: undefined,
                                         total_page: undefined,
+                                        message: undefined,
                                 }
                         };
                 case RESET_PROPS_MESSAGE_LIST_MESSAGE:
                         return {
                                 resetPropsMessageListMessage: {
                                         message: undefined,
-                                        isLoading: false,
                                 }
                         };
                 default:

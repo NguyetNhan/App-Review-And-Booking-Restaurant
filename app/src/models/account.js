@@ -71,7 +71,6 @@ AddInfoAccountFromDatabaseLocal = async (data) => {
                         };
                 }
         } catch (error) {
-                console.log('error: ', error);
                 return {
                         error: true,
                         message: error.message

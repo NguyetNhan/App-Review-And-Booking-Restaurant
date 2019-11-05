@@ -26,6 +26,8 @@ const ListConversationReducers = (state = null, action) => {
                                         listConversation: undefined,
                                         page: undefined,
                                         total_page: undefined,
+                                        messageSucceeded: undefined,
+                                        messageFailed: undefined,
                                 }
                         };
                 case RESET_PROPS_MESSAGE_LIST_CONVERSATION:

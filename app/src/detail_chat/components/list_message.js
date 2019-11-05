@@ -17,7 +17,7 @@ export default class ListMessage extends Component {
                         isLoadMore: false,
                         page: 1,
                         total_page: null,
-                        resetListMessage: false
+                        resetListMessage: false,
                 };
                 this.receiverMessageFromServer();
         }
@@ -25,39 +25,30 @@ export default class ListMessage extends Component {
         async receiverMessageFromServer () {
                 await socket.on('server-send-message-chat', (data) => {
                         this.setState({
-                                isLoading: true
+                                isLoading: true,
                         });
-                        let list = [data, ...this.state.listMessage];
-                        this.props.onReceiverMessage(list);
+                        this.props.onFetchListMessage(this.state.idConversation, 1);
                 });
         }
-
 
         componentDidMount () {
                 this.props.onFetchListMessage(this.state.idConversation, 1);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.resetListMessage !== prevState.resetListMessage && nextProps.resetListMessage !== undefined && !prevState.isLoading) {
-                        prevState.resetListMessage = nextProps.resetListMessage;
-                }
                 if (nextProps.page !== prevState.page && nextProps.page !== undefined && !prevState.isLoading) {
                         prevState.page = nextProps.page;
                 }
                 if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page;
-
                 }
                 if (nextProps.listMessage !== prevState.listMessage && nextProps.listMessage !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
-
                         prevState.listMessage = nextProps.listMessage;
                 } else if (nextProps.listMessage !== prevState.listMessage && nextProps.listMessage !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
-
                         prevState.listMessage = nextProps.listMessage;
                         prevState.isRefresh = false;
                 } else if (nextProps.listMessage !== prevState.listMessage && nextProps.listMessage !== undefined && !prevState.isRefresh && prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listMessage = prevState.listMessage.concat(nextProps.listMessage);
-
                         prevState.isLoadMore = false;
                 }
                 if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
@@ -95,18 +86,14 @@ export default class ListMessage extends Component {
 
         onLoadMore () {
                 if (!this.state.isLoading) {
-                        if (this.state.resetListMessage) {
-                                this.onRefresh();
-                        } else {
-                                const page = this.state.page;
-                                const total_page = this.state.total_page;
-                                if (page < total_page) {
-                                        this.setState({
-                                                isLoading: true,
-                                                isLoadMore: true
-                                        });
-                                        this.props.onFetchListMessage(this.state.idConversation, page + 1);
-                                }
+                        const page = this.state.page;
+                        const total_page = this.state.total_page;
+                        if (page < total_page) {
+                                this.setState({
+                                        isLoading: true,
+                                        isLoadMore: true
+                                });
+                                this.props.onFetchListMessage(this.state.idConversation, page + 1);
                         }
                 }
 

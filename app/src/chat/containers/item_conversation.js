@@ -21,8 +21,8 @@ const mapStateToProps = (state) => {
                         };
                 } else if (itemConversationReducers.fetchInfoAccountReceiverSucceeded !== undefined) {
                         return {
-                                accountReceiver: itemConversationReducers.fetchInfoAccountReceiverSucceeded.data.data,
-                                isLoading: false
+                                isLoading: false,
+                                accountReceiver: itemConversationReducers.fetchInfoAccountReceiverSucceeded.data,
                         };
                 } else if (itemConversationReducers.fetchInfoAccountReceiverFailed !== undefined) {
                         return {

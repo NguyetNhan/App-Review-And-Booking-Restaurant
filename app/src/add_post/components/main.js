@@ -7,7 +7,10 @@ import { AccountModel } from '../../models/account';
 import PlaceList from '../containers/place_list';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
 import PhotoList from './photo_list';
+import Discount from './discount';
+import { convertDate } from '../../functions/convert';
 const { width, height } = Dimensions.get('window');
+
 export default class AddPost extends Component {
         constructor (props) {
                 super(props);
@@ -19,12 +22,16 @@ export default class AddPost extends Component {
                         selectedPlace: null,
                         visiblePhoto: false,
                         photoSelected: [],
-                        isLoadingPost: false
+                        isLoadingPost: false,
+                        visibleDiscount: false,
+                        discount: null
                 };
                 this.onClosePlaceList = this.onClosePlaceList.bind(this);
                 this.onSelectedPlace = this.onSelectedPlace.bind(this);
                 this.onClosePhoto = this.onClosePhoto.bind(this);
                 this.onSetPhoto = this.onSetPhoto.bind(this);
+                this.onCloseDiscount = this.onCloseDiscount.bind(this);
+
         }
 
         async componentDidMount () {
@@ -74,7 +81,7 @@ export default class AddPost extends Component {
                 }
                 if (nextProps.messageSucceeded !== undefined) {
                         prevState.photoSelected = [];
-                        prevState.selectedPlace = null;
+                        //   prevState.selectedPlace = null;
                         prevState.content = '';
                         ToastAndroid.show(nextProps.messageSucceeded, ToastAndroid.LONG);
                         nextProps.onResetPropsMessageMain();
@@ -112,6 +119,20 @@ export default class AddPost extends Component {
                 });
         }
 
+        onCloseDiscount (discount) {
+                discount.idRestaurant = this.state.selectedPlace._id;
+                this.setState({
+                        visibleDiscount: !this.state.visibleDiscount,
+                        discount: discount
+                });
+        }
+
+        onOpenDiscount () {
+                this.setState({
+                        visibleDiscount: !this.state.visibleDiscount
+                });
+        }
+
         onSetPhoto (list) {
                 this.setState({
                         photoSelected: list
@@ -142,7 +163,8 @@ export default class AddPost extends Component {
                                         idRestaurant: this.state.selectedPlace._id,
                                         image: image,
                                         content: this.state.content,
-                                        typePost: 'restaurant'
+                                        typePost: 'restaurant',
+                                        discount: this.state.discount
                                 };
                         } else {
                                 data = {
@@ -160,7 +182,8 @@ export default class AddPost extends Component {
                                         idRestaurant: this.state.selectedPlace._id,
                                         image: image,
                                         content: this.state.content,
-                                        typePost: 'restaurant'
+                                        typePost: 'restaurant',
+                                        discount: this.state.discount
                                 };
                         } else {
                                 data = {
@@ -172,7 +195,6 @@ export default class AddPost extends Component {
                                 };
                         }
                 }
-
                 this.props.onAddPost(data);
         }
 
@@ -219,6 +241,7 @@ export default class AddPost extends Component {
                                                 });
                                 }
                         }
+
                         return (
                                 <View style={styles.container}>
                                         <StatusBar
@@ -290,7 +313,15 @@ export default class AddPost extends Component {
                                                                         }}
                                                                 />
                                                         </View>
-
+                                                        {
+                                                                this.state.discount === null ? null :
+                                                                        <View style={styles.containerDiscount}>
+                                                                                <Text style={styles.textNameDiscount}>{this.state.discount.name}</Text>
+                                                                                <Text style={styles.textTitleDiscount}>Số lượng mã khuyến mãi : <Text style={styles.textValueDiscount}>{this.state.discount.amount}</Text></Text>
+                                                                                <Text style={styles.textTitleDiscount}>Giá trị mã khuyến mãi : <Text style={styles.textValueDiscount}>{this.state.discount.percent}%</Text></Text>
+                                                                                <Text style={styles.textTitleDiscount}>Ngày kết thúc khuyến mãi : <Text style={styles.textValueDiscount}>{convertDate(this.state.discount.endDate)}</Text></Text>
+                                                                        </View>
+                                                        }
                                                         {
                                                                 this.state.selectedPlace === null ?
                                                                         <Text style={styles.note}>* hãy chọn địa điểm bạn đã đến để review và cộng thêm điểm thưởng !</Text>
@@ -347,6 +378,23 @@ export default class AddPost extends Component {
                                                                         <Entypo name='images' size={30} color={colorMain} />
                                                                         <Text style={styles.textOptions}>Hình ảnh</Text>
                                                                 </TouchableOpacity>
+                                                                {
+                                                                        this.state.account.authorities !== 'admin-restaurant' ? null :
+                                                                                <View style={{
+                                                                                        flex: 1
+                                                                                }}>
+                                                                                        <View style={styles.line} />
+                                                                                        <TouchableOpacity
+                                                                                                style={styles.options}
+                                                                                                onPress={() => {
+                                                                                                        this.onOpenDiscount();
+                                                                                                }}
+                                                                                        >
+                                                                                                <Entypo name='code' size={30} color='red' />
+                                                                                                <Text style={styles.textOptions}>Tạo mã khuyến mãi</Text>
+                                                                                        </TouchableOpacity>
+                                                                                </View>
+                                                                }
                                                         </View>
                                                 </View>
                                         </ScrollView>
@@ -397,6 +445,17 @@ export default class AddPost extends Component {
                                                         />
                                                 </View>
                                         </Modal>
+                                        <Modal
+                                                visible={this.state.visibleDiscount}
+                                                animated={true}
+                                                animationType='slide'
+                                                onRequestClose={() => this.onCloseDiscount(null)}
+                                        >
+                                                <Discount
+                                                        onCloseDiscount={this.onCloseDiscount}
+                                                />
+                                        </Modal>
+
                                 </View>
                         );
                 }
@@ -457,7 +516,7 @@ const styles = StyleSheet.create({
         textInput: {
                 marginLeft: 10,
                 flex: 1,
-                minHeight: width
+                minHeight: 200
         },
         containerOptions: {
                 borderTopWidth: 1,
@@ -477,6 +536,26 @@ const styles = StyleSheet.create({
                 height: 1,
                 backgroundColor: background,
                 marginLeft: 60
+        },
+        containerDiscount: {
+                flex: 1,
+                marginHorizontal: 20,
+                marginVertical: 10,
+                borderColor: 'red',
+                borderWidth: 1,
+                padding: 10
+        },
+        textNameDiscount: {
+                fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 16,
+                color: colorMain
+        },
+        textTitleDiscount: {
+                fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 12
+        },
+        textValueDiscount: {
+                fontFamily: 'UVN-Baisau-Bold',
         },
         containerPlace: {
                 flexDirection: 'row',

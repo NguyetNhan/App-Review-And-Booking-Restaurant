@@ -61,7 +61,7 @@ export default class DetailChat extends Component {
 
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.idConversation !== prevState.idConversation && nextProps.idConversation !== null && nextProps.idConversation !== undefined) {
+                if (nextProps.idConversation !== prevState.idConversation && nextProps.idConversation !== undefined) {
                         prevState.idConversation = nextProps.idConversation;
                         socket.emit('create-room', nextProps.idConversation);
                 }

@@ -127,7 +127,9 @@ export default class CommentReply extends Component {
                                         }
                                         <View style={styles.content}>
                                                 <View style={styles.contentComment}>
-                                                        <Text style={styles.name}>{this.state.account.name}</Text>
+                                                        {this.state.account === null ? null :
+                                                                <Text style={styles.name}>{this.state.account.name}</Text>
+                                                        }
                                                         <Text style={styles.textComment}>{this.state.item.content}</Text>
                                                         <Text style={styles.time}>{formatDate}</Text>
                                                 </View>

@@ -15,7 +15,7 @@ export default class ItemConversation extends Component {
                         isCheckOnline: false,
                         tinNhanMoiNhat: null
                 };
-                //     this.checkAccountReceiverOnline();
+                this.checkAccountReceiverOnline();
         }
 
         async checkAccountReceiverOnline () {
@@ -43,48 +43,60 @@ export default class ItemConversation extends Component {
                 }, 1000);
         }
 
-        componentDidMount () {
+        async  componentDidMount () {
                 for (item of this.state.item.participant) {
                         if (item !== this.state.accountSend.id) {
-                                this.props.onFetchInfoAccountReceiver(item);
+                                try {
+                                        const response = await fetch(`${urlServer}/auth/id/${item}`, {
+                                                method: 'GET',
+                                                headers: {
+                                                        Accept: 'application/json',
+                                                        'Content-Type': 'application/json',
+                                                },
+                                        }).then(value => value.json());
+                                        if (response.error) {
+                                                Alert.alert('Thông Báo Lỗi', response.message);
+                                                this.setState({
+                                                        isLoading: false
+                                                });
+                                        } else {
+                                                this.setState({
+                                                        accountReceiver: response.data,
+                                                        isLoading: false
+                                                });
+                                        }
+                                } catch (error) {
+                                        Alert.alert('Thông Báo Lỗi', error.message);
+                                        this.setState({
+                                                isLoading: false
+                                        });
+                                }
                                 break;
                         }
                 }
-                this.props.onFetchNewMessageForItem(this.state.item._id);
-        }
 
-        static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
-                        prevState.isLoading = nextProps.isLoading;
+                try {
+                        const response = await fetch(`${urlServer}/message/get-new-message/idConversation/${this.state.item._id}`, {
+                                method: 'GET',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                },
+                        }).then(value => value.json());
+                        if (response.error) {
+                                Alert.alert('Thông Báo Lỗi', response.message);
+                        } else {
+                                this.setState({
+                                        tinNhanMoiNhat: response.data,
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert('Thông Báo Lỗi', error.message);
                 }
-                if (nextProps.accountReceiver !== prevState.accountReceiver && nextProps.accountReceiver !== undefined && !prevState.isLoading) {
-                        prevState.accountReceiver = nextProps.accountReceiver;
-                        // prevState.isLoading = true;
-                        // nextProps.onFetchNewMessageForItem(prevState.item._id);
-                }
-                if (nextProps.tinNhanMoiNhat !== prevState.tinNhanMoiNhat && nextProps.tinNhanMoiNhat !== undefined && !prevState.isLoading) {
-                        prevState.tinNhanMoiNhat = nextProps.tinNhanMoiNhat;
-                }
-
-                if (nextProps.message !== undefined) {
-                        Alert.alert(
-                                'Thông Báo Lỗi',
-                                nextProps.message,
-                                [
-                                        {
-                                                text: 'OK',
-                                                onPress: () => nextProps.onResetPropsMessageItemConversation()
-                                        },
-                                ],
-                                { cancelable: false },
-                        );
-                }
-                return null;
         }
 
         componentWillUnmount () {
                 clearInterval(this.intervalId);
-                this.props.onResetPropsItemConversation();
         }
 
         render () {
@@ -106,29 +118,34 @@ export default class ItemConversation extends Component {
                                         }}
                                         style={styles.container}>
                                         {
-                                                this.state.accountReceiver.avatar === null ?
-                                                        this.state.isCheckOnline ?
-                                                                <Image
-                                                                        source={require('../../assets/images/avatar_user.png')}
-                                                                        style={styles.imageOnline}
-                                                                /> :
-                                                                <Image
-                                                                        source={require('../../assets/images/avatar_user.png')}
-                                                                        style={styles.image}
-                                                                />
-                                                        :
-                                                        this.state.isCheckOnline ?
-                                                                <Image
-                                                                        source={{ uri: `${urlServer}${this.state.accountReceiver.avatar}` }}
-                                                                        style={styles.imageOnline}
-                                                                /> :
-                                                                <Image
-                                                                        source={{ uri: `${urlServer}${this.state.accountReceiver.avatar}` }}
-                                                                        style={styles.image}
-                                                                />
+                                                this.state.accountReceiver === null ? null :
+                                                        this.state.accountReceiver.avatar === null ?
+                                                                this.state.isCheckOnline ?
+                                                                        <Image
+                                                                                source={require('../../assets/images/avatar_user.png')}
+                                                                                style={styles.imageOnline}
+                                                                        /> :
+                                                                        <Image
+                                                                                source={require('../../assets/images/avatar_user.png')}
+                                                                                style={styles.image}
+                                                                        />
+                                                                :
+                                                                this.state.isCheckOnline ?
+                                                                        <Image
+                                                                                source={{ uri: `${urlServer}${this.state.accountReceiver.avatar}` }}
+                                                                                style={styles.imageOnline}
+                                                                        /> :
+                                                                        <Image
+                                                                                source={{ uri: `${urlServer}${this.state.accountReceiver.avatar}` }}
+                                                                                style={styles.image}
+                                                                        />
                                         }
                                         <View style={styles.contentValue}>
-                                                <Text style={styles.name}>{this.state.accountReceiver.name}</Text>
+                                                {
+                                                        this.state.accountReceiver === null ? null :
+                                                                <Text style={styles.name}>{this.state.accountReceiver.name}</Text>
+                                                }
+
                                                 {
                                                         this.state.tinNhanMoiNhat === null ? null :
                                                                 this.state.accountSend.id === this.state.tinNhanMoiNhat.idSender ?

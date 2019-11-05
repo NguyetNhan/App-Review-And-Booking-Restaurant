@@ -54,7 +54,7 @@ export const onFetchListMessage = (idConversation, page) => {
         return {
                 type: FETCH_LIST_MESSAGE,
                 idConversation,
-                page
+                page,
         };
 };
 export const onFetchListMessageSucceeded = (data) => {

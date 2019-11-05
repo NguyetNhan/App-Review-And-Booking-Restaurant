@@ -53,7 +53,9 @@ export default class SendMessage extends Component {
                 if (textMessage.length > 0) {
                         socket.emit('user-send-message', {
                                 content: this.state.textMessage,
-                                idSender: this.state.idAccountSend
+                                idSender: this.state.idAccountSend,
+                                createDate: new Date(),
+                                idConversation: this.state.idConversation
                         });
                         this.props.onSendMessage(this.state.idConversation, this.state.idAccountSend, this.state.textMessage);
                         this.setState({

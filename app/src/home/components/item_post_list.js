@@ -23,7 +23,8 @@ export default class ItemPostList extends Component {
                         visibleDetailPost: false,
                         numberLike: props.item.like.length,
                         numberComment: props.item.comment.length,
-                        typePost: 'client'
+                        discount: null,
+                        isLoadingDiscount: false
                 };
                 this.onCloseCommentList = this.onCloseCommentList.bind(this);
                 this.onClickButtonLike = this.onClickButtonLike.bind(this);
@@ -157,8 +158,40 @@ export default class ItemPostList extends Component {
                 this.fetchInfoAccountFromLocal();
                 if (this.state.item.idRestaurant !== 'null')
                         this.fetchInfoRestaurant();
+                if (this.state.item.typePost === 'restaurant')
+                        this.fetchDetailDiscount();
         }
 
+
+        async fetchDetailDiscount () {
+                if (this.state.item.discount !== null) {
+                        try {
+                                const response = await fetch(`${urlServer}/discount/idDiscount/${this.state.item.discount}`, {
+                                        method: 'GET',
+                                        headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                        },
+                                }).then(data => data.json());
+                                if (response.error) {
+                                        Alert.alert(
+                                                'Thông Báo Lỗi',
+                                                `Lỗi không lấy dữ liệu khuyến mãi được: ${response.message}`
+                                        );
+                                } else {
+                                        this.setState({
+                                                discount: response.data
+                                        });
+                                }
+                        } catch (error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        `Lỗi không lấy dữ liệu khuyến mãi được: ${error.message}`
+                                );
+                        }
+                }
+
+        }
 
         async   onClickButtonLike () {
                 if (this.state.isLiked) {
@@ -230,6 +263,40 @@ export default class ItemPostList extends Component {
                                 error.message);
                 }
                 this.props.onChangeScreenDetailPlace(this.state.restaurant._id, this.state.restaurant.idAdmin);
+        }
+
+        async onClickDiscount () {
+                this.setState({
+                        isLoadingDiscount: true
+                });
+                try {
+                        const response = await fetch(`${urlServer}/discount/add-discount-client/idDiscount/${this.state.discount._id}/idAccount/${this.state.accountLocal.id}`, {
+                                method: 'PUT',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (response.error) {
+                                Alert.alert('Thông Báo Lỗi',
+                                        response.message);
+                                this.setState({
+                                        isLoadingDiscount: false
+                                });
+                        } else {
+                                Alert.alert('Thông Báo',
+                                        response.message);
+                                this.setState({
+                                        isLoadingDiscount: false
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert('Thông Báo Lỗi',
+                                error.message);
+                        this.setState({
+                                isLoadingDiscount: false
+                        });
+                }
         }
 
         render () {
@@ -319,6 +386,31 @@ export default class ItemPostList extends Component {
                                                 <TouchableOpacity onPress={() => this.onOpenDetailPost()}>
                                                         <Text style={styles.textContentPost}>{item.content}</Text>
                                                         {
+                                                                this.state.isLoadingDiscount ?
+                                                                        <View style={{
+                                                                                flex: 1,
+                                                                                alignItems: 'center'
+                                                                        }}>
+                                                                                <ActivityIndicator
+                                                                                        animating={true}
+                                                                                        size={30}
+                                                                                />
+                                                                        </View> :
+                                                                        this.state.discount === null ? null :
+                                                                                <TouchableOpacity
+                                                                                        onPress={() => this.onClickDiscount()}
+                                                                                        style={styles.containerDiscount}>
+                                                                                        <View style={styles.discountTop}>
+                                                                                                <Text style={styles.textTitleDiscount}>nhận mã</Text>
+                                                                                                <Text style={styles.textIdDiscount}>{this.state.discount._id}</Text>
+                                                                                                <Text style={styles.textNameDiscount}>{this.state.discount.name}</Text>
+                                                                                        </View>
+                                                                                        <View style={styles.discountBottom}>
+                                                                                                <Text style={styles.textTitleDiscount}>giảm <Text style={styles.textPercent}>{this.state.discount.percent}%</Text></Text>
+                                                                                        </View>
+                                                                                </TouchableOpacity>
+                                                        }
+                                                        {
                                                                 this.state.isLoadingRestaurant ?
                                                                         <View style={styles.containerLoadingRestaurant}>
                                                                                 <ActivityIndicator
@@ -329,7 +421,7 @@ export default class ItemPostList extends Component {
                                                                         </View> :
                                                                         this.state.restaurant === null ? null :
                                                                                 <TouchableOpacity
-                                                                                        onPress={() => this.onClickItemRestaurant()}
+                                                                                        onPress={() => this.onChangeScreenDetailPlace()}
                                                                                         style={styles.containerRestaurant}>
                                                                                         <Image
                                                                                                 source={{ uri: `${urlServer}${this.state.restaurant.imageRestaurant[0]}` }}
@@ -531,6 +623,8 @@ export default class ItemPostList extends Component {
                                                         onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
                                                         onClickButtonLike={this.onClickButtonLike}
                                                         onOpenCommentList={this.onOpenCommentList}
+                                                        discount={this.state.discount}
+                                                        accountLocal={this.state.accountLocal}
                                                 />
                                         </Modal>
                                 </View >
@@ -561,6 +655,51 @@ const styles = StyleSheet.create({
         },
         place: {
                 fontFamily: 'UVN-Baisau-Regular',
+        },
+        containerDiscount: {
+                flex: 1,
+                marginHorizontal: 30,
+        },
+        discountTop: {
+                backgroundColor: '#f03232',
+                flex: 2,
+                alignItems: 'center',
+                paddingHorizontal: 10,
+                paddingTop: 10,
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+        },
+        textTitleDiscount: {
+                textTransform: 'uppercase',
+                color: 'white',
+                fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 12
+        },
+        textNameDiscount: {
+                textTransform: 'uppercase',
+                color: 'white',
+                fontFamily: 'UVN-Baisau-Regular',
+                textAlign: 'center',
+                fontSize: 12
+        },
+        textIdDiscount: {
+                color: 'white',
+                backgroundColor: '#d12525',
+                fontFamily: 'UVN-Baisau-Bold',
+                padding: 5
+        },
+        textPercent: {
+                fontFamily: 'UVN-Baisau-Bold',
+                color: 'white',
+                fontSize: 30
+        },
+        discountBottom: {
+                backgroundColor: '#d12525',
+                flex: 1,
+                alignItems: 'center',
+                padding: 10,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10,
         },
         time: {
                 fontFamily: 'UVN-Baisau-Regular',

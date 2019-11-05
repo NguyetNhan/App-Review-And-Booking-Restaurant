@@ -27,8 +27,15 @@ import {
         LIKE_POST_FOR_PERSON,
         RESET_PROPS_ITEM_POST_LIST,
         RESET_PROPS_MESSAGE_ITEM_POST_LIST,
-        ACCESS_PLACE_IN_POST
+        ACCESS_PLACE_IN_POST,
+        REFRESH_COMMENT_REPLY
 } from './types';
+
+export const onRefreshCommentReply = () => {
+        return {
+                type: REFRESH_COMMENT_REPLY
+        };
+};
 
 export const onAccessPlaceInPost = (idPost, idAccountView) => {
         return {

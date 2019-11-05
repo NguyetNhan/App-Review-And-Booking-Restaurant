@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
 import { AccountModel } from '../../models/account';
-import ItemConversation from '../containers/item_conversation';
+import ItemConversation from './item_conversation';
 
 export default class ListConversation extends Component {
         constructor (props) {
@@ -49,7 +49,7 @@ export default class ListConversation extends Component {
                 if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
                         prevState.isLoading = nextProps.isLoading;
                 }
-                if (nextProps.listConversation !== prevState.listConversation && nextProps.listConversation !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+                if (nextProps.listConversation !== prevState.listConversation && nextProps.listConversation !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
                         if (nextProps.listConversation.length === 0) {
                                 let list = ['1', ...nextProps.listConversation];
                                 prevState.listConversation = list;
@@ -68,6 +68,7 @@ export default class ListConversation extends Component {
                         prevState.listConversation = prevState.listConversation.concat(nextProps.listConversation);
                         prevState.isLoadMore = false;
                 }
+
                 if (nextProps.page !== prevState.page && nextProps.page !== undefined && !prevState.isLoading) {
                         prevState.page = nextProps.page;
                 }
@@ -105,7 +106,6 @@ export default class ListConversation extends Component {
 
         onRefresh () {
                 if (!this.state.isLoading) {
-                        console.log('refresh');
                         this.setState({
                                 page: 1,
                                 listConversation: [],
@@ -119,7 +119,6 @@ export default class ListConversation extends Component {
 
         onLoadMore () {
                 if (!this.state.isLoading) {
-                        console.log('load more');
                         const page = this.state.page;
                         const total_page = this.state.total_page;
                         if (page < total_page) {
@@ -156,7 +155,6 @@ export default class ListConversation extends Component {
                                 }}
                                 onEndReachedThreshold={0.1}
                                 renderItem={(item) => {
-                                        console.log('item: ', item);
                                         if (item.item === '1')
                                                 return (
                                                         <View>
@@ -167,7 +165,7 @@ export default class ListConversation extends Component {
                                                                 }}>không có tin nhắn</Text>
                                                         </View>
                                                 );
-                                        else
+                                        else {
                                                 return (
                                                         <ItemConversation
                                                                 item={item.item}
@@ -175,9 +173,8 @@ export default class ListConversation extends Component {
                                                                 onChangeScreenDetailChat={this.onChangeScreenDetailChat}
                                                         />
                                                 );
-                                }
-                                }
-
+                                        }
+                                }}
                         />
                 );
         }

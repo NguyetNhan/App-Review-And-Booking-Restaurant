@@ -45,6 +45,7 @@ export default class CommentList extends Component {
         }
 
         async onClickButtonSend () {
+                const idPost = this.state.post._id;
                 this.setState({
                         isLoading: true
                 });
@@ -62,10 +63,11 @@ export default class CommentList extends Component {
                         }).then(value => value.json());
                         this.setState({
                                 textComment: '',
-                                idReply: null
+                                idReply: null,
+                                post: null,
                         });
                         if (!response.error) {
-                                const post = await fetch(`${urlServer}/post/get-post/idPost/${this.state.post._id}`, {
+                                const post = await fetch(`${urlServer}/post/get-post/idPost/${idPost}`, {
                                         method: 'GET',
                                         headers: {
                                                 Accept: 'application/json',
@@ -78,6 +80,8 @@ export default class CommentList extends Component {
                                                 numberLike: post.data.like.length,
                                                 isLoading: false
                                         });
+                                        //    this.onRefresh();
+                                        //     this.props.onRefreshCommentReply();
                                 } else {
                                         this.setState({
                                                 isLoading: false
@@ -100,11 +104,12 @@ export default class CommentList extends Component {
         }
 
         async  onRefresh () {
+                const idPost = this.state.post._id;
                 this.setState({
                         isLoading: true,
-                        post: null
+                        post: null,
                 });
-                const post = await fetch(`${urlServer}/post/get-post/idPost/${this.state.post._id}`, {
+                const post = await fetch(`${urlServer}/post/get-post/idPost/${idPost}`, {
                         method: 'GET',
                         headers: {
                                 Accept: 'application/json',

@@ -30,7 +30,6 @@ const mapStateToProps = (state) => {
                         return {
                                 listMessage: listMessageReducers.messageReceiver,
                                 isLoading: false,
-                                resetListMessage: true,
                         };
                 }
 

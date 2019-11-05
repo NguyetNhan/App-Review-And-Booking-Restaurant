@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { urlServer, colorMain, background } from '../../config';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,6 +16,9 @@ export default class DetailPost extends Component {
                         restaurant: props.restaurant,
                         numberLike: props.numberLike,
                         numberComment: props.numberComment,
+                        discount: props.discount,
+                        isLoadingDiscount: false,
+                        accountLocal: props.accountLocal
                 };
         }
 
@@ -37,6 +40,40 @@ export default class DetailPost extends Component {
                         });
                 }
                 this.props.onClickButtonLike();
+        }
+
+        async onClickDiscount () {
+                this.setState({
+                        isLoadingDiscount: true
+                });
+                try {
+                        const response = await fetch(`${urlServer}/discount/add-discount-client/idDiscount/${this.state.discount._id}/idAccount/${this.state.accountLocal.id}`, {
+                                method: 'PUT',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (response.error) {
+                                Alert.alert('Thông Báo Lỗi',
+                                        response.message);
+                                this.setState({
+                                        isLoadingDiscount: false
+                                });
+                        } else {
+                                Alert.alert('Thông Báo',
+                                        response.message);
+                                this.setState({
+                                        isLoadingDiscount: false
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert('Thông Báo Lỗi',
+                                error.message);
+                        this.setState({
+                                isLoadingDiscount: false
+                        });
+                }
         }
 
         render () {
@@ -118,33 +155,35 @@ export default class DetailPost extends Component {
                                                                 </View>
                                                         </View>
                                         }
-                                        {/* <View style={styles.header}>
-                                                {
-                                                        this.state.accountPost.avatar == null ?
-                                                                <Image
-                                                                        source={require('../../assets/images/avatar_user.png')}
-                                                                        style={styles.imageAvatar}
-                                                                /> :
-                                                                <Image
-                                                                        source={{ uri: `${urlServer}${this.state.accountPost.avatar}` }}
-                                                                        style={styles.imageAvatar}
-                                                                />
-                                                }
-                                                <View style={styles.contentHeader}>
-                                                        {
-                                                                this.state.restaurant === null ?
-                                                                        <Text style={styles.name}>{this.state.accountPost.name}</Text> :
-                                                                        this.state.restaurant.type === 'restaurant' ?
-                                                                                <Text style={styles.place}><Text style={styles.name}>{this.state.accountPost.name}</Text> - tại nhà hàng <Text style={styles.name}>{this.state.restaurant.name}</Text></Text> :
-                                                                                <Text style={styles.place}><Text style={styles.name}>{this.state.accountPost.name}</Text> - tại quán Coffee <Text style={styles.name}>{this.state.restaurant.name}</Text></Text>
-                                                        }
-                                                        <Text style={styles.time}>{formatDate}</Text>
-                                                </View>
-                                        </View> */}
                                 </View>
                                 <View style={styles.content}>
                                         <ScrollView>
                                                 <Text style={styles.textContentPost}>{item.content}</Text>
+                                                {
+                                                        this.state.isLoadingDiscount ?
+                                                                <View style={{
+                                                                        flex: 1,
+                                                                        alignItems: 'center'
+                                                                }}>
+                                                                        <ActivityIndicator
+                                                                                animating={true}
+                                                                                size={30}
+                                                                        />
+                                                                </View> :
+                                                                this.state.discount === null ? null :
+                                                                        <TouchableOpacity
+                                                                                onPress={() => this.onClickDiscount()}
+                                                                                style={styles.containerDiscount}>
+                                                                                <View style={styles.discountTop}>
+                                                                                        <Text style={styles.textTitleDiscount}>nhận mã</Text>
+                                                                                        <Text style={styles.textIdDiscount}>{this.state.discount._id}</Text>
+                                                                                        <Text style={styles.textNameDiscount}>{this.state.discount.name}</Text>
+                                                                                </View>
+                                                                                <View style={styles.discountBottom}>
+                                                                                        <Text style={styles.textTitleDiscount}>giảm <Text style={styles.textPercent}>{this.state.discount.percent}%</Text></Text>
+                                                                                </View>
+                                                                        </TouchableOpacity>
+                                                }
                                                 {
                                                         this.state.isLoadingRestaurant ?
                                                                 <View style={styles.containerLoadingRestaurant}>
@@ -256,6 +295,51 @@ const styles = StyleSheet.create({
         },
         place: {
                 fontFamily: 'UVN-Baisau-Regular',
+        },
+        containerDiscount: {
+                flex: 1,
+                marginHorizontal: 30,
+        },
+        discountTop: {
+                backgroundColor: '#f03232',
+                flex: 2,
+                alignItems: 'center',
+                paddingHorizontal: 10,
+                paddingTop: 10,
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+        },
+        textTitleDiscount: {
+                textTransform: 'uppercase',
+                color: 'white',
+                fontFamily: 'UVN-Baisau-Regular',
+                fontSize: 12
+        },
+        textNameDiscount: {
+                textTransform: 'uppercase',
+                color: 'white',
+                fontFamily: 'UVN-Baisau-Regular',
+                textAlign: 'center',
+                fontSize: 12
+        },
+        textIdDiscount: {
+                color: 'white',
+                backgroundColor: '#d12525',
+                fontFamily: 'UVN-Baisau-Bold',
+                padding: 5
+        },
+        textPercent: {
+                fontFamily: 'UVN-Baisau-Bold',
+                color: 'white',
+                fontSize: 30
+        },
+        discountBottom: {
+                backgroundColor: '#d12525',
+                flex: 1,
+                alignItems: 'center',
+                padding: 10,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10,
         },
         time: {
                 fontFamily: 'UVN-Baisau-Regular',

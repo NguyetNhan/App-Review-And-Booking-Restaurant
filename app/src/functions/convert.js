@@ -37,5 +37,9 @@ export function convertPhoneNumber (data) {
         return Number.parseInt(convert);
 }
 
+export function convertDate (date) {
+        return `${date.getDate()} / ${date.getMonth()} / ${date.getFullYear()}`;
+}
+
 
 
