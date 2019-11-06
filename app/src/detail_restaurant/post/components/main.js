@@ -3,6 +3,7 @@ import { View, Text, Image, FlatList, Alert, ActivityIndicator, StyleSheet, Stat
 import { urlServer, colorMain, background } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { AccountModel } from '../../../models/account';
+import ItemPostList from '../../../home/components/item_post_list';
 
 export default class PostRestaurant extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -23,6 +24,7 @@ export default class PostRestaurant extends Component {
                 }
                 this.fetchAccountLocal();
                 this.fetchInfoRestaurant();
+                this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
         }
 
         async fetchInfoRestaurant () {
@@ -171,6 +173,21 @@ export default class PostRestaurant extends Component {
                         })
                 }
         }
+
+        onRefreshMain () {
+                this.fetchAccountLocal();
+        }
+
+        onChangeScreenDetailPlace (idRestaurant, idAdmin) {
+                var data = {
+                        idRestaurant: idRestaurant,
+                        idAdmin: idAdmin
+                }
+                this.props.navigation.navigate('DetailRestaurant', {
+                        IdConfigDetailRestaurant: data,
+                        GoBack: 'Home'
+                });
+        }
         render () {
                 return (
                         <View style={styles.container} >
@@ -201,7 +218,11 @@ export default class PostRestaurant extends Component {
                                                 refreshing={this.state.isLoading}
                                                 renderItem={(item) => {
                                                         return (
-                                                                <Text>cc</Text>
+                                                                <ItemPostList
+                                                                        item={item.item}
+                                                                        onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
+                                                                        onRefreshMain={this.onRefreshMain}
+                                                                />
                                                         )
                                                 }}
                                         />
