@@ -24,6 +24,7 @@ const AccountSchema = {
                 phone: 'string',
                 avatar: { type: 'string', default: 'null' },
                 conversation: { type: 'list', objectType: Conversation },
+                discount: 'string?[]'
         }
 };
 
@@ -44,7 +45,8 @@ AddInfoAccountFromDatabaseLocal = async (data) => {
                                                 id: data._id,
                                                 password: data.password,
                                                 score: data.score,
-                                                conversation: data.conversation
+                                                conversation: data.conversation,
+                                                discount: data.discount
                                         });
                                 } else {
                                         realm.create(Account, {
@@ -56,7 +58,8 @@ AddInfoAccountFromDatabaseLocal = async (data) => {
                                                 password: data.password,
                                                 score: data.score,
                                                 avatar: data.avatar,
-                                                conversation: data.conversation
+                                                conversation: data.conversation,
+                                                discount: data.discount
                                         });
                                 }
                         });
@@ -102,6 +105,7 @@ FetchInfoAccountFromDatabaseLocal = async () => {
                                 result.score = item.score;
                                 result.avatar = item.avatar;
                                 result.conversation = item.conversation;
+                                result.discount = item.discount;
                         }
                         return {
                                 error: false,
@@ -159,11 +163,68 @@ updateAccountInfoFromDatabaseLocal = async (idAccount, score) => {
         }
 };
 
+removeDiscountAccountFromDatabaseLocal = async (idAccount, idDiscount) => {
+        try {
+                const realm = await Realm.open({ schema: [AccountSchema, ConversationSchema] });
+                const account = realm.objects(Account);
+                let clientAccount = account.filtered(`id = "${idAccount}"`);
+                let discountAccount;
+                for (item of clientAccount) {
+                        discountAccount = item.discount;
+                }
+                let discountList = [];
+                for (discount of discountAccount) {
+                        if (discount != idDiscount) {
+                                discountList.push(discount);
+                        }
+                }
+                realm.write(() => {
+                        realm.create(Account, { id: idAccount, discount: discountList }, true);
+                });
+                return {
+                        error: false,
+                        message: 'ok',
+                };
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
+
+addDiscountForAccountIntoDatabaseLocal = async (idAccount, idDiscount) => {
+        try {
+                const realm = await Realm.open({ schema: [AccountSchema, ConversationSchema] });
+                const account = realm.objects(Account);
+                let clientAccount = account.filtered(`id = "${idAccount}"`);
+                let discountAccount;
+                for (item of clientAccount) {
+                        discountAccount = item.discount;
+                }
+                discountAccount.push(idDiscount);
+                realm.write(() => {
+                        realm.create(Account, { id: idAccount, discount: discountAccount }, true);
+                });
+                return {
+                        error: false,
+                        message: 'ok',
+                };
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
+
 export const AccountModel = {
         Account,
         AccountSchema,
         FetchInfoAccountFromDatabaseLocal,
         DeleteAccountInfoFromDatabaseLocal,
         AddInfoAccountFromDatabaseLocal,
-        updateAccountInfoFromDatabaseLocal
+        updateAccountInfoFromDatabaseLocal,
+        removeDiscountAccountFromDatabaseLocal,
+        addDiscountForAccountIntoDatabaseLocal
 };

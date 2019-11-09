@@ -299,7 +299,9 @@ export default class ItemReview extends Component {
                                         <ActivityIndicator animating={true} size={30} color={colorMain} />
                                 </View>
                         );
-                else
+                else {
+                        console.log('this.state.resultReview: ', this.state.resultReview);
+                        console.log('this.state.listImageSelect: ', this.state.listImageSelect);
                         return (
                                 <View style={styles.container}>
                                         {
@@ -407,8 +409,27 @@ export default class ItemReview extends Component {
                                                                                                         >
                                                                                                                 <EvilIcons name='camera' size={50} color={colorMain} />
                                                                                                         </TouchableOpacity>
-                                                                                                        {
-                                                                                                                this.state.listImageSelect.length !== 0 ?
+                                                                                                        {/* {
+                                                                                                                this.state.resultReview.imageReview.length !== 0 ?
+                                                                                                                        <FlatList
+                                                                                                                                data={this.state.resultReview.imageReview}
+                                                                                                                                extraData={this.state}
+                                                                                                                                keyExtractor={(item, index) => index.toString()}
+                                                                                                                                numColumns={3}
+                                                                                                                                horizontal={false}
+                                                                                                                                renderItem={(item) => {
+                                                                                                                                        return (
+                                                                                                                                                <Image source={{ uri: `${urlServer}${item.item}` }}
+                                                                                                                                                        style={{
+                                                                                                                                                                height: width / 3,
+                                                                                                                                                                width: width / 3,
+                                                                                                                                                                borderWidth: 1,
+                                                                                                                                                                borderColor: 'white'
+                                                                                                                                                        }} />
+                                                                                                                                        );
+                                                                                                                                }}
+                                                                                                                        />
+                                                                                                                        :
                                                                                                                         <FlatList
                                                                                                                                 data={this.state.listImageSelect}
                                                                                                                                 extraData={this.state}
@@ -427,30 +448,49 @@ export default class ItemReview extends Component {
                                                                                                                                         );
                                                                                                                                 }}
                                                                                                                         />
+                                                                                                        } */}
+                                                                                                        {
+                                                                                                                this.state.listImageSelect.length !== 0 ?
+                                                                                                                        <FlatList
+                                                                                                                                data={this.state.listImageSelect}
+                                                                                                                                extraData={this.state}
+                                                                                                                                keyExtractor={(item, index) => index.toString()}
+                                                                                                                                numColumns={3}
+                                                                                                                                horizontal={false}
+                                                                                                                                renderItem={(item) => {
+                                                                                                                                        console.log('item: ', item);
+                                                                                                                                        return (
+                                                                                                                                                <Image source={{ uri: item.item.node.image.uri }}
+                                                                                                                                                        style={{
+                                                                                                                                                                height: width / 3,
+                                                                                                                                                                width: width / 3,
+                                                                                                                                                                borderWidth: 1,
+                                                                                                                                                                borderColor: 'white'
+                                                                                                                                                        }} />
+                                                                                                                                        );
+                                                                                                                                }}
+                                                                                                                        />
                                                                                                                         :
-                                                                                                                        this.state.resultReview.imageReview.length === 0 ?
-                                                                                                                                null :
-                                                                                                                                <FlatList
-                                                                                                                                        data={this.state.resultReview.imageReview}
-                                                                                                                                        extraData={this.state}
-                                                                                                                                        keyExtractor={(item, index) => index.toString()}
-                                                                                                                                        numColumns={3}
-                                                                                                                                        horizontal={false}
-                                                                                                                                        renderItem={(item) => {
-                                                                                                                                                console.log('item: ', item);
-                                                                                                                                                return (
-                                                                                                                                                        <Image source={{ uri: `${urlServer}${item.item}` }}
-                                                                                                                                                                style={{
-                                                                                                                                                                        height: width / 3,
-                                                                                                                                                                        width: width / 3,
-                                                                                                                                                                        borderWidth: 1,
-                                                                                                                                                                        borderColor: 'white'
-                                                                                                                                                                }} />
-                                                                                                                                                );
-                                                                                                                                        }}
-                                                                                                                                />
+                                                                                                                        <FlatList
+                                                                                                                                data={this.state.resultReview.imageReview}
+                                                                                                                                extraData={this.state}
+                                                                                                                                keyExtractor={(item, index) => index.toString()}
+                                                                                                                                numColumns={3}
+                                                                                                                                horizontal={false}
+                                                                                                                                renderItem={(item) => {
+                                                                                                                                        console.log('item: ', item);
+                                                                                                                                        return (
+                                                                                                                                                <Image source={{ uri: `${urlServer}${item.item}` }}
+                                                                                                                                                        style={{
+                                                                                                                                                                height: width / 3,
+                                                                                                                                                                width: width / 3,
+                                                                                                                                                                borderWidth: 1,
+                                                                                                                                                                borderColor: 'white'
+                                                                                                                                                        }} />
+                                                                                                                                        );
+                                                                                                                                }}
+                                                                                                                        />
                                                                                                         }
-
                                                                                                 </View>
                                                                                         </View>
                                                                                 :
@@ -465,6 +505,24 @@ export default class ItemReview extends Component {
                                                                                                         >
                                                                                                                 <EvilIcons name='camera' size={50} color={colorMain} />
                                                                                                         </TouchableOpacity>
+                                                                                                        <FlatList
+                                                                                                                data={this.state.listImageSelect}
+                                                                                                                extraData={this.state}
+                                                                                                                keyExtractor={(item, index) => index.toString()}
+                                                                                                                numColumns={3}
+                                                                                                                horizontal={false}
+                                                                                                                renderItem={(item) => {
+                                                                                                                        return (
+                                                                                                                                <Image source={{ uri: item.item.node.image.uri }}
+                                                                                                                                        style={{
+                                                                                                                                                height: width / 3,
+                                                                                                                                                width: width / 3,
+                                                                                                                                                borderWidth: 1,
+                                                                                                                                                borderColor: 'white'
+                                                                                                                                        }} />
+                                                                                                                        );
+                                                                                                                }}
+                                                                                                        />
                                                                                                 </View>
                                                                                         </View>
                                                                 }
@@ -495,6 +553,7 @@ export default class ItemReview extends Component {
                                         </Modal>
                                 </View>
                         );
+                }
         }
 }
 

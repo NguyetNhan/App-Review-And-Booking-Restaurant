@@ -54,6 +54,11 @@ export default class AddReview extends Component {
                 this.fetchInfoAccount();
         }
 
+        componentWillUnmount () {
+                this.setState({
+                        listImageSelect: [],
+                });
+        }
 
 
         render () {

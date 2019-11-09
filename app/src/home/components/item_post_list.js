@@ -9,6 +9,7 @@ import CommentList from '../../person/components/comment_list';
 import DetailPost from '../../person/components/detail_post';
 
 export default class ItemPostList extends Component {
+
         constructor (props) {
                 super(props);
                 this.state = {
@@ -24,7 +25,8 @@ export default class ItemPostList extends Component {
                         numberLike: props.item.like.length,
                         numberComment: props.item.comment.length,
                         discount: null,
-                        isLoadingDiscount: false
+                        isLoadingDiscount: false,
+                        visiblePopupEdit: false
                 };
                 this.onCloseCommentList = this.onCloseCommentList.bind(this);
                 this.onClickButtonLike = this.onClickButtonLike.bind(this);
@@ -32,6 +34,8 @@ export default class ItemPostList extends Component {
                 this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
                 this.onOpenCommentList = this.onOpenCommentList.bind(this);
         }
+
+
 
         async fetchInfoRestaurant () {
                 try {
@@ -289,6 +293,7 @@ export default class ItemPostList extends Component {
                                 this.setState({
                                         isLoadingDiscount: false
                                 });
+                                //   await AccountModel.addDiscountForAccountIntoDatabaseLocal(this.state.accountLocal.id, this.state.discount._id);
                         }
                 } catch (error) {
                         Alert.alert('Thông Báo Lỗi',
@@ -298,6 +303,39 @@ export default class ItemPostList extends Component {
                         });
                 }
         }
+
+        onOpenPopupEdit () {
+                this.setState({
+                        visiblePopupEdit: !this.state.visiblePopupEdit
+                });
+        }
+        onClosePopupEdit () {
+                this.setState({
+                        visiblePopupEdit: !this.state.visiblePopupEdit
+                });
+        }
+
+        async    onClickRemovePost () {
+                this.onClosePopupEdit();
+                try {
+                        const response = await fetch(`${urlServer}/post/idPost/${this.state.item._id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (response.error) {
+                                Alert.alert('Thông Báo Lỗi', response.message);
+                        } else {
+                                this.props.onRefreshMain();
+                        }
+                } catch (error) {
+                        Alert.alert('Thông Báo Lỗi', error.message);
+                }
+        }
+
+
 
         render () {
                 const item = this.state.item;
@@ -355,6 +393,18 @@ export default class ItemPostList extends Component {
                                                                                 <Text style={styles.place}>Nhà Hàng <Text style={styles.name}>{this.state.restaurant.name}</Text></Text>
                                                                                 <Text style={styles.time}>{formatDate}</Text>
                                                                         </View>
+                                                                        {
+                                                                                this.state.accountLocal.id === this.state.accountPost._id ?
+                                                                                        <TouchableOpacity
+                                                                                                onPress={() => this.onOpenPopupEdit()}
+                                                                                        >
+                                                                                                <Entypo
+                                                                                                        name='dots-three-vertical'
+                                                                                                        size={20}
+                                                                                                        color='black'
+                                                                                                />
+                                                                                        </TouchableOpacity> : null
+                                                                        }
                                                                 </View>
                                                         :
                                                         <View style={styles.header}>
@@ -379,6 +429,19 @@ export default class ItemPostList extends Component {
                                                                         }
                                                                         <Text style={styles.time}>{formatDate}</Text>
                                                                 </View>
+                                                                {
+                                                                        this.state.accountLocal.id === this.state.accountPost._id ?
+                                                                                <TouchableOpacity
+                                                                                        onPress={() => this.onOpenPopupEdit()}
+                                                                                >
+                                                                                        <Entypo
+                                                                                                name='dots-three-vertical'
+                                                                                                size={20}
+                                                                                                color='black'
+                                                                                        />
+                                                                                </TouchableOpacity> : null
+                                                                }
+
                                                         </View>
                                         }
 
@@ -627,6 +690,29 @@ export default class ItemPostList extends Component {
                                                         accountLocal={this.state.accountLocal}
                                                 />
                                         </Modal>
+                                        <Modal
+                                                visible={this.state.visiblePopupEdit}
+                                                animated={true}
+                                                animationType='fade'
+                                                onRequestClose={() => this.onClosePopupEdit()}
+                                                transparent
+                                        >
+                                                <View style={styles.containerPopupEdit}>
+                                                        <View style={styles.popup}>
+                                                                <Text style={styles.titlePopup}>Tùy Chọn</Text>
+                                                                <TouchableOpacity
+                                                                        onPress={() => this.onClickRemovePost()}
+                                                                >
+                                                                        <Text style={styles.optionsPopup}>Xóa Bài Viết</Text>
+                                                                </TouchableOpacity>
+                                                                <TouchableOpacity
+                                                                        onPress={() => this.onClosePopupEdit()}
+                                                                >
+                                                                        <Text style={styles.buttonCancelPopup}>hủy</Text>
+                                                                </TouchableOpacity>
+                                                        </View>
+                                                </View>
+                                        </Modal>
                                 </View >
                         );
                 }
@@ -857,5 +943,30 @@ const styles = StyleSheet.create({
         textNumberLike: {
                 fontFamily: 'UVN-Baisau-Bold',
                 color: colorMain
+        },
+        containerPopupEdit: {
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                alignItems: 'center',
+                justifyContent: 'center'
+        },
+        popup: {
+                width: 130,
+                height: 150,
+                backgroundColor: 'white',
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                borderRadius: 10,
+        },
+        titlePopup: {
+                fontFamily: 'UVN-Baisau-Regular',
+        },
+        optionsPopup: {
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 16
+        },
+        buttonCancelPopup: {
+                fontFamily: 'UVN-Baisau-Regular',
+                color: 'red'
         }
 });

@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView
 import Icon from 'react-native-vector-icons/Feather';
 import { urlServer, colorMain, background } from '../../config';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AccountModel } from '../../models/account';
 
 
 const { width, height } = Dimensions.get('window');
@@ -66,6 +67,7 @@ export default class DetailPost extends Component {
                                 this.setState({
                                         isLoadingDiscount: false
                                 });
+                                //   await AccountModel.addDiscountForAccountIntoDatabaseLocal(this.state.accountLocal.id, this.state.discount._id);
                         }
                 } catch (error) {
                         Alert.alert('Thông Báo Lỗi',

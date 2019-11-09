@@ -100,6 +100,8 @@ export default class Complete extends Component {
                                         totalMoney = 0;
                                         scoreDiscount = totalMoneyFood;
                                 }
+                        } else {
+                                totalMoney = (totalMoneyFood * this.state.discount.value) / 100;
                         }
                 }
                 return (
@@ -198,7 +200,8 @@ export default class Complete extends Component {
                                                                 this.state.discount === null ? null :
                                                                         this.state.discount.type === 'score' ?
                                                                                 <Text style={styles.textTitleValue}>sử dụng điểm tích lũy: <Text style={styles.textValue}>{scoreDiscount}</Text></Text>
-                                                                                : null
+                                                                                :
+                                                                                <Text style={styles.textTitleValue}>giảm giá : <Text style={styles.textValue}>{this.state.discount.value}%</Text></Text>
                                                         }
                                                         <Text style={styles.textTitleValue}>tổng tiền menu: <Text style={styles.textValueMoney}>{convertVND(this.state.totalMoneyFood)} VND</Text></Text>
                                                         <Text style={styles.textTitleValue}>Tổng tiền thanh toán: <Text style={styles.textValueMoney}>{convertVND(totalMoney)} VND</Text></Text>

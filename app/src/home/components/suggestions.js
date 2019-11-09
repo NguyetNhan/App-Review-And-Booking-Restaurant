@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, FlatList, Alert, Dimensions, RefreshControl, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, FlatList, Alert, Dimensions, RefreshControl, Modal, PermissionsAndroid, ToastAndroid } from 'react-native';
 import ItemPlace from '../containers/item_place';
 import ItemFood from './item_food';
 const { width, height } = Dimensions.get('window');
 import ModalListPlaceBest from '../containers/modal_list_place_best';
 import ModalListFoodBest from '../containers/modal_list_food_best';
+import Geolocation from '@react-native-community/geolocation';
+import { socket } from '../../socket';
 export default class Suggestions extends Component {
         constructor (props) {
                 super(props);
@@ -36,15 +38,12 @@ export default class Suggestions extends Component {
                         prevState.isLoading = nextProps.isLoading;
                 }
                 if (nextProps.listPlaceByLocation !== prevState.listPlaceByLocation && nextProps.listPlaceByLocation !== undefined && !prevState.isLoading) {
-
                         prevState.listPlaceByLocation = nextProps.listPlaceByLocation;
                 }
                 if (nextProps.listPlaceTheBest !== prevState.listPlaceTheBest && nextProps.listPlaceTheBest !== undefined && !prevState.isLoading) {
-
                         prevState.listPlaceTheBest = nextProps.listPlaceTheBest;
                 }
                 if (nextProps.listFoodTheBest !== prevState.listFoodTheBest && nextProps.listFoodTheBest !== undefined && !prevState.isLoading) {
-
                         prevState.listFoodTheBest = nextProps.listFoodTheBest;
                 }
                 if (nextProps.message !== undefined) {
@@ -64,12 +63,51 @@ export default class Suggestions extends Component {
         }
 
         //FIXME: refresh theo geo
-        onRefresh () {
-                if (this.state.geolocation !== null) {
-                        this.props.onFetchNearbyLocationPlace(this.state.geolocation);
+        async    onRefresh () {
+                if (!this.state.isLoading) {
+                        this.setState({
+                                listPlaceByLocation: [],
+                                listPlaceTheBest: [],
+                                listFoodTheBest: [],
+                                isLoading: true
+                        });
+                        const granted = await PermissionsAndroid.request(
+                                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                        );
+                        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                                Geolocation.getCurrentPosition((position) => {
+                                        const geolocation = {
+                                                latitude: position.coords.latitude,
+                                                longitude: position.coords.longitude,
+                                        };
+                                        this.setState({
+                                                geolocation: geolocation
+                                        });
+                                        if (this.state.geolocation !== null) {
+                                                this.props.onFetchNearbyLocationPlace(geolocation);
+                                        }
+                                        socket.emit('infoAccount', { idAccount: this.state.account.id, geolocation: geolocation });
+                                }, (error) => {
+                                        ToastAndroid.show(error.message, ToastAndroid.LONG);
+                                }, {
+                                        enableHighAccuracy: true,
+                                        timeout: 20000,
+                                        maximumAge: 1000
+                                });
+                        } else {
+                                Alert.alert(
+                                        'Thông Báo',
+                                        'Bạn không đồng ý cung cấp vị trí nên không thể định vị các địa điểm gần bạn !',
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                socket.emit('infoAccount', { idAccount: this.state.account.id, location: null });
+                        }
+                        this.props.onFetchPlaceTheBest(1);
+                        this.props.onFetchFoodTheBest(1);
                 }
-                this.props.onFetchPlaceTheBest(1);
-                this.props.onFetchFoodTheBest(1);
         }
 
         onCloseModalListPlaceBest () {

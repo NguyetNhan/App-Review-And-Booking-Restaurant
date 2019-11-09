@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colorMain, background } from '../../config';
+import { colorMain, background, urlServer } from '../../config';
 import { AccountModel } from '../../models/account';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
@@ -39,24 +39,86 @@ export default class InfoAccount extends Component {
                                         { cancelable: false },
                                 );
                         } else {
+                                let discountList = [];
+                                const resultAccount = await fetch(`${urlServer}/auth/id/${account.data.id}`, {
+                                        method: 'GET',
+                                        headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                        }
+                                }).then(value => value.json());
+                                if (resultAccount.error) {
+                                        Alert.alert(
+                                                'Thông Báo Lỗi',
+                                                resultAccount.message,
+                                                [
+                                                        { text: 'OK' },
+                                                ],
+                                                { cancelable: false },
+                                        );
+                                } else {
+                                        if (resultAccount.data.discount.length > 0) {
+                                                for (item of resultAccount.data.discount) {
+                                                        try {
+                                                                const result = await fetch(`${urlServer}/discount/idDiscount/${item}`, {
+                                                                        method: 'GET',
+                                                                        headers: {
+                                                                                Accept: 'application/json',
+                                                                                'Content-Type': 'application/json',
+                                                                        }
+                                                                }).then(value => value.json());
+                                                                if (result.error) {
+                                                                        Alert.alert(
+                                                                                'Thông Báo Lỗi',
+                                                                                result.message,
+                                                                                [
+                                                                                        { text: 'OK' },
+                                                                                ],
+                                                                                { cancelable: false },
+                                                                        );
+                                                                } else {
+                                                                        discountList.push({
+                                                                                label: `Mã giảm giá ${result.data.percent}%`,
+                                                                                value: result.data.percent,
+                                                                                type: 'percent',
+                                                                                idDiscount: result.data._id
+                                                                        });
+                                                                }
+                                                        } catch (error) {
+                                                                Alert.alert(
+                                                                        'Thông Báo Lỗi',
+                                                                        error.message,
+                                                                        [
+                                                                                { text: 'OK' },
+                                                                        ],
+                                                                        { cancelable: false },
+                                                                );
+                                                        }
+                                                }
+                                        }
+                                }
+
                                 if (account.data.score <= 0) {
                                         this.setState({
                                                 account: account.data,
                                                 name: account.data.name,
                                                 email: account.data.email,
                                                 phone: (account.data.phone).toString(),
-                                                discount: [],
+                                                discount: discountList,
                                         });
                                 } else {
-                                        var listDiscount = this.state.discount;
-                                        listDiscount[0].label = `Sử dụng ${account.data.score} điểm tích lũy`;
-                                        listDiscount[0].value = account.data.score;
+                                        discountList.push({
+                                                label: `Sử dụng ${account.data.score} điểm tích lũy`,
+                                                value: account.data.score,
+                                                type: 'score',
+                                                idDiscount: null
+                                        });
                                         this.setState({
                                                 account: account.data,
                                                 name: account.data.name,
                                                 email: account.data.email,
                                                 phone: (account.data.phone).toString(),
-                                                discount: listDiscount,
+                                                discount: discountList,
                                         });
                                 }
                         }
@@ -89,8 +151,9 @@ export default class InfoAccount extends Component {
                                                 idClient: prevState.account.id,
                                                 discount: {
                                                         name: prevState.discount[prevState.valueDiscount].label,
-                                                        score: prevState.discount[prevState.valueDiscount].value,
-                                                        type: prevState.discount[prevState.valueDiscount].type
+                                                        value: prevState.discount[prevState.valueDiscount].value,
+                                                        type: prevState.discount[prevState.valueDiscount].type,
+                                                        idDiscount: prevState.discount[prevState.valueDiscount].idDiscount,
                                                 },
                                         });
                                 }
@@ -240,8 +303,9 @@ export default class InfoAccount extends Component {
                                                                         idClient: this.state.account.id,
                                                                         discount: {
                                                                                 name: this.state.discount[this.state.valueDiscount].label,
-                                                                                score: this.state.discount[this.state.valueDiscount].value,
-                                                                                type: this.state.discount[this.state.valueDiscount].type
+                                                                                value: this.state.discount[this.state.valueDiscount].value,
+                                                                                type: this.state.discount[this.state.valueDiscount].type,
+                                                                                idDiscount: this.state.discount[this.state.valueDiscount].idDiscount,
                                                                         },
                                                                 });
                                                                 this.props._onComplete({
@@ -251,8 +315,9 @@ export default class InfoAccount extends Component {
                                                                         idClient: this.state.account.id,
                                                                         discount: {
                                                                                 name: this.state.discount[this.state.valueDiscount].label,
-                                                                                score: this.state.discount[this.state.valueDiscount].value,
-                                                                                type: this.state.discount[this.state.valueDiscount].type
+                                                                                value: this.state.discount[this.state.valueDiscount].value,
+                                                                                type: this.state.discount[this.state.valueDiscount].type,
+                                                                                idDiscount: this.state.discount[this.state.valueDiscount].idDiscount,
                                                                         },
                                                                 });
                                                         }

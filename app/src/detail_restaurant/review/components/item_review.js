@@ -52,7 +52,7 @@ export default class ItemReview extends Component {
         }
 
         render () {
-                const date = new Date(this.state.item.date);
+                const date = new Date(this.state.item.createDate);
                 const formatDate = `${date.getHours()}h${date.getMinutes()}   ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
                 return (
                         <View style={styles.container}>

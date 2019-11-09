@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { urlServer, colorMain } from '../../config';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
 const { width, height } = Dimensions.get('window');

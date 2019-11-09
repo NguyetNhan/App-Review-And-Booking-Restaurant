@@ -28,6 +28,7 @@ import Stranger from './stranger/containers';
 import AddPost from './add_post/containers';
 import Invite from './invite/containers';
 import PostRestaurant from './detail_restaurant/post/components/main';
+import Follow from './follow/components';
 
 
 const RouteBottomTabConfig = {
@@ -177,6 +178,12 @@ const MainNavigatorClient = createStackNavigator(
                 },
                 Invite: {
                         screen: Invite,
+                        navigationOptions: {
+                                header: null,
+                        },
+                },
+                Follow: {
+                        screen: Follow,
                         navigationOptions: {
                                 header: null,
                         },

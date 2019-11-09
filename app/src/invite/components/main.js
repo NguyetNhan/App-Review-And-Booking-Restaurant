@@ -11,6 +11,7 @@ export default class Invite extends Component {
                         isLoading: true,
                         inviteList: []
                 };
+                this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
         }
 
         async componentDidMount () {
@@ -60,6 +61,17 @@ export default class Invite extends Component {
                 this.props.onResetProps();
         }
 
+        onChangeScreenDetailPlace (idRestaurant, idAdmin) {
+                var data = {
+                        idRestaurant: idRestaurant,
+                        idAdmin: idAdmin
+                };
+                this.props.navigation.navigate('DetailRestaurant', {
+                        IdConfigDetailRestaurant: data,
+                        GoBack: 'Invite'
+                });
+        }
+
 
         render () {
                 return (
@@ -100,6 +112,7 @@ export default class Invite extends Component {
                                                                 return (
                                                                         <ItemInviteList
                                                                                 item={item.item}
+                                                                                onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
                                                                         />
                                                                 );
                                                 }}

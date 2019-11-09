@@ -25,14 +25,17 @@ addPost = async (data) => {
                 for (var item of data.image) {
                         formData.append('post', item);
                 }
+                if (data.discount !== null) {
+                        formData.append('nameDiscount', data.discount.name);
+                        formData.append('endDateDiscount', data.discount.endDate.toString());
+                        formData.append('amountDiscount', data.discount.amount);
+                        formData.append('percentDiscount', data.discount.percent);
+                }
                 formData.append('idAccount', data.idAccount);
                 formData.append('content', data.content);
                 formData.append('idRestaurant', data.idRestaurant);
                 formData.append('typePost', data.typePost);
-                formData.append('nameDiscount', data.discount.name);
-                formData.append('endDateDiscount', data.discount.endDate.toString());
-                formData.append('amountDiscount', data.discount.amount);
-                formData.append('percentDiscount', data.discount.percent);
+
                 const response = await fetch(`${urlServer}/post/create-post`, {
                         method: 'POST',
                         headers: {

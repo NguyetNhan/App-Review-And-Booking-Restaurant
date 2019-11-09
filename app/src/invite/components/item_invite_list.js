@@ -132,6 +132,10 @@ export default class ItemInviteList extends Component {
                 }
         }
 
+        onChangeScreenDetailPlace () {
+                this.props.onChangeScreenDetailPlace(this.state.restaurant._id, this.state.restaurant.idAdmin);
+        }
+
         render () {
                 if (this.state.isLoading)
                         return (
@@ -151,7 +155,9 @@ export default class ItemInviteList extends Component {
                         const convertDateCreateDate = `${dateCreateDate.getDate()} / ${dateCreateDate.getMonth() + 1} / ${dateCreateDate.getFullYear()}`;
                         const timeNow = new Date();
                         return (
-                                <View style={styles.container}>
+                                <TouchableOpacity style={styles.container}
+                                        onPress={() => this.onChangeScreenDetailPlace()}
+                                >
                                         {
                                                 this.state.account.avatar === null ?
                                                         <Image
@@ -195,7 +201,7 @@ export default class ItemInviteList extends Component {
                                                 }
 
                                         </View>
-                                </View>
+                                </TouchableOpacity>
                         );
                 }
         }

@@ -34,7 +34,12 @@ function* AddOrderIntoDatabase (action) {
                                                 const score = resultAccount.data.score - results.data.discount.score;
                                                 yield AccountModel.updateAccountInfoFromDatabaseLocal(resultAccount.data.id, score);
                                         }
-                                }
+                                } /* else {
+                                        const resultAccount = yield AccountModel.FetchInfoAccountFromDatabaseLocal();
+                                        if (!resultAccount.error) {
+                                                yield AccountModel.removeDiscountAccountFromDatabaseLocal(resultAccount.data.id, results.data.discount.idDiscount);
+                                        }
+                                } */
                         }
                         yield put(onAddOrderSucceeded(results.messages));
                 }

@@ -52,7 +52,7 @@ export default class Order extends Component {
                                 'Thông Báo',
                                 nextProps.messagesSucceeded,
                                 [
-                                        { text: 'OK', onPress: () => nextProps.onResetPropsMessage() },
+                                        { text: 'OK', onPress: () => nextProps.navigation.goBack() },
                                 ],
                                 { cancelable: false },
                         );

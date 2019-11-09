@@ -50,9 +50,11 @@ export default class AuthLoading extends Component {
                                                 name: response.data.name,
                                                 phone: response.data.phone,
                                                 score: response.data.score,
-                                                avatar: response.data.avatar
+                                                avatar: response.data.avatar,
+                                                discount: response.data.discount,
                                         };
-                                        AccountModel.AddInfoAccountFromDatabaseLocal(accountNew);
+                                        await AccountModel.DeleteAccountInfoFromDatabaseLocal();
+                                        await AccountModel.AddInfoAccountFromDatabaseLocal(accountNew);
                                         this.setState({
                                                 account: accountNew
                                         });

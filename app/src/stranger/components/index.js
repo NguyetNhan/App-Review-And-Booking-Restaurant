@@ -153,6 +153,9 @@ export default class Stranger extends Component {
                                                 showsVerticalScrollIndicator={false}
                                                 refreshing={this.state.isLoading}
                                                 onRefresh={() => {
+                                                        this.setState({
+                                                                strangerList: []
+                                                        });
                                                         this.fetchGeolocation();
                                                 }}
                                                 renderItem={(item) => {

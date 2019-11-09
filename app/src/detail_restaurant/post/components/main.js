@@ -20,11 +20,13 @@ export default class PostRestaurant extends Component {
                         total_page: null,
                         accountLocal: null,
                         accountPost: null,
-                        restaurant: null
-                }
+                        restaurant: null,
+                        isLoadMore: false
+                };
                 this.fetchAccountLocal();
                 this.fetchInfoRestaurant();
                 this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
+                this.onRefreshMain = this.onRefreshMain.bind(this);
         }
 
         async fetchInfoRestaurant () {
@@ -95,7 +97,7 @@ export default class PostRestaurant extends Component {
                                 this.setState({
                                         accountPost: result.data,
                                 });
-                                this.fetchPostList(result.data._id);
+                                this.fetchPostList(result.data._id, 1);
                         }
                 } catch (error) {
                         Alert.alert(
@@ -130,9 +132,9 @@ export default class PostRestaurant extends Component {
                 }
         }
 
-        async fetchPostList (idAccount) {
+        async fetchPostList (idAccount, page) {
                 try {
-                        const response = await fetch(`${urlServer}/post/restaurant/post-list/idAccountRestaurant/${idAccount}/page/1`, {
+                        const response = await fetch(`${urlServer}/post/restaurant/post-list/idAccountRestaurant/${idAccount}/page/${page}`, {
                                 method: 'GET',
                                 headers: {
                                         Accept: 'application/json',
@@ -152,12 +154,22 @@ export default class PostRestaurant extends Component {
                                         isLoading: false
                                 })
                         } else {
-                                this.setState({
-                                        postList: response.data,
-                                        page: response.page,
-                                        total_page: response.total_page,
-                                        isLoading: false
-                                })
+                                if (this.state.isLoadMore) {
+                                        this.setState({
+                                                postList: [...this.state.postList, ...response.data],
+                                                page: response.page,
+                                                total_page: response.total_page,
+                                                isLoading: false,
+                                                isLoadMore: false
+                                        })
+                                } else {
+                                        this.setState({
+                                                postList: response.data,
+                                                page: response.page,
+                                                total_page: response.total_page,
+                                                isLoading: false
+                                        })
+                                }
                         }
                 } catch (error) {
                         Alert.alert(
@@ -175,8 +187,28 @@ export default class PostRestaurant extends Component {
         }
 
         onRefreshMain () {
-                this.fetchAccountLocal();
+                if (!this.state.isLoading) {
+                        this.setState({
+                                isLoading: true,
+                                postList: []
+                        })
+                        this.fetchPostList(this.state.accountPost._id, 1);
+                }
         }
+        onLoadMore () {
+                if (!this.state.isLoading) {
+                        const page = this.state.page;
+                        const total_page = this.state.total_page;
+                        if (page < total_page) {
+                                this.setState({
+                                        isLoading: true,
+                                        isLoadMore: true
+                                });
+                                this.fetchPostList(this.state.accountPost._id, page + 1);
+                        }
+                }
+        }
+
 
         onChangeScreenDetailPlace (idRestaurant, idAdmin) {
                 var data = {
@@ -188,6 +220,9 @@ export default class PostRestaurant extends Component {
                         GoBack: 'Home'
                 });
         }
+
+
+
         render () {
                 return (
                         <View style={styles.container} >
@@ -216,6 +251,9 @@ export default class PostRestaurant extends Component {
                                                 keyExtractor={(item, index) => index.toString()}
                                                 showsVerticalScrollIndicator={false}
                                                 refreshing={this.state.isLoading}
+                                                onRefresh={() => this.onRefreshMain()}
+                                                onEndReached={() => this.onLoadMore()}
+                                                onEndReachedThreshold={0.1}
                                                 renderItem={(item) => {
                                                         return (
                                                                 <ItemPostList

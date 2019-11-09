@@ -38,6 +38,7 @@ export default class ModalInfo extends Component {
                         <ScrollView>
                                 <View style={styles.container}>
                                         <View style={styles.content}>
+                                                <Text style={styles.textSucceeded}>đã xác nhận thành công !</Text>
                                                 <Text style={styles.textTitle}>thông tin cá nhân</Text>
                                                 <View style={styles.containerValue}>
                                                         <View style={styles.formatValue}>
@@ -148,6 +149,15 @@ const styles = StyleSheet.create({
         },
         content: {
                 paddingHorizontal: 20,
+        },
+        textSucceeded: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize',
+                marginTop: 15,
+                textAlign: 'center',
+                marginBottom: 5,
+                fontSize: 20,
+                color: colorMain
         },
         textTitle: {
                 fontFamily: 'UVN-Baisau-Regular',

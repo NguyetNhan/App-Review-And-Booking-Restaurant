@@ -178,7 +178,9 @@ export default class Profile extends Component {
                                                                                         >bạn bè</Text>
                                                                                 </View>
                                                                         </TouchableOpacity>
-                                                                        <TouchableOpacity style={styles.itemNavigator}>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => this.props.navigation.navigate('Follow')}
+                                                                                style={styles.itemNavigator}>
                                                                                 <View style={styles.containerIconNavigator}>
                                                                                         <MaterialCommunityIcons name='home' size={30} color='black' />
                                                                                 </View>
