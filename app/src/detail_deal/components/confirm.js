@@ -135,7 +135,7 @@ export default class Confirm extends Component {
                                                                                                 this._onConfirmCancel();
                                                                                         }}
                                                                                         style={styles.buttonCancel}>
-                                                                                        <Text style={styles.textButtonCancel}>hủy giao dịch</Text>
+                                                                                        <Text style={styles.textButtonCancel}>hủy đặt chỗ</Text>
                                                                                 </TouchableOpacity>
                                                                         </View>
                                                                         :
@@ -146,7 +146,7 @@ export default class Confirm extends Component {
                                                                                                         this._onConfirmCancel();
                                                                                                 }}
                                                                                                 style={styles.buttonCancelClient}>
-                                                                                                <Text style={styles.textButtonCancel}>hủy giao dịch</Text>
+                                                                                                <Text style={styles.textButtonCancel}>hủy đặt chỗ</Text>
                                                                                         </TouchableOpacity>
                                                                                 </View>
                                                                                 :
@@ -187,7 +187,7 @@ export default class Confirm extends Component {
                                                                                                                                 this._onConfirmCancel();
                                                                                                                         }}
                                                                                                                         style={styles.buttonCancel}>
-                                                                                                                        <Text style={styles.textButtonCancel}>hủy giao dịch</Text>
+                                                                                                                        <Text style={styles.textButtonCancel}>hủy đặt chỗ</Text>
                                                                                                                 </TouchableOpacity>
                                                                                                         </View>
                                                                                                         :

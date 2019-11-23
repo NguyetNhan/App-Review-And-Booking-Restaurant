@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { urlServer, colorMain } from '../../config';
 import { convertVND } from '../../functions/convert';
 
@@ -7,8 +7,51 @@ export default class Item extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        item: props.item
+                        item: props.item,
+                        account: null
                 };
+        }
+
+        async componentDidMount () {
+                try {
+                        const result = await fetch(`${urlServer}/auth/id/${this.state.item.idClient}`, {
+                                method: 'GET',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (result.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        result.message,
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.setState({
+                                        isLoading: false
+                                });
+                        } else {
+                                this.setState({
+                                        account: result.data,
+                                        isLoading: false
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.setState({
+                                isLoading: false
+                        });
+                }
         }
 
         render () {
@@ -23,10 +66,23 @@ export default class Item extends Component {
                         >
                                 <View style={styles.container}>
                                         <View style={styles.containerImage}>
-                                                <Image
-                                                        style={styles.image}
-                                                        source={{ uri: 'https://viknews.com/vi/wp-content/uploads/2019/04/Hot-girl-Tr%C3%A2m-Anh.jpg' }}
-                                                />
+                                                {
+                                                        this.state.account === null ?
+                                                                <ActivityIndicator
+                                                                        animating={true}
+                                                                        size={30}
+                                                                /> :
+                                                                this.state.account.avatar === null ?
+                                                                        <Image
+                                                                                style={styles.image}
+                                                                                source={require('../../assets/images/avatar_user.png')}
+                                                                        /> :
+                                                                        <Image
+                                                                                style={styles.image}
+                                                                                source={this.state.account.avatar}
+                                                                        />
+                                                }
+
                                                 <Text
                                                         numberOfLines={1}
                                                         ellipsizeMode='tail'

@@ -172,7 +172,8 @@ export default class AddPost extends Component {
                                         idRestaurant: null,
                                         image: image,
                                         content: this.state.content,
-                                        typePost: 'client'
+                                        typePost: 'client',
+                                        discount: null
                                 };
                         }
                 } else {
@@ -191,7 +192,8 @@ export default class AddPost extends Component {
                                         idRestaurant: this.state.selectedPlace._id,
                                         image: image,
                                         content: this.state.content,
-                                        typePost: 'client'
+                                        typePost: 'client',
+                                        discount: null
                                 };
                         }
                 }

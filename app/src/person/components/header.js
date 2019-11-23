@@ -68,9 +68,12 @@ export default class Header extends Component {
                                 <View style={styles.containerHeader}>
                                         {
                                                 this.state.account.avatar === null ?
-                                                        <Image
-                                                                source={{ uri: 'https://znews-photo.zadn.vn/w660/Uploaded/lce_qdhuc/2019_03_24/trantran.jpg' }}
-                                                                style={styles.image}
+                                                        <View
+                                                                style={{
+                                                                        backgroundColor: colorMain,
+                                                                        width: width,
+                                                                        height: 220
+                                                                }}
                                                         /> :
                                                         <Image
                                                                 source={{ uri: `${urlServer}${this.state.account.avatar}` }}
@@ -105,7 +108,7 @@ export default class Header extends Component {
                                                                                                 <Text style={styles.titleOptions}>điểm</Text>
                                                                                         </View>
                                                                                         <View style={styles.options}>
-                                                                                                <Text style={styles.numberFriend}>90000</Text>
+                                                                                                <Text style={styles.numberFriend}>10</Text>
                                                                                                 <Text style={styles.titleOptions}>bạn bè</Text>
                                                                                         </View>
                                                                                 </View>

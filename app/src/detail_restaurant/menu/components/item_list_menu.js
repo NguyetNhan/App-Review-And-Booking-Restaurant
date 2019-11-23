@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
                 alignItems: 'center'
         },
         image: {
-                width: 100,
-                height: 100
+                width: 115,
+                height: 115
         },
         content: {
                 flex: 1,

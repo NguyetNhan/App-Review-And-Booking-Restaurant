@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Modal, ScrollView, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Modal, ScrollView, Alert, RefreshControl } from 'react-native';
 import { urlServer, colorMain, background } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -7,8 +7,10 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
 import Carousel from 'react-native-snap-carousel';
 import { AccountModel } from '../../../models/account';
-import MapDirections from './map';
+import MapDirections from '../../../client/register_restaurant/components/map';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
+import MenuPopupAdminRestaurant from './menu_popup_admin_restaurant';
+import EditRestaurant from './edit_restaurant';
 
 export default class OverView extends Component {
         static navigationOptions = ({ navigation }) => {
@@ -36,9 +38,16 @@ export default class OverView extends Component {
                         visibleModalMap: false,
                         score: null,
                         isCheckedFollow: false,
-                        statusActivity: false
+                        statusActivity: false,
+                        visibleMenuPopupAdmin: false,
+                        visibleEditRestaurant: false,
+                        isLoading: true
                 }
                 this._onClickCloseModalMap = this._onClickCloseModalMap.bind(this);
+                this.onClickCloseMenuPopup = this.onClickCloseMenuPopup.bind(this);
+                this.onOpenEditRestaurant = this.onOpenEditRestaurant.bind(this);
+                this.onCloseEditRestaurant = this.onCloseEditRestaurant.bind(this);
+                this.onRefresh = this.onRefresh.bind(this);
         }
 
         async _onGetInfoAccount () {
@@ -78,19 +87,25 @@ export default class OverView extends Component {
                         );
                         this.props.navigation.navigate('Auth');
                 }
-
-
-
-
         }
 
         componentDidMount () {
                 this._onGetInfoAccount();
         }
 
+        onRefresh () {
+                this.setState({
+                        isLoading: true
+                });
+                this.props.onFetchDetailRestaurant(this.state.idConfig.idRestaurant);
+                this.props.onFetchScoreReview(this.state.idConfig.idRestaurant);
+                this.props.onCheckFollowRestaurant(this.state.idConfig.idRestaurant, this.state.account.id);
+        }
+
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.restaurant !== prevState.restaurant && nextProps.restaurant !== undefined) {
                         prevState.restaurant = nextProps.restaurant;
+                        prevState.isLoading = nextProps.isLoading;
                         prevState.imageRestaurant = nextProps.restaurant.imageRestaurant;
                         prevState.name = nextProps.restaurant.name;
                         prevState.type = nextProps.restaurant.type;
@@ -145,6 +160,30 @@ export default class OverView extends Component {
         _onClickCloseModalMap () {
                 this.setState({
                         visibleModalMap: !this.state.visibleModalMap
+                })
+        }
+
+        onClickOpenMenuPopup () {
+                this.setState({
+                        visibleMenuPopupAdmin: !this.state.visibleMenuPopupAdmin
+                })
+        }
+
+        onClickCloseMenuPopup () {
+                this.setState({
+                        visibleMenuPopupAdmin: !this.state.visibleMenuPopupAdmin
+                })
+        }
+
+        onOpenEditRestaurant () {
+                this.setState({
+                        visibleEditRestaurant: !this.state.visibleEditRestaurant
+                })
+        }
+
+        onCloseEditRestaurant () {
+                this.setState({
+                        visibleEditRestaurant: !this.state.visibleEditRestaurant
                 })
         }
 
@@ -206,8 +245,24 @@ export default class OverView extends Component {
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
+                                        {
+                                                this.state.restaurant === null ? null :
+                                                        this.state.account === null ? null :
+                                                                this.state.account.id === this.state.restaurant.idAdmin ?
+                                                                        <TouchableOpacity onPress={() => {
+                                                                                this.onClickOpenMenuPopup()
+                                                                        }}>
+                                                                                <Icon name='edit' size={25} color='black' />
+                                                                        </TouchableOpacity> : null
+                                        }
                                 </View>
-                                <ScrollView>
+                                <ScrollView
+                                        showsVerticalScrollIndicator={false}
+                                        refreshControl={<RefreshControl
+                                                refreshing={this.state.isLoading}
+                                                onRefresh={() => this.onRefresh()}
+                                        />}
+                                >
                                         <View style={styles.containerSliderImage}>
                                                 <Carousel
                                                         ref={(c) => { this._slider1Ref = c; }}
@@ -242,7 +297,6 @@ export default class OverView extends Component {
                                         <View style={styles.content}>
                                                 <View>
                                                         <Text style={styles.textTitleRestaurant}
-                                                                numberOfLines={1}
                                                         >{this.state.name}</Text>
                                                         <View style={styles.containerStar}>
                                                                 {
@@ -395,6 +449,30 @@ export default class OverView extends Component {
                                                 restaurant={this.state.restaurant}
                                         />
                                 </Modal>
+                                <Modal
+                                        visible={this.state.visibleMenuPopupAdmin}
+                                        animationType='fade'
+                                        transparent
+                                        onRequestClose={() => {
+                                                this.onClickCloseMenuPopup()
+                                        }}
+                                >
+                                        <MenuPopupAdminRestaurant
+                                                onClickCloseMenuPopup={this.onClickCloseMenuPopup}
+                                                onOpenEditRestaurant={this.onOpenEditRestaurant}
+                                        />
+                                </Modal>
+                                <Modal
+                                        visible={this.state.visibleEditRestaurant}
+                                        animationType='slide'
+                                        onRequestClose={() => this.onCloseEditRestaurant()}
+                                >
+                                        <EditRestaurant
+                                                onCloseEditRestaurant={this.onCloseEditRestaurant}
+                                                restaurant={this.state.restaurant}
+                                                onRefresh={this.onRefresh}
+                                        />
+                                </Modal>
                         </View>
                 );
         }
@@ -434,7 +512,7 @@ const styles = StyleSheet.create({
         },
         textTitleRestaurant: {
                 fontFamily: 'UVN-Baisau-Bold',
-                fontSize: 35,
+                fontSize: 25,
                 textTransform: 'capitalize',
         },
         textTypeRestaurant: {

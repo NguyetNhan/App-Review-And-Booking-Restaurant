@@ -300,8 +300,6 @@ export default class ItemReview extends Component {
                                 </View>
                         );
                 else {
-                        console.log('this.state.resultReview: ', this.state.resultReview);
-                        console.log('this.state.listImageSelect: ', this.state.listImageSelect);
                         return (
                                 <View style={styles.container}>
                                         {
@@ -314,7 +312,7 @@ export default class ItemReview extends Component {
                                                                 <View style={styles.containerName}>
                                                                         <Text style={styles.name}>{this.state.restaurant.name}</Text>
                                                                         <Text style={styles.introduce}
-                                                                                numberOfLines={2}
+                                                                                numberOfLines={3}
                                                                                 ellipsizeMode='tail'
                                                                         >{this.state.restaurant.introduce}</Text>
                                                                 </View>
@@ -326,7 +324,10 @@ export default class ItemReview extends Component {
                                                                 />
                                                                 <View style={styles.containerName}>
                                                                         <Text style={styles.name}>{this.state.food.name}</Text>
-                                                                        <Text style={styles.introduce}>{this.state.food.introduce}</Text>
+                                                                        <Text style={styles.introduce}
+                                                                                ellipsizeMode='tail'
+                                                                                numberOfLines={3}
+                                                                        >{this.state.food.introduce}</Text>
                                                                 </View>
                                                         </View>
                                         }
@@ -458,7 +459,6 @@ export default class ItemReview extends Component {
                                                                                                                                 numColumns={3}
                                                                                                                                 horizontal={false}
                                                                                                                                 renderItem={(item) => {
-                                                                                                                                        console.log('item: ', item);
                                                                                                                                         return (
                                                                                                                                                 <Image source={{ uri: item.item.node.image.uri }}
                                                                                                                                                         style={{
@@ -478,7 +478,6 @@ export default class ItemReview extends Component {
                                                                                                                                 numColumns={3}
                                                                                                                                 horizontal={false}
                                                                                                                                 renderItem={(item) => {
-                                                                                                                                        console.log('item: ', item);
                                                                                                                                         return (
                                                                                                                                                 <Image source={{ uri: `${urlServer}${item.item}` }}
                                                                                                                                                         style={{
@@ -575,7 +574,7 @@ const styles = StyleSheet.create({
 
         header: {
                 flexDirection: 'row',
-
+                flex: 1
         },
         imageAvatar: {
                 width: 40,
@@ -583,7 +582,8 @@ const styles = StyleSheet.create({
                 borderRadius: 20
         },
         containerName: {
-                marginLeft: 10
+                marginLeft: 10,
+                flex: 1
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',

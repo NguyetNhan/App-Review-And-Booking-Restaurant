@@ -160,7 +160,7 @@ export default class Profile extends Component {
                                                                                         <Text style={styles.textNavigator}
                                                                                                 numberOfLines={2}
                                                                                                 ellipsizeMode='tail'
-                                                                                        >đơn hàng của tôi</Text>
+                                                                                        >giao dịch đặt chỗ</Text>
                                                                                 </View>
                                                                         </TouchableOpacity>
                                                                         <TouchableOpacity
@@ -203,7 +203,7 @@ export default class Profile extends Component {
                                                                                         <Text style={styles.textNavigator}
                                                                                                 numberOfLines={2}
                                                                                                 ellipsizeMode='tail'
-                                                                                        >đăng kí nhà hàng của bạn</Text>
+                                                                                        >đăng kí địa điểm của bạn</Text>
                                                                                 </View>
                                                                         </TouchableOpacity>
                                                                 </View>
@@ -270,7 +270,7 @@ export default class Profile extends Component {
                                                                                         <Text style={styles.textNavigator}
                                                                                                 numberOfLines={2}
                                                                                                 ellipsizeMode='tail'
-                                                                                        >nhà hàng của tôi</Text>
+                                                                                        >địa điểm của tôi</Text>
                                                                                 </View>
                                                                         </TouchableOpacity>
                                                                         <TouchableOpacity
@@ -303,7 +303,7 @@ export default class Profile extends Component {
                                                                                         <Text style={styles.textNavigator}
                                                                                                 numberOfLines={2}
                                                                                                 ellipsizeMode='tail'
-                                                                                        >nhà hàng đăng kí</Text>
+                                                                                        >địa điểm đăng kí</Text>
                                                                                 </View>
                                                                         </TouchableOpacity>
                                                                 </View>

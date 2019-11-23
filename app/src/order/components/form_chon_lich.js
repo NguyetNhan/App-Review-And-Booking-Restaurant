@@ -82,26 +82,10 @@ export default class FormChonLich extends Component {
 
         _setTime (event, time) {
                 if (event.type === 'set') {
-                        const datenow = Date.now();
-                        if (time > datenow) {
-                                this.setState({
-                                        showTime: !this.state.showTime,
-                                        date: time
-                                });
-                        }
-                        else {
-                                this.setState({
-                                        showTime: !this.state.showTime,
-                                });
-                                Alert.alert(
-                                        'Thông Báo Lỗi',
-                                        'Không được chọn giờ trước giờ hiện tại !',
-                                        [
-                                                { text: 'OK' },
-                                        ],
-                                        { cancelable: false },
-                                );
-                        }
+                        this.setState({
+                                showTime: !this.state.showTime,
+                                date: time
+                        });
                 } else if (event.type === 'dismissed') {
                         this.setState({
                                 showTime: !this.state.showTime,

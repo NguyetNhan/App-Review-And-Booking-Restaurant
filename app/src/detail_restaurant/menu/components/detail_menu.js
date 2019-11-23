@@ -199,7 +199,6 @@ export default class DetailMenu extends Component {
 const styles = StyleSheet.create({
         container: {
                 flex: 1,
-                backgroundColor: background
         },
         buttonBack: {
                 position: 'absolute',
@@ -219,7 +218,7 @@ const styles = StyleSheet.create({
         image: {
                 width: 180,
                 height: 180,
-                borderRadius: 90
+                borderRadius: 90,
         },
         content: {
                 alignItems: 'center',
@@ -239,7 +238,9 @@ const styles = StyleSheet.create({
         introduce: {
                 fontFamily: 'UVN-Baisau-Regular',
                 fontSize: 16,
-                marginBottom: 20
+                marginBottom: 20,
+                marginHorizontal: 20,
+                textAlign: 'center'
         },
         title: {
                 fontFamily: 'UVN-Baisau-Regular',

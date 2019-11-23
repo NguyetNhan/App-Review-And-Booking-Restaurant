@@ -14,7 +14,8 @@ const mapStateToProps = (state) => {
         if (overviewReducers !== null) {
                 if (overviewReducers.fetchSucceeded !== undefined) {
                         return {
-                                restaurant: overviewReducers.fetchSucceeded.data
+                                restaurant: overviewReducers.fetchSucceeded.data,
+                                isLoading: false
                         };
                 } else if (overviewReducers.fetchFailed !== undefined) {
                         return {

@@ -20,8 +20,8 @@ export default class RegisterRestaurant extends Component {
                         selectImage: null,
                         name: 'Ngọc Linh',
                         phone: '0123456789',
-                        textTinh: 'Hồ Chí Minh',
-                        textQuan: 'Thủ Đức',
+                        textTinh: 'Thành Phố Hồ Chí Minh',
+                        textQuan: 'Quận Thủ Đức',
                         address: '147/15 Lý Tế Xuyên',
                         introduce: 'Có nhiều gái đẹp',
                         type: 'restaurant',
@@ -341,7 +341,13 @@ export default class RegisterRestaurant extends Component {
         }
 
         _onClickComplete (position) {
-                this.setState({
+              this.setState({
+                        region: {
+                                latitude: position.latitude,
+                                longitude: position.longitude,
+                                latitudeDelta: 0.00922 * 1.5,
+                                longitudeDelta: 0.00421 * 1.5
+                        },
                         marker: position
                 });
         }
@@ -384,11 +390,11 @@ export default class RegisterRestaurant extends Component {
                                         }}>
                                                 <Icon name='arrowleft' size={25} color='black' />
                                         </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Đăng kí cửa hàng</Text>
+                                        <Text style={styles.textHeader}>Đăng kí địa điểm kinh doanh</Text>
                                 </View>
-                                <ScrollView                                >
+                                <ScrollView>
                                         <View style={styles.containerForm}>
-                                                <Text style={styles.textHint}>Tên cửa hàng</Text>
+                                                <Text style={styles.textHint}>Tên địa điểm</Text>
                                                 <TextInput style={styles.textInput}
                                                         onChangeText={(text) => {
                                                                 this.setState({
@@ -414,7 +420,7 @@ export default class RegisterRestaurant extends Component {
                                                         }}
                                                         value={this.state.introduce}
                                                 />
-                                                <Text style={styles.textHint}>Loại nhà hàng</Text>
+                                                <Text style={styles.textHint}>Loại địa điểm</Text>
                                                 <Picker
                                                         selectedValue={this.state.type}
                                                         style={{
@@ -513,7 +519,7 @@ export default class RegisterRestaurant extends Component {
                                                                 <Picker.Item label="7h" value={7} />
                                                                 <Picker.Item label="8h" value={8} />
                                                                 <Picker.Item label="9h" value={9} />
-                                                                <Picker.Item label="10" value={10} />
+                                                                <Picker.Item label="10h" value={10} />
                                                                 <Picker.Item label="11h" value={11} />
                                                                 <Picker.Item label="12h" value={12} />
                                                                 <Picker.Item label="13h" value={13} />
@@ -550,7 +556,7 @@ export default class RegisterRestaurant extends Component {
                                                                 <Picker.Item label="7h" value={7} />
                                                                 <Picker.Item label="8h" value={8} />
                                                                 <Picker.Item label="9h" value={9} />
-                                                                <Picker.Item label="10" value={10} />
+                                                                <Picker.Item label="10h" value={10} />
                                                                 <Picker.Item label="11h" value={11} />
                                                                 <Picker.Item label="12h" value={12} />
                                                                 <Picker.Item label="13h" value={13} />

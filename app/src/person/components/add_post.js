@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, } from 'react-native';
+import { colorMain } from '../../config';
 
 export default class AddPost extends Component {
         constructor (props) {
@@ -11,10 +12,10 @@ export default class AddPost extends Component {
                 return (
                         <View style={styles.container}>
                                 <View style={styles.contentPost}>
-                                        <Image
-                                                source={{ uri: 'https://znews-photo.zadn.vn/w660/Uploaded/lce_qdhuc/2019_03_24/trantran.jpg' }}
+                                        <View
                                                 style={styles.image}
                                         />
+
                                         <TouchableOpacity
                                                 style={styles.buttonInput}
                                                 onPress={() => {
@@ -48,7 +49,8 @@ const styles = StyleSheet.create({
         image: {
                 width: 50,
                 height: 50,
-                borderRadius: 10
+                borderRadius: 10,
+                backgroundColor: colorMain
         },
         textInput: {
                 color: 'gray'
