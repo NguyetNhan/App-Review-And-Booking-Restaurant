@@ -19,7 +19,10 @@ AddMenuOnAPI = async (data) => {
                 }).then(value => value.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error);
+                return {
+                        error: true,
+                        message: 'Thêm món ăn thất bại. ' + error.message
+                };
         }
 };
 
@@ -34,7 +37,10 @@ FetchMenuFromAPI = async (data) => {
                 }).then(data => data.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error);
+                return {
+                        error: true,
+                        message: 'Lấy danh sách thất bại. ' + error.message
+                };
         }
 };
 

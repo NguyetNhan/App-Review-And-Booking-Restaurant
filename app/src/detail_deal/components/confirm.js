@@ -178,6 +178,7 @@ export default class Confirm extends Component {
                                                                                                         <View style={styles.containerButton}>
                                                                                                                 <TouchableOpacity
                                                                                                                         onPress={() => {
+                                                                                                                                this.props.onClickChat(this.state.item.idClient);
                                                                                                                         }}
                                                                                                                         style={styles.buttonAgree}>
                                                                                                                         <Text style={styles.textButtonAgree}>gửi tin nhắn</Text>

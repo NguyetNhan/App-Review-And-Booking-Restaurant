@@ -12,6 +12,7 @@ export default class DetailDeal extends Component {
                 };
                 this._onCallback = this._onCallback.bind(this);
                 this._onClickChangeScreenRestaurant = this._onClickChangeScreenRestaurant.bind(this);
+                this.onClickChat = this.onClickChat.bind(this);
         }
 
         _onCallback () {
@@ -23,6 +24,12 @@ export default class DetailDeal extends Component {
         _onClickChangeScreenRestaurant (order) {
                 this.props.navigation.navigate('AddReview', {
                         order: order
+                });
+        }
+
+        onClickChat (idUserChat) {
+                this.props.navigation.navigate('DetailChat', {
+                        idAccountReceiver: idUserChat
                 });
         }
 
@@ -47,6 +54,7 @@ export default class DetailDeal extends Component {
                                                 idOrder={this.state.idOrder}
                                                 _onCallback={this._onCallback}
                                                 _onClickChangeScreenRestaurant={this._onClickChangeScreenRestaurant}
+                                                onClickChat={this.onClickChat}
                                         />
                                 </View>
                         </View>

@@ -25,9 +25,6 @@ export default class MenuPopupAdminRestaurant extends Component {
                                                 >
                                                         <Text style={styles.textButtonEdit}>chỉnh sửa</Text>
                                                 </TouchableOpacity>
-                                                <TouchableOpacity>
-                                                        <Text style={styles.textButtonDelete}>xóa</Text>
-                                                </TouchableOpacity>
                                                 <TouchableOpacity
                                                         onPress={() => this.props.onClickCloseMenuPopup()}
                                                 >
@@ -50,7 +47,7 @@ const styles = StyleSheet.create({
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'white',
-                height: 200,
+                height: 150,
                 width: 150,
                 justifyContent: 'space-around',
                 borderRadius: 10
@@ -85,6 +82,7 @@ const styles = StyleSheet.create({
                 marginBottom: 15
         },
         textButtonCancel: {
+                color: 'red',
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
         }

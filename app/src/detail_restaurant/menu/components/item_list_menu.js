@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Modal } from 'react-native';
 import { urlServer, colorMain } from '../../../config';
 import { convertVND } from '../../../functions/convert';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { API } from '../../overview/sagas/API';
+import EditMenu from './edit_menu';
 
 export default class ItemListMenu extends Component {
         constructor (props) {
@@ -16,7 +18,11 @@ export default class ItemListMenu extends Component {
                         price: props.item.price,
                         introduce: props.item.introduce,
                         score: null,
+                        isShowEditFood: props.isShowEditFood,
+                        visibleOptionsEdit: false,
+                        visibleEditMenu: false,
                 };
+                this.onCloseEditMenu = this.onCloseEditMenu.bind(this);
         }
 
         async fetchMediumScore () {
@@ -53,7 +59,30 @@ export default class ItemListMenu extends Component {
                 this.fetchMediumScore();
         }
 
+        onOpenOptionsEdit () {
+                this.setState({
+                        visibleOptionsEdit: !this.state.visibleOptionsEdit
+                });
+        }
+        onCloseOptionsEdit () {
+                this.setState({
+                        visibleOptionsEdit: !this.state.visibleOptionsEdit
+                });
+        }
 
+        onOpenEditMenu () {
+                this.setState({
+                        visibleEditMenu: !this.state.visibleEditMenu
+                });
+        }
+        onCloseEditMenu () {
+                this.setState({
+                        visibleEditMenu: !this.state.visibleEditMenu
+                });
+        }
+        onClickOpenSelectImage () {
+                this.props.onClickOpenSelectImage()
+        }
         render () {
                 const score = this.state.score;
                 var listStar = [];
@@ -122,6 +151,53 @@ export default class ItemListMenu extends Component {
                                                 >{this.state.introduce}</Text>
                                         </View>
                                 </View>
+                                {
+                                        this.state.isShowEditFood ?
+                                                <TouchableOpacity style={styles.buttonEdit}
+                                                        onPress={() => this.onOpenOptionsEdit()}
+                                                >
+                                                        <Entypo
+                                                                name='edit'
+                                                                size={20}
+                                                                color={colorMain}
+                                                        />
+                                                </TouchableOpacity> : null
+                                }
+                                <Modal
+                                        visible={this.state.visibleOptionsEdit}
+                                        animationType='fade'
+                                        transparent
+                                        onRequestClose={() => this.onCloseOptionsEdit()}
+                                >
+                                        <View style={styles.containerOptionsEdit}>
+                                                <View style={styles.contentOptions}>
+                                                        <TouchableOpacity
+                                                                onPress={() => {
+                                                                        this.onCloseOptionsEdit();
+                                                                        this.onOpenEditMenu();
+                                                                }}
+                                                        >
+                                                                <Text style={styles.textButtonEdit}>Chỉnh Sửa</Text>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity>
+                                                                <Text style={styles.textButtonDelete}>Xóa</Text>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity>
+                                                                <Text style={styles.textButtonCancel}>Hủy</Text>
+                                                        </TouchableOpacity>
+                                                </View>
+                                        </View>
+                                </Modal>
+                                <Modal
+                                        visible={this.state.visibleEditMenu}
+                                        animationType='slide'
+                                        onRequestClose={() => this.onCloseEditMenu()}
+                                >
+                                        <EditMenu
+                                                food={this.state.item}
+                                                onCloseEditMenu={this.onCloseEditMenu}
+                                        />
+                                </Modal>
                         </TouchableOpacity>
                 );
         }
@@ -159,4 +235,34 @@ const styles = StyleSheet.create({
         containerStar: {
                 flexDirection: 'row'
         },
+        buttonEdit: {
+                position: 'absolute',
+                right: 5,
+                top: 15
+        },
+        containerOptionsEdit: {
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flex: 1
+        },
+        contentOptions: {
+                backgroundColor: 'white',
+                width: 130,
+                height: 150,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'space-around',
+        },
+        textButtonEdit: {
+                fontFamily: 'UVN-Baisau-Bold',
+                color: colorMain
+        },
+        textButtonDelete: {
+                fontFamily: 'UVN-Baisau-Bold',
+                color: 'red'
+        },
+        textButtonCancel: {
+                fontFamily: 'UVN-Baisau-Regular',
+        }
 });

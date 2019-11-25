@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Dimensions, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Dimensions, Alert, ScrollView } from 'react-native';
 import { colorMain } from '../../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -89,59 +89,61 @@ export default class AddMenu extends Component {
                                         </TouchableOpacity>
                                 </View>
                                 <View style={styles.content}>
-                                        <Text style={styles.textHint}>Tên món ăn</Text>
-                                        <TextInput style={styles.textInput}
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                nameFood: text
-                                                        });
-                                                }}
-                                                value={this.state.nameFood}
-                                        />
-                                        <Text style={styles.textHint}>Mô tả</Text>
-                                        <TextInput style={styles.textInput}
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                moTa: text
-                                                        });
-                                                }}
-                                                value={this.state.moTa}
-                                        />
-                                        <Text style={styles.textHint}>Giá</Text>
-                                        <TextInput style={styles.textInput}
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                price: text
-                                                        });
-                                                }}
-                                                value={this.state.price}
-                                                keyboardType='number-pad'
-                                        />
-                                        <View style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between',
-                                                marginVertical: 10
-                                        }}>
-                                                <Text style={{
-                                                        fontFamily: 'UVN-Baisau-Regular',
-                                                }}>Hình ảnh</Text>
-                                                <TouchableOpacity onPress={() => {
-                                                        this.props.onClickOpenSelectImage();
+                                        <ScrollView>
+                                                <Text style={styles.textHint}>Tên món ăn</Text>
+                                                <TextInput style={styles.textInput}
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        nameFood: text
+                                                                });
+                                                        }}
+                                                        value={this.state.nameFood}
+                                                />
+                                                <Text style={styles.textHint}>Mô tả</Text>
+                                                <TextInput style={styles.textInput}
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        moTa: text
+                                                                });
+                                                        }}
+                                                        value={this.state.moTa}
+                                                />
+                                                <Text style={styles.textHint}>Giá</Text>
+                                                <TextInput style={styles.textInput}
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        price: text
+                                                                });
+                                                        }}
+                                                        value={this.state.price}
+                                                        keyboardType='number-pad'
+                                                />
+                                                <View style={{
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        marginVertical: 10
                                                 }}>
-                                                        <EvilIcons name='camera' size={50} color={colorMain} />
-                                                </TouchableOpacity>
-                                        </View>
-                                        {
-                                                this.state.uriImageSelect === null ? null :
-                                                        <Image
-                                                                source={{ uri: this.state.uriImageSelect.uri }}
-                                                                style={{
-                                                                        width: screenWidth - 40,
-                                                                        height: screenWidth / 2
-                                                                }}
-                                                        />
-                                        }
+                                                        <Text style={{
+                                                                fontFamily: 'UVN-Baisau-Regular',
+                                                        }}>Hình ảnh</Text>
+                                                        <TouchableOpacity onPress={() => {
+                                                                this.props.onClickOpenSelectImage();
+                                                        }}>
+                                                                <EvilIcons name='camera' size={50} color={colorMain} />
+                                                        </TouchableOpacity>
+                                                </View>
+                                                {
+                                                        this.state.uriImageSelect === null ? null :
+                                                                <Image
+                                                                        source={{ uri: this.state.uriImageSelect.uri }}
+                                                                        style={{
+                                                                                width: screenWidth - 40,
+                                                                                height: screenWidth / 2
+                                                                        }}
+                                                                />
+                                                }
+                                        </ScrollView>
                                 </View>
                         </View>
                 );

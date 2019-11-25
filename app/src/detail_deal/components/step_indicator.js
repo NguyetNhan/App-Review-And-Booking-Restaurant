@@ -21,6 +21,7 @@ export default class Index extends Component {
                 };
                 this._onCallback = this._onCallback.bind(this);
                 this._onChangeScreenRestaurant = this._onChangeScreenRestaurant.bind(this);
+                this.onClickChat = this.onClickChat.bind(this);
         }
 
         async _getInfoAccountFromLocal () {
@@ -115,6 +116,10 @@ export default class Index extends Component {
                 this.props._onClickChangeScreenRestaurant(order);
         }
 
+        onClickChat (idUserChat) {
+                this.props.onClickChat(idUserChat);
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsStepIndicator();
         }
@@ -150,6 +155,7 @@ export default class Index extends Component {
                                                                                                                                         item={this.state.detailOrder}
                                                                                                                                         account={this.state.account}
                                                                                                                                         _onChangeScreenRestaurant={this._onChangeScreenRestaurant}
+                                                                                                                                        onClickChat={this.onClickChat}
                                                                                                                                 />
                                                                                                         }
 
@@ -209,6 +215,8 @@ export default class Index extends Component {
                                                                                                                                 item={this.state.detailOrder}
                                                                                                                                 account={this.state.account}
                                                                                                                                 _onChangeScreenRestaurant={this._onChangeScreenRestaurant}
+                                                                                                                                onClickChat={this.onClickChat}
+
                                                                                                                         />
                                                                                                 }
                                                                                         </View>

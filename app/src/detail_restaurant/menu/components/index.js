@@ -41,7 +41,8 @@ export default class Menu extends Component {
                         page: 1,
                         total_page: null,
                         isRefresh: false,
-                        isLoadMore: false
+                        isLoadMore: false,
+                        isShowEditFood: false
                 }
                 this._onClickCloseAddMenu = this._onClickCloseAddMenu.bind(this);
                 this._onClickCloseSelectImage = this._onClickCloseSelectImage.bind(this);
@@ -77,7 +78,8 @@ export default class Menu extends Component {
                                 })
                                 if (account.data.id == id.idAdmin) {
                                         this.setState({
-                                                showEdit: true
+                                                showEdit: true,
+                                                isShowEditFood: true
                                         })
                                 }
                                 this.props.onFetchMenu({
@@ -254,6 +256,7 @@ export default class Menu extends Component {
                                                                 <ItemListMenu
                                                                         item={item.item}
                                                                         _onClickOpenDetailMenu={this._onClickOpenDetailMenu}
+                                                                        isShowEditFood={this.state.isShowEditFood}
                                                                 />
                                                         );
                                                 }}
@@ -287,20 +290,7 @@ export default class Menu extends Component {
                                                 onClickSelectImage={this._onClickSelectImage}
                                         />
                                 </Modal>
-                                {/*  <Modal
-                                        visible={this.state.isLoading}
-                                        transparent={true}
-                                        animationType='slide'
-                                >
-                                        <View style={{
-                                                flex: 1,
-                                                backgroundColor: 'rgba(0,0,0,0.3)',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
-                                        }} >
-                                                <ActivityIndicator animating={true} size={80} color={colorMain} />
-                                        </View>
-                                </Modal> */}
+
                                 <Modal
                                         visible={this.state.visibleDetailMenu}
                                         transparent={false}
