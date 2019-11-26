@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, ActivityIndicator } from 'react-native';
 const { width, height } = Dimensions.get('window');
 import { urlServer, colorMain } from '../../config';
 import Icon from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AccountModel } from '../../models/account';
+import EditAccount from './edit_account';
 
 export default class Header extends Component {
         constructor (props) {
@@ -14,8 +15,12 @@ export default class Header extends Component {
                         account: props.account,
                         type: props.type,
                         accountClient: null,
-                        isFriended: null
+                        isFriended: null,
+                        visibleEditAccount: false,
+                        isLoading: false
                 };
+                this.onCloseEditAccount = this.onCloseEditAccount.bind(this);
+                this.onRefresh = this.onRefresh.bind(this);
         }
 
         async fetchAccountClientFromLocal () {
@@ -25,11 +30,13 @@ export default class Header extends Component {
                                 result.message);
                         return null;
                 } else {
+
                         this.setState({
                                 accountClient: result.data
                         });
                         return result.data.id;
                 }
+
         }
 
         async   componentDidMount () {
@@ -59,114 +66,214 @@ export default class Header extends Component {
                 return null;
         }
 
+        onCloseEditAccount () {
+                this.setState({
+                        visibleEditAccount: !this.state.visibleEditAccount
+                });
+        }
+
+        onOpenEditAccount () {
+                this.setState({
+                        visibleEditAccount: !this.state.visibleEditAccount
+                });
+        }
+
+        async  onRefresh () {
+                this.props.onRefresh();
+                this.setState({
+                        isLoading: true
+                });
+
+                try {
+                        const result = await fetch(`${urlServer}/auth/id/${this.state.account._id}`, {
+                                method: 'GET',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (result.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        result.message,
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.setState({
+                                        isLoading: false
+                                });
+                        } else {
+                                this.setState({
+                                        account: result.data,
+                                        isLoading: false
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.setState({
+                                isLoading: false
+                        });
+                }
+
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsHeader();
         }
         render () {
-                return (
-                        <View style={styles.container}>
-                                <View style={styles.containerHeader}>
-                                        {
-                                                this.state.account.avatar === null ?
-                                                        <View
-                                                                style={{
-                                                                        backgroundColor: colorMain,
-                                                                        width: width,
-                                                                        height: 220
-                                                                }}
-                                                        /> :
-                                                        <Image
-                                                                source={{ uri: `${urlServer}${this.state.account.avatar}` }}
-                                                                style={styles.image}
-                                                        />
-                                        }
-                                        <TouchableOpacity
-                                                style={styles.buttonBack}
-                                                onPress={() => {
-                                                        this.props.onClickButtonBack();
-                                                }}
-                                        >
-                                                <Icon name='arrow-left' size={25} color='white' />
-                                        </TouchableOpacity>
-                                        <View style={{
-                                                height: 50,
-                                                width: width,
-                                        }}>
+                if (this.state.isLoading) {
+                        return (
+                                <View style={{
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                }}>
+                                        <ActivityIndicator
+                                                animating={true}
+                                                size={30}
+                                                color={colorMain}
+                                        />
+                                </View>
+                        );
+                } else
+                        return (
+                                <View style={styles.container}>
+                                        <View style={styles.containerHeader}>
+                                                {
+                                                        this.state.account.avatar === null ?
+                                                                <View
+                                                                        style={{
+                                                                                backgroundColor: colorMain,
+                                                                                width: width,
+                                                                                height: 220
+                                                                        }}
+                                                                /> :
+                                                                <Image
+                                                                        source={{ uri: `${urlServer}${this.state.account.avatar}` }}
+                                                                        style={styles.image}
+                                                                />
+                                                }
+                                                <TouchableOpacity
+                                                        style={styles.buttonBack}
+                                                        onPress={() => {
+                                                                this.props.onClickButtonBack();
+                                                        }}
+                                                >
+                                                        <Icon name='arrow-left' size={25} color='white' />
+                                                </TouchableOpacity>
                                                 {
                                                         this.state.type === 'host' ?
-                                                                <View style={styles.containerValue}>
-                                                                        <View style={styles.containerName}>
-                                                                                <View style={{
-                                                                                        flex: 1,
-                                                                                        justifyContent: 'center'
-                                                                                }}>
-                                                                                        <Text style={styles.name}>{this.state.account.name}</Text>
-                                                                                </View>
-                                                                                <View style={styles.containerOptions}>
-                                                                                        <View style={styles.options}>
-                                                                                                <Text style={styles.score}>{this.state.account.score}</Text>
-                                                                                                <Text style={styles.titleOptions}>điểm</Text>
-                                                                                        </View>
-                                                                                        <View style={styles.options}>
-                                                                                                <Text style={styles.numberFriend}>10</Text>
-                                                                                                <Text style={styles.titleOptions}>bạn bè</Text>
-                                                                                        </View>
-                                                                                </View>
-                                                                        </View>
-                                                                </View> :
-                                                                <View style={styles.containerValue}>
-                                                                        <View style={styles.containerName}>
-                                                                                <View style={{
-                                                                                        flex: 1,
-                                                                                        justifyContent: 'center'
-                                                                                }}>
-                                                                                        <Text style={styles.name}>{this.state.account.name}</Text>
-                                                                                </View>
-                                                                                <View style={styles.containerOptions}>
-                                                                                        {
-                                                                                                this.state.isFriended === null ?
-                                                                                                        <View style={styles.options}>
-                                                                                                                <TouchableOpacity
-                                                                                                                        onPress={() => {
-                                                                                                                                this.props.onAddFriend(this.state.accountClient.id, this.state.account._id);
-                                                                                                                        }}
-                                                                                                                >
-                                                                                                                        <FontAwesome5 name='user-plus' size={20} color='gray' />
-                                                                                                                </TouchableOpacity>
-                                                                                                                <Text style={styles.titleOptions}>kết bạn</Text>
-                                                                                                        </View> :
-                                                                                                        this.state.isFriended === 'waiting' ?
-                                                                                                                <View style={styles.options}>
-                                                                                                                        <TouchableOpacity>
-                                                                                                                                <FontAwesome5 name='user-clock' size={20} color='#2977e5' />
-                                                                                                                        </TouchableOpacity>
-                                                                                                                        <Text style={styles.titleOptions}>đã gửi</Text>
-                                                                                                                </View> :
-                                                                                                                <View style={styles.options}>
-                                                                                                                        <TouchableOpacity>
-                                                                                                                                <FontAwesome5 name='user-check' size={20} color='#2977e5' />
-                                                                                                                        </TouchableOpacity>
-                                                                                                                        <Text style={styles.titleOptions}>bạn bè</Text>
-                                                                                                                </View>
-                                                                                        }
-                                                                                        <View style={styles.options}>
-                                                                                                <TouchableOpacity
-                                                                                                        onPress={() => {
-                                                                                                                this.props.onClickChat(this.state.account._id);
-                                                                                                        }}
-                                                                                                >
-                                                                                                        <MaterialCommunityIcons name='chat' size={20} color='#2977e5' />
-                                                                                                </TouchableOpacity>
-                                                                                                <Text style={styles.titleOptions}>nhắn tin</Text>
-                                                                                        </View>
-                                                                                </View>
-                                                                        </View>
-                                                                </View>
+                                                                <TouchableOpacity
+                                                                        style={styles.buttonOptions}
+                                                                        onPress={() => this.onOpenEditAccount()}
+                                                                >
+                                                                        <Icon
+                                                                                name='edit'
+                                                                                size={25}
+                                                                                color='white'
+                                                                        />
+                                                                </TouchableOpacity> : null
                                                 }
+
+                                                <View style={{
+                                                        height: 50,
+                                                        width: width,
+                                                }}>
+                                                        {
+                                                                this.state.type === 'host' ?
+                                                                        <View style={styles.containerValue}>
+                                                                                <View style={styles.containerName}>
+                                                                                        <View style={{
+                                                                                                flex: 1,
+                                                                                                justifyContent: 'center'
+                                                                                        }}>
+                                                                                                <Text style={styles.name}>{this.state.account.name}</Text>
+                                                                                        </View>
+                                                                                        <View style={styles.containerOptions}>
+                                                                                                <View style={styles.options}>
+                                                                                                        <Text style={styles.score}>{this.state.account.score}</Text>
+                                                                                                        <Text style={styles.titleOptions}>điểm</Text>
+                                                                                                </View>
+                                                                                                <View style={styles.options}>
+                                                                                                        <Text style={styles.numberFriend}>10</Text>
+                                                                                                        <Text style={styles.titleOptions}>bạn bè</Text>
+                                                                                                </View>
+                                                                                        </View>
+                                                                                </View>
+                                                                        </View> :
+                                                                        <View style={styles.containerValue}>
+                                                                                <View style={styles.containerName}>
+                                                                                        <View style={{
+                                                                                                flex: 1,
+                                                                                                justifyContent: 'center'
+                                                                                        }}>
+                                                                                                <Text style={styles.name}>{this.state.account.name}</Text>
+                                                                                        </View>
+                                                                                        <View style={styles.containerOptions}>
+                                                                                                {
+                                                                                                        this.state.isFriended === null ?
+                                                                                                                <View style={styles.options}>
+                                                                                                                        <TouchableOpacity
+                                                                                                                                onPress={() => {
+                                                                                                                                        this.props.onAddFriend(this.state.accountClient.id, this.state.account._id);
+                                                                                                                                }}
+                                                                                                                        >
+                                                                                                                                <FontAwesome5 name='user-plus' size={20} color='gray' />
+                                                                                                                        </TouchableOpacity>
+                                                                                                                        <Text style={styles.titleOptions}>kết bạn</Text>
+                                                                                                                </View> :
+                                                                                                                this.state.isFriended === 'waiting' ?
+                                                                                                                        <View style={styles.options}>
+                                                                                                                                <TouchableOpacity>
+                                                                                                                                        <FontAwesome5 name='user-clock' size={20} color='#2977e5' />
+                                                                                                                                </TouchableOpacity>
+                                                                                                                                <Text style={styles.titleOptions}>đã gửi</Text>
+                                                                                                                        </View> :
+                                                                                                                        <View style={styles.options}>
+                                                                                                                                <TouchableOpacity>
+                                                                                                                                        <FontAwesome5 name='user-check' size={20} color='#2977e5' />
+                                                                                                                                </TouchableOpacity>
+                                                                                                                                <Text style={styles.titleOptions}>bạn bè</Text>
+                                                                                                                        </View>
+                                                                                                }
+                                                                                                <View style={styles.options}>
+                                                                                                        <TouchableOpacity
+                                                                                                                onPress={() => {
+                                                                                                                        this.props.onClickChat(this.state.account._id);
+                                                                                                                }}
+                                                                                                        >
+                                                                                                                <MaterialCommunityIcons name='chat' size={20} color='#2977e5' />
+                                                                                                        </TouchableOpacity>
+                                                                                                        <Text style={styles.titleOptions}>nhắn tin</Text>
+                                                                                                </View>
+                                                                                        </View>
+                                                                                </View>
+                                                                        </View>
+                                                        }
+                                                </View>
                                         </View>
+                                        <Modal
+                                                visible={this.state.visibleEditAccount}
+                                                animationType='slide'
+                                                onRequestClose={() => this.onCloseEditAccount()}
+                                        >
+                                                <EditAccount
+                                                        account={this.state.account}
+                                                        onCloseEditAccount={this.onCloseEditAccount}
+                                                        onRefresh={this.onRefresh}
+                                                />
+                                        </Modal>
                                 </View>
-                        </View>
-                );
+                        );
         }
 }
 
@@ -184,6 +291,11 @@ const styles = StyleSheet.create({
         buttonBack: {
                 position: 'absolute',
                 left: 20,
+                top: 50
+        },
+        buttonOptions: {
+                position: 'absolute',
+                right: 20,
                 top: 50
         },
         containerValue: {
@@ -228,6 +340,7 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
                 fontSize: 12
-        }
+        },
+
 
 });

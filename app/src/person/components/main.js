@@ -99,12 +99,14 @@ export default class Person extends Component {
                         if (this.state.idAccountView === this.state.account._id) {
                                 this.props.onFetchAccountView(this.state.account._id);
                                 this.setState({
-                                        type: 'host'
+                                        type: 'host',
+                                        account: null
                                 });
                         } else {
                                 this.props.onFetchAccountView(this.state.idAccountView);
                                 this.setState({
-                                        type: 'visit'
+                                        type: 'visit',
+                                        account: null
                                 });
                         }
                 } else {
@@ -163,11 +165,13 @@ export default class Person extends Component {
                                                         type={this.state.type}
                                                         onClickChat={this.onClickChat}
                                                         onClickButtonBack={this.onClickButtonBack}
+                                                        onRefresh={this.onRefresh}
                                                 />
                                                 {
                                                         this.state.type === 'host' ?
                                                                 <AddPost
                                                                         onClickAddPost={this.onClickAddPost}
+                                                                        account={this.state.account}
                                                                 /> : null
                                                 }
                                                 <PostList

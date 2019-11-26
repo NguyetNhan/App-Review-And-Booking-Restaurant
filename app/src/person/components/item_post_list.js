@@ -12,7 +12,8 @@ export default class ItemPostList extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        account: props.account,
+                        idAccountPost: props.account._id,
+                        account: null,
                         item: props.item,
                         restaurant: null,
                         isLoadingRestaurant: false,
@@ -23,7 +24,8 @@ export default class ItemPostList extends Component {
                         visibleComment: false,
                         visibleDetailPost: false,
                         discount: null,
-                        visiblePopupEdit: false
+                        visiblePopupEdit: false,
+                        isLoading: true
                 };
                 this.fetchInfoAccountFromLocal();
                 this.onCloseCommentList = this.onCloseCommentList.bind(this);
@@ -94,7 +96,50 @@ export default class ItemPostList extends Component {
                 }
         }
 
+        async fetchInfoAccountPost () {
+                try {
+                        const result = await fetch(`${urlServer}/auth/id/${this.state.idAccountPost}`, {
+                                method: 'GET',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (result.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        result.message,
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.setState({
+                                        isLoading: false
+                                });
+                        } else {
+                                this.setState({
+                                        account: result.data,
+                                        isLoading: false
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.setState({
+                                isLoading: false
+                        });
+                }
+        }
+
         componentDidMount () {
+                this.fetchInfoAccountPost();
                 if (this.state.item.idRestaurant !== 'null')
                         this.fetchInfoRestaurant();
                 if (this.state.item.typePost === 'restaurant')
@@ -208,7 +253,6 @@ export default class ItemPostList extends Component {
                 });
         }
         onClosePopupEdit () {
-                this.onClosePopupEdit();
                 this.setState({
                         visiblePopupEdit: !this.state.visiblePopupEdit
                 });
@@ -265,302 +309,315 @@ export default class ItemPostList extends Component {
                                         });
                         }
                 }
-                return (
-                        <View style={styles.container}>
-                                <View style={styles.header}>
-                                        {
-                                                this.state.account.avatar == null ?
-                                                        <Image
-                                                                source={require('../../assets/images/avatar_user.png')}
-                                                                style={styles.imageAvatar}
-                                                        /> :
-                                                        <Image
-                                                                source={{ uri: `${urlServer}${this.state.account.avatar}` }}
-                                                                style={styles.imageAvatar}
-                                                        />
-                                        }
-                                        <View style={styles.contentHeader}>
-                                                {
-                                                        this.state.restaurant === null ?
-                                                                <Text style={styles.name}>{this.state.account.name}</Text> :
-                                                                this.state.restaurant.type === 'restaurant' ?
-                                                                        <Text style={styles.place}><Text style={styles.name}>{this.state.account.name}</Text> - tại nhà hàng <Text style={styles.name}>{this.state.restaurant.name}</Text></Text> :
-                                                                        <Text style={styles.place}><Text style={styles.name}>{this.state.account.name}</Text> - tại quán Coffee <Text style={styles.name}>{this.state.restaurant.name}</Text></Text>
-                                                }
-                                                <Text style={styles.time}>{formatDate}</Text>
-                                        </View>
-                                        {
-                                                this.state.accountLocal === null ? null :
-                                                        this.state.accountLocal.id === this.state.item.idAccount ?
-                                                                <TouchableOpacity
-                                                                        onPress={() => this.onOpenPopupEdit()}
-                                                                >
-                                                                        <Entypo
-                                                                                name='dots-three-vertical'
-                                                                                size={20}
-                                                                                color='black'
-                                                                        />
-                                                                </TouchableOpacity> : null
-                                        }
+                if (this.state.isLoading)
+                        return (
+                                <View style={{
+                                        flex: 1,
+                                        alignItems: 'center'
+                                }}>
+                                        <ActivityIndicator
+                                                animating={true}
+                                                size={30}
+                                        />
                                 </View>
-                                <View style={styles.contentPost}>
-                                        <TouchableOpacity onPress={() => this.onOpenDetailPost()}>
-                                                <Text style={styles.textContentPost}>{item.content}</Text>
+                        );
+                else
+                        return (
+                                <View style={styles.container}>
+                                        <View style={styles.header}>
                                                 {
-                                                        this.state.discount === null ? null :
-                                                                <View style={styles.containerDiscount}>
-                                                                        <View style={styles.discountTop}>
-                                                                                <Text style={styles.textTitleDiscount}>nhận mã</Text>
-                                                                                <Text style={styles.textIdDiscount}>{this.state.discount._id}</Text>
-                                                                                <Text style={styles.textNameDiscount}>{this.state.discount.name}</Text>
-                                                                        </View>
-                                                                        <View style={styles.discountBottom}>
-                                                                                <Text style={styles.textTitleDiscount}>giảm <Text style={styles.textPercent}>{this.state.discount.percent}%</Text></Text>
-                                                                        </View>
-                                                                </View>
+                                                        this.state.account.avatar == null ?
+                                                                <Image
+                                                                        source={require('../../assets/images/avatar_user.png')}
+                                                                        style={styles.imageAvatar}
+                                                                /> :
+                                                                <Image
+                                                                        source={{ uri: `${urlServer}${this.state.account.avatar}` }}
+                                                                        style={styles.imageAvatar}
+                                                                />
                                                 }
+                                                <View style={styles.contentHeader}>
+                                                        {
+                                                                this.state.restaurant === null ?
+                                                                        <Text style={styles.name}>{this.state.account.name}</Text> :
+                                                                        this.state.restaurant.type === 'restaurant' ?
+                                                                                <Text style={styles.place}><Text style={styles.name}>{this.state.account.name}</Text> - tại nhà hàng <Text style={styles.name}>{this.state.restaurant.name}</Text></Text> :
+                                                                                <Text style={styles.place}><Text style={styles.name}>{this.state.account.name}</Text> - tại quán Coffee <Text style={styles.name}>{this.state.restaurant.name}</Text></Text>
+                                                        }
+                                                        <Text style={styles.time}>{formatDate}</Text>
+                                                </View>
                                                 {
-                                                        this.state.isLoadingRestaurant ?
-                                                                <View style={styles.containerLoadingRestaurant}>
-                                                                        <ActivityIndicator
-                                                                                animating={true}
-                                                                                size={30}
-                                                                                color={colorMain}
-                                                                        />
-                                                                </View> :
-                                                                this.state.restaurant === null ? null :
+                                                        this.state.accountLocal === null ? null :
+                                                                this.state.accountLocal.id === this.state.item.idAccount ?
                                                                         <TouchableOpacity
-                                                                                onPress={() => this.onChangeScreenDetailPlace()}
-                                                                                style={styles.containerRestaurant}>
-                                                                                <Image
-                                                                                        source={{ uri: `${urlServer}${this.state.restaurant.imageRestaurant[0]}` }}
-                                                                                        style={styles.imageRestaurant}
+                                                                                onPress={() => this.onOpenPopupEdit()}
+                                                                        >
+                                                                                <Entypo
+                                                                                        name='dots-three-vertical'
+                                                                                        size={20}
+                                                                                        color='black'
                                                                                 />
-                                                                                <View style={styles.contentRestaurant}>
-                                                                                        <Text style={styles.name}>{this.state.restaurant.name}</Text>
-                                                                                        <View
-                                                                                                style={styles.star}
-                                                                                        >
-                                                                                                {
-                                                                                                        this.state.score === null ? null :
-                                                                                                                listStar.map(item => {
-                                                                                                                        if (item.value === 1)
-                                                                                                                                return (<Star key={item.index.toString()} name='star' size={15} color={colorMain} />);
-                                                                                                                        else if (item.value === 0)
-                                                                                                                                return (<Star key={item.index.toString()} name='star-half' size={15} color={colorMain} />);
-                                                                                                                        else if (item.value === -1)
-                                                                                                                                return (<Star key={item.index.toString()} name='star-outline' size={15} color={colorMain} />);
-                                                                                                                })
-                                                                                                }
-                                                                                        </View>
-                                                                                        <Text style={styles.address}>{this.state.restaurant.address}</Text>
-                                                                                </View>
-                                                                        </TouchableOpacity>
+                                                                        </TouchableOpacity> : null
                                                 }
-                                                {
-                                                        item.image.length === 0 ? null :
-                                                                item.image.length === 1 ?
-                                                                        <Image
-                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                style={styles.image1}
-                                                                        /> :
-                                                                        item.image.length === 2 ?
-                                                                                <View style={styles.containerImage2}>
+                                        </View>
+                                        <View style={styles.contentPost}>
+                                                <TouchableOpacity onPress={() => this.onOpenDetailPost()}>
+                                                        <Text style={styles.textContentPost}>{item.content}</Text>
+                                                        {
+                                                                this.state.discount === null ? null :
+                                                                        <View style={styles.containerDiscount}>
+                                                                                <View style={styles.discountTop}>
+                                                                                        <Text style={styles.textTitleDiscount}>nhận mã</Text>
+                                                                                        <Text style={styles.textIdDiscount}>{this.state.discount._id}</Text>
+                                                                                        <Text style={styles.textNameDiscount}>{this.state.discount.name}</Text>
+                                                                                </View>
+                                                                                <View style={styles.discountBottom}>
+                                                                                        <Text style={styles.textTitleDiscount}>giảm <Text style={styles.textPercent}>{this.state.discount.percent}%</Text></Text>
+                                                                                </View>
+                                                                        </View>
+                                                        }
+                                                        {
+                                                                this.state.isLoadingRestaurant ?
+                                                                        <View style={styles.containerLoadingRestaurant}>
+                                                                                <ActivityIndicator
+                                                                                        animating={true}
+                                                                                        size={30}
+                                                                                        color={colorMain}
+                                                                                />
+                                                                        </View> :
+                                                                        this.state.restaurant === null ? null :
+                                                                                <TouchableOpacity
+                                                                                        onPress={() => this.onChangeScreenDetailPlace()}
+                                                                                        style={styles.containerRestaurant}>
                                                                                         <Image
-                                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                style={styles.image2}
+                                                                                                source={{ uri: `${urlServer}${this.state.restaurant.imageRestaurant[0]}` }}
+                                                                                                style={styles.imageRestaurant}
                                                                                         />
-                                                                                        <Image
-                                                                                                source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                style={styles.image2}
-                                                                                        />
-                                                                                </View> :
-                                                                                item.image.length === 3 ?
-                                                                                        <View style={styles.containerImage3}>
+                                                                                        <View style={styles.contentRestaurant}>
+                                                                                                <Text style={styles.name}>{this.state.restaurant.name}</Text>
+                                                                                                <View
+                                                                                                        style={styles.star}
+                                                                                                >
+                                                                                                        {
+                                                                                                                this.state.score === null ? null :
+                                                                                                                        listStar.map(item => {
+                                                                                                                                if (item.value === 1)
+                                                                                                                                        return (<Star key={item.index.toString()} name='star' size={15} color={colorMain} />);
+                                                                                                                                else if (item.value === 0)
+                                                                                                                                        return (<Star key={item.index.toString()} name='star-half' size={15} color={colorMain} />);
+                                                                                                                                else if (item.value === -1)
+                                                                                                                                        return (<Star key={item.index.toString()} name='star-outline' size={15} color={colorMain} />);
+                                                                                                                        })
+                                                                                                        }
+                                                                                                </View>
+                                                                                                <Text style={styles.address}>{this.state.restaurant.address}</Text>
+                                                                                        </View>
+                                                                                </TouchableOpacity>
+                                                        }
+                                                        {
+                                                                item.image.length === 0 ? null :
+                                                                        item.image.length === 1 ?
+                                                                                <Image
+                                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                        style={styles.image1}
+                                                                                /> :
+                                                                                item.image.length === 2 ?
+                                                                                        <View style={styles.containerImage2}>
                                                                                                 <Image
                                                                                                         source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                        style={styles.image3Row1}
+                                                                                                        style={styles.image2}
                                                                                                 />
-                                                                                                <View style={styles.containerImage3Row2}>
-                                                                                                        <Image
-                                                                                                                source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                                style={styles.image3Row2}
-                                                                                                        />
-                                                                                                        <Image
-                                                                                                                source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                                style={styles.image3Row2}
-                                                                                                        />
-                                                                                                </View>
+                                                                                                <Image
+                                                                                                        source={{ uri: `${urlServer}${item.image[1]}` }}
+                                                                                                        style={styles.image2}
+                                                                                                />
                                                                                         </View> :
-                                                                                        item.image.length === 4 ?
-                                                                                                <View style={styles.containerImage4}>
-                                                                                                        <View style={styles.containerImage4Row}>
-                                                                                                                <Image
-                                                                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                                        style={styles.image4Row}
-                                                                                                                />
+                                                                                        item.image.length === 3 ?
+                                                                                                <View style={styles.containerImage3}>
+                                                                                                        <Image
+                                                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                                                style={styles.image3Row1}
+                                                                                                        />
+                                                                                                        <View style={styles.containerImage3Row2}>
                                                                                                                 <Image
                                                                                                                         source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                                        style={styles.image4Row}
+                                                                                                                        style={styles.image3Row2}
                                                                                                                 />
-                                                                                                        </View>
-                                                                                                        <View style={styles.containerImage4Row}>
                                                                                                                 <Image
                                                                                                                         source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                                        style={styles.image4Row}
-                                                                                                                />
-                                                                                                                <Image
-                                                                                                                        source={{ uri: `${urlServer}${item.image[3]}` }}
-                                                                                                                        style={styles.image4Row}
+                                                                                                                        style={styles.image3Row2}
                                                                                                                 />
                                                                                                         </View>
                                                                                                 </View> :
-                                                                                                item.image.length === 5 ?
-                                                                                                        <View style={styles.containerImage5}>
-                                                                                                                <View style={styles.containerImage5Row}>
+                                                                                                item.image.length === 4 ?
+                                                                                                        <View style={styles.containerImage4}>
+                                                                                                                <View style={styles.containerImage4Row}>
                                                                                                                         <Image
                                                                                                                                 source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                                                style={styles.containerImage5Row1}
+                                                                                                                                style={styles.image4Row}
                                                                                                                         />
                                                                                                                         <Image
                                                                                                                                 source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                                                style={styles.containerImage5Row1}
+                                                                                                                                style={styles.image4Row}
                                                                                                                         />
                                                                                                                 </View>
-                                                                                                                <View style={styles.containerImage5Row}>
+                                                                                                                <View style={styles.containerImage4Row}>
                                                                                                                         <Image
                                                                                                                                 source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                                                style={styles.containerImage5Row2}
+                                                                                                                                style={styles.image4Row}
                                                                                                                         />
                                                                                                                         <Image
                                                                                                                                 source={{ uri: `${urlServer}${item.image[3]}` }}
-                                                                                                                                style={styles.containerImage5Row2}
-                                                                                                                        />
-                                                                                                                        <Image
-                                                                                                                                source={{ uri: `${urlServer}${item.image[4]}` }}
-                                                                                                                                style={styles.containerImage5Row2}
+                                                                                                                                style={styles.image4Row}
                                                                                                                         />
                                                                                                                 </View>
                                                                                                         </View> :
-                                                                                                        <View style={styles.containerImage5}>
-                                                                                                                <View style={styles.containerImage5Row}>
-                                                                                                                        <Image
-                                                                                                                                source={{ uri: `${urlServer}${item.image[0]}` }}
-                                                                                                                                style={styles.containerImage5Row1}
-                                                                                                                        />
-                                                                                                                        <Image
-                                                                                                                                source={{ uri: `${urlServer}${item.image[1]}` }}
-                                                                                                                                style={styles.containerImage5Row1}
-                                                                                                                        />
-                                                                                                                </View>
-                                                                                                                <View style={styles.containerImage5Row}>
-                                                                                                                        <Image
-                                                                                                                                source={{ uri: `${urlServer}${item.image[2]}` }}
-                                                                                                                                style={styles.containerImage5Row2}
-                                                                                                                        />
-                                                                                                                        <Image
-                                                                                                                                source={{ uri: `${urlServer}${item.image[3]}` }}
-                                                                                                                                style={styles.containerImage5Row2}
-                                                                                                                        />
-                                                                                                                        <View style={{
-                                                                                                                                flex: 1
-                                                                                                                        }}>
+                                                                                                        item.image.length === 5 ?
+                                                                                                                <View style={styles.containerImage5}>
+                                                                                                                        <View style={styles.containerImage5Row}>
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                                                                        style={styles.containerImage5Row1}
+                                                                                                                                />
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[1]}` }}
+                                                                                                                                        style={styles.containerImage5Row1}
+                                                                                                                                />
+                                                                                                                        </View>
+                                                                                                                        <View style={styles.containerImage5Row}>
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[2]}` }}
+                                                                                                                                        style={styles.containerImage5Row2}
+                                                                                                                                />
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[3]}` }}
+                                                                                                                                        style={styles.containerImage5Row2}
+                                                                                                                                />
                                                                                                                                 <Image
                                                                                                                                         source={{ uri: `${urlServer}${item.image[4]}` }}
                                                                                                                                         style={styles.containerImage5Row2}
                                                                                                                                 />
-                                                                                                                                <View style={styles.containerImagePlus}>
-                                                                                                                                        <Text style={styles.textImagePlus}>{item.image.length - 5}</Text>
-                                                                                                                                        <Entypo name='plus' size={20} color={colorMain} />
+                                                                                                                        </View>
+                                                                                                                </View> :
+                                                                                                                <View style={styles.containerImage5}>
+                                                                                                                        <View style={styles.containerImage5Row}>
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[0]}` }}
+                                                                                                                                        style={styles.containerImage5Row1}
+                                                                                                                                />
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[1]}` }}
+                                                                                                                                        style={styles.containerImage5Row1}
+                                                                                                                                />
+                                                                                                                        </View>
+                                                                                                                        <View style={styles.containerImage5Row}>
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[2]}` }}
+                                                                                                                                        style={styles.containerImage5Row2}
+                                                                                                                                />
+                                                                                                                                <Image
+                                                                                                                                        source={{ uri: `${urlServer}${item.image[3]}` }}
+                                                                                                                                        style={styles.containerImage5Row2}
+                                                                                                                                />
+                                                                                                                                <View style={{
+                                                                                                                                        flex: 1
+                                                                                                                                }}>
+                                                                                                                                        <Image
+                                                                                                                                                source={{ uri: `${urlServer}${item.image[4]}` }}
+                                                                                                                                                style={styles.containerImage5Row2}
+                                                                                                                                        />
+                                                                                                                                        <View style={styles.containerImagePlus}>
+                                                                                                                                                <Text style={styles.textImagePlus}>{item.image.length - 5}</Text>
+                                                                                                                                                <Entypo name='plus' size={20} color={colorMain} />
+                                                                                                                                        </View>
                                                                                                                                 </View>
                                                                                                                         </View>
                                                                                                                 </View>
-                                                                                                        </View>
-                                                }
-                                        </TouchableOpacity>
-                                        <View style={styles.containerButton}>
-                                                <TouchableOpacity
-                                                        onPress={() => this.onClickButtonLike()}
-                                                >
-                                                        {
-                                                                this.state.isLiked ?
-                                                                        <Text style={styles.textButtonLike}><Text style={styles.textNumberLike}>{this.state.numberLike}</Text>   Đã thích</Text>
-                                                                        :
-                                                                        <Text style={styles.textButtonUnLike}><Text style={styles.textNumberUnLike}>{this.state.numberLike}</Text>  Thích</Text>
                                                         }
                                                 </TouchableOpacity>
-                                                <TouchableOpacity
-                                                        onPress={() => this.onOpenCommentList()}
-                                                >
-                                                        <Text style={styles.textButtonComment}><Text style={styles.textNumberUnLike}>{this.state.numberComment}</Text>   Bình luận</Text>
-                                                </TouchableOpacity>
-                                        </View>
-                                </View>
-                                <Modal
-                                        visible={this.state.visibleComment}
-                                        animated={true}
-                                        animationType='slide'
-                                        onRequestClose={() => {
-                                                this.onCloseCommentList();
-                                        }}
-                                >
-                                        <CommentList
-                                                post={this.state.item}
-                                                onCloseCommentList={this.onCloseCommentList}
-                                                isLiked={this.state.isLiked}
-                                                numberLike={this.state.numberLike}
-                                                onClickButtonLike={this.onClickButtonLike}
-                                                accountLocal={this.state.accountLocal}
-                                        />
-                                </Modal>
-                                <Modal
-                                        visible={this.state.visibleDetailPost}
-                                        animated={true}
-                                        animationType='slide'
-                                        onRequestClose={() => {
-                                                this.onCloseDetailPost();
-                                        }}
-                                >
-                                        <DetailPost
-                                                onCloseDetailPost={this.onCloseDetailPost}
-                                                item={this.state.item}
-                                                isLiked={this.state.isLiked}
-                                                accountPost={this.state.account}
-                                                restaurant={this.state.restaurant}
-                                                numberComment={this.state.numberComment}
-                                                numberLike={this.state.numberLike}
-                                                onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
-                                                onClickButtonLike={this.onClickButtonLike}
-                                                onOpenCommentList={this.onOpenCommentList}
-                                                discount={this.state.discount}
-                                                accountLocal={this.state.accountLocal}
-                                        />
-                                </Modal>
-                                <Modal
-                                        visible={this.state.visiblePopupEdit}
-                                        animated={true}
-                                        animationType='fade'
-                                        onRequestClose={() => this.onClosePopupEdit()}
-                                        transparent
-                                >
-                                        <View style={styles.containerPopupEdit}>
-                                                <View style={styles.popup}>
-                                                        <Text style={styles.titlePopup}>Tùy Chọn</Text>
+                                                <View style={styles.containerButton}>
                                                         <TouchableOpacity
-                                                                onPress={() => this.onClickRemovePost()}
+                                                                onPress={() => this.onClickButtonLike()}
                                                         >
-                                                                <Text style={styles.optionsPopup}>Xóa Bài Viết</Text>
+                                                                {
+                                                                        this.state.isLiked ?
+                                                                                <Text style={styles.textButtonLike}><Text style={styles.textNumberLike}>{this.state.numberLike}</Text>   Đã thích</Text>
+                                                                                :
+                                                                                <Text style={styles.textButtonUnLike}><Text style={styles.textNumberUnLike}>{this.state.numberLike}</Text>  Thích</Text>
+                                                                }
                                                         </TouchableOpacity>
                                                         <TouchableOpacity
-                                                                onPress={() => this.onClosePopupEdit()}
+                                                                onPress={() => this.onOpenCommentList()}
                                                         >
-                                                                <Text style={styles.buttonCancelPopup}>hủy</Text>
+                                                                <Text style={styles.textButtonComment}><Text style={styles.textNumberUnLike}>{this.state.numberComment}</Text>   Bình luận</Text>
                                                         </TouchableOpacity>
                                                 </View>
                                         </View>
-                                </Modal>
-                        </View >
-                );
+                                        <Modal
+                                                visible={this.state.visibleComment}
+                                                animated={true}
+                                                animationType='slide'
+                                                onRequestClose={() => {
+                                                        this.onCloseCommentList();
+                                                }}
+                                        >
+                                                <CommentList
+                                                        post={this.state.item}
+                                                        onCloseCommentList={this.onCloseCommentList}
+                                                        isLiked={this.state.isLiked}
+                                                        numberLike={this.state.numberLike}
+                                                        onClickButtonLike={this.onClickButtonLike}
+                                                        accountLocal={this.state.accountLocal}
+                                                />
+                                        </Modal>
+                                        <Modal
+                                                visible={this.state.visibleDetailPost}
+                                                animated={true}
+                                                animationType='slide'
+                                                onRequestClose={() => {
+                                                        this.onCloseDetailPost();
+                                                }}
+                                        >
+                                                <DetailPost
+                                                        onCloseDetailPost={this.onCloseDetailPost}
+                                                        item={this.state.item}
+                                                        isLiked={this.state.isLiked}
+                                                        accountPost={this.state.account}
+                                                        restaurant={this.state.restaurant}
+                                                        numberComment={this.state.numberComment}
+                                                        numberLike={this.state.numberLike}
+                                                        onChangeScreenDetailPlace={this.onChangeScreenDetailPlace}
+                                                        onClickButtonLike={this.onClickButtonLike}
+                                                        onOpenCommentList={this.onOpenCommentList}
+                                                        discount={this.state.discount}
+                                                        accountLocal={this.state.accountLocal}
+                                                />
+                                        </Modal>
+                                        <Modal
+                                                visible={this.state.visiblePopupEdit}
+                                                animated={true}
+                                                animationType='fade'
+                                                onRequestClose={() => this.onClosePopupEdit()}
+                                                transparent
+                                        >
+                                                <View style={styles.containerPopupEdit}>
+                                                        <View style={styles.popup}>
+                                                                <Text style={styles.titlePopup}>Tùy Chọn</Text>
+                                                                <TouchableOpacity
+                                                                        onPress={() => this.onClickRemovePost()}
+                                                                >
+                                                                        <Text style={styles.optionsPopup}>Xóa Bài Viết</Text>
+                                                                </TouchableOpacity>
+                                                                <TouchableOpacity
+                                                                        onPress={() => this.onClosePopupEdit()}
+                                                                >
+                                                                        <Text style={styles.buttonCancelPopup}>hủy</Text>
+                                                                </TouchableOpacity>
+                                                        </View>
+                                                </View>
+                                        </Modal>
+                                </View >
+                        );
         }
 }
 

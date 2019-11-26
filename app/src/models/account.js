@@ -163,6 +163,35 @@ updateAccountInfoFromDatabaseLocal = async (idAccount, score) => {
         }
 };
 
+updateAccountFromDatabaseLocal = async (idAccount, data) => {
+        try {
+                const realm = await Realm.open({ schema: [AccountSchema, ConversationSchema] });
+                realm.write(() => {
+                        realm.create(Account, {
+                                authorities: data.authorities,
+                                email: data.email,
+                                name: data.name,
+                                phone: data.phone,
+                                id: idAccount,
+                                password: data.password,
+                                score: data.score,
+                                conversation: data.conversation,
+                                avatar: data.avatar,
+                                discount: data.discount
+                        }, true);
+                });
+                return {
+                        error: false,
+                        message: 'ok'
+                };
+        } catch (error) {
+                return {
+                        error: true,
+                        message: error.message
+                };
+        }
+};
+
 removeDiscountAccountFromDatabaseLocal = async (idAccount, idDiscount) => {
         try {
                 const realm = await Realm.open({ schema: [AccountSchema, ConversationSchema] });
@@ -226,5 +255,6 @@ export const AccountModel = {
         AddInfoAccountFromDatabaseLocal,
         updateAccountInfoFromDatabaseLocal,
         removeDiscountAccountFromDatabaseLocal,
-        addDiscountForAccountIntoDatabaseLocal
+        addDiscountForAccountIntoDatabaseLocal,
+        updateAccountFromDatabaseLocal
 };

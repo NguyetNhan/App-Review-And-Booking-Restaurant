@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Modal, ActivityIndicator } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { urlServer, colorMain, background } from '../../config';
 import Feather from 'react-native-vector-icons/Feather';
@@ -18,9 +18,59 @@ export default class FormChonLich extends Component {
                         note: '',
                         visibleModalFriendList: false,
                         guests: [],
+                        idRestaurant: props.idRestaurant,
+                        restaurant: null,
+                        isLoading: true
                 };
                 this.onCloseModalFriendList = this.onCloseModalFriendList.bind(this);
                 this.onCompleteInvite = this.onCompleteInvite.bind(this);
+        }
+
+        async fetchInfoRestaurant () {
+                try {
+                        const response = await fetch(`${urlServer}/restaurant/id/${this.state.idRestaurant}`, {
+                                method: 'GET',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (response.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        response.message,
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                                this.setState({
+                                        isLoading: false
+                                });
+                        } else {
+
+                                this.setState({
+                                        restaurant: response.data,
+                                        isLoading: false
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                        this.setState({
+                                isLoading: false
+                        });
+                }
+        }
+
+        componentDidMount () {
+                this.fetchInfoRestaurant();
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -81,11 +131,19 @@ export default class FormChonLich extends Component {
         }
 
         _setTime (event, time) {
+                const dateNow = new Date();
+                const date = new Date(time);
                 if (event.type === 'set') {
-                        this.setState({
-                                showTime: !this.state.showTime,
-                                date: time
-                        });
+                        if (date.getHours() > this.state.restaurant.timeClose || date.getHours() < this.state.restaurant.timeOpen) {
+                                Alert.alert('Thông Báo', 'Nhà hàng không hoạt động trong thời gian này, mời bạn chọn lại !');
+                        } else if (date < dateNow) {
+                                Alert.alert('Thông Báo', 'Không được chọn thời gian đã qua !');
+                        } else {
+                                this.setState({
+                                        showTime: !this.state.showTime,
+                                        date: time
+                                });
+                        }
                 } else if (event.type === 'dismissed') {
                         this.setState({
                                 showTime: !this.state.showTime,
@@ -119,126 +177,141 @@ export default class FormChonLich extends Component {
                 const date = this.state.date;
                 const convertTime = `${date.getHours()}h ${date.getMinutes()}''`;
                 const convertDate = `${date.getDate()} / ${date.getMonth() + 1} / ${date.getFullYear()}`;
-                return (
-                        <View style={styles.container}>
-                                <View style={styles.form}>
-                                        <Text style={styles.title}>giờ</Text>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this._onClickShowTimePicker();
-                                                }}
-                                        >
-                                                <View style={styles.containerTime}>
-                                                        <Text style={styles.textTime} >{convertTime}</Text>
-                                                </View>
-                                        </TouchableOpacity>
-                                        <Text style={styles.title}>ngày</Text>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this._onClickShowDatePicker();
-                                                }}
-                                        >
-                                                <View style={styles.containerTime}>
-                                                        <Text style={styles.textTime} >{convertDate}</Text>
-                                                </View>
-                                        </TouchableOpacity>
-                                        <Text style={styles.title}>mời bạn bè</Text>
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.onOpenModalFriendList();
-                                                }}
-                                        >
-                                                <Feather
-                                                        name='user-plus'
-                                                        size={20}
-                                                        color='black'
-                                                />
-                                        </TouchableOpacity>
-                                        {
-                                                this.state.guests.map(item =>
-
-                                                        <Text
-                                                                key={item.idAccount}
-                                                                style={styles.nameInvite}
-                                                        >
-                                                                {item.name}
-                                                        </Text>
-                                                )
-                                        }
-                                        <Text style={styles.title}>số lượng người</Text>
-                                        <TextInput
-                                                style={styles.textInput}
-                                                value={this.state.amount}
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                amount: text
-                                                        });
-                                                }}
-                                                keyboardType='numeric'
-                                        />
-                                        <Text style={styles.title}>ghi chú</Text>
-                                        <TextInput
-                                                style={styles.textInputNote}
-                                                value={this.state.note}
-                                                multiline={true}
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                note: text
-                                                        });
-                                                }}
-                                        />
-                                </View>
+                if (this.state.isLoading) {
+                        return (
                                 <View style={{
-                                        flex: 1
-                                }} />
-                                <View style={styles.containerButtonNext}>
-                                        <View />
-                                        <TouchableOpacity
-                                                onPress={() => {
-                                                        this.props._onClickButtonNext();
-                                                }}
-                                                style={styles.buttonNext}>
-                                                <Text style={styles.textButtonNext}>tiếp</Text>
-                                        </TouchableOpacity>
-                                </View>
-                                {
-                                        this.state.showTime ?
-                                                <DateTimePicker
-                                                        value={this.state.date}
-                                                        mode={this.state.modeTime}
-                                                        is24Hour={true}
-                                                        display="clock"
-                                                        onChange={(event, text) => {
-                                                                this._setTime(event, text);
-                                                        }}
-                                                /> : null
-                                }
-                                {
-                                        this.state.showDate ?
-                                                <DateTimePicker
-                                                        value={this.state.date}
-                                                        mode={this.state.modeDate}
-                                                        display="spinner"
-                                                        onChange={(event, text) => {
-                                                                this._setDate(event, text);
-                                                        }}
-                                                /> : null
-                                }
-                                <Modal
-                                        visible={this.state.visibleModalFriendList}
-                                        animated={true}
-                                        animationType='slide'
-                                        onRequestClose={() => {
-                                                this.onCloseModalFriendList();
-                                        }}
-                                >
-                                        <FriendList
-                                                onCloseModalFriendList={this.onCloseModalFriendList}
-                                                onCompleteInvite={this.onCompleteInvite}
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                }}>
+                                        <ActivityIndicator
+                                                animating={true}
+                                                size={30}
+                                                color={colorMain}
                                         />
-                                </Modal>
-                        </View>
-                );
+                                </View>
+                        );
+                } else
+                        return (
+                                <View style={styles.container}>
+                                        <View style={styles.form}>
+                                                <Text style={styles.title}>giờ</Text>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this._onClickShowTimePicker();
+                                                        }}
+                                                >
+                                                        <View style={styles.containerTime}>
+                                                                <Text style={styles.textTime} >{convertTime}</Text>
+                                                        </View>
+                                                </TouchableOpacity>
+                                                <Text style={styles.title}>ngày</Text>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this._onClickShowDatePicker();
+                                                        }}
+                                                >
+                                                        <View style={styles.containerTime}>
+                                                                <Text style={styles.textTime} >{convertDate}</Text>
+                                                        </View>
+                                                </TouchableOpacity>
+                                                <Text style={styles.title}>mời bạn bè</Text>
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this.onOpenModalFriendList();
+                                                        }}
+                                                >
+                                                        <Feather
+                                                                name='user-plus'
+                                                                size={20}
+                                                                color='black'
+                                                        />
+                                                </TouchableOpacity>
+                                                {
+                                                        this.state.guests.map(item =>
+
+                                                                <Text
+                                                                        key={item.idAccount}
+                                                                        style={styles.nameInvite}
+                                                                >
+                                                                        {item.name}
+                                                                </Text>
+                                                        )
+                                                }
+                                                <Text style={styles.title}>số lượng người</Text>
+                                                <TextInput
+                                                        style={styles.textInput}
+                                                        value={this.state.amount}
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        amount: text
+                                                                });
+                                                        }}
+                                                        keyboardType='numeric'
+                                                />
+                                                <Text style={styles.title}>ghi chú</Text>
+                                                <TextInput
+                                                        style={styles.textInputNote}
+                                                        value={this.state.note}
+                                                        multiline={true}
+                                                        onChangeText={(text) => {
+                                                                this.setState({
+                                                                        note: text
+                                                                });
+                                                        }}
+                                                />
+                                        </View>
+                                        <View style={{
+                                                flex: 1
+                                        }} />
+                                        <View style={styles.containerButtonNext}>
+                                                <View />
+                                                <TouchableOpacity
+                                                        onPress={() => {
+                                                                this.props._onClickButtonNext();
+                                                        }}
+                                                        style={styles.buttonNext}>
+                                                        <Text style={styles.textButtonNext}>tiếp</Text>
+                                                </TouchableOpacity>
+                                        </View>
+                                        {
+                                                this.state.showTime ?
+                                                        <DateTimePicker
+                                                                value={this.state.date}
+                                                                mode={this.state.modeTime}
+                                                                is24Hour={true}
+                                                                display="clock"
+                                                                onChange={(event, text) => {
+                                                                        this._setTime(event, text);
+                                                                }}
+                                                        /> : null
+                                        }
+                                        {
+                                                this.state.showDate ?
+                                                        <DateTimePicker
+                                                                value={this.state.date}
+                                                                mode={this.state.modeDate}
+                                                                display="spinner"
+                                                                onChange={(event, text) => {
+                                                                        this._setDate(event, text);
+                                                                }}
+                                                        /> : null
+                                        }
+                                        <Modal
+                                                visible={this.state.visibleModalFriendList}
+                                                animated={true}
+                                                animationType='slide'
+                                                onRequestClose={() => {
+                                                        this.onCloseModalFriendList();
+                                                }}
+                                        >
+                                                <FriendList
+                                                        onCloseModalFriendList={this.onCloseModalFriendList}
+                                                        onCompleteInvite={this.onCompleteInvite}
+                                                />
+                                        </Modal>
+                                </View>
+                        );
         }
 }
 

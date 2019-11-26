@@ -8,7 +8,8 @@ export default class Item extends Component {
                 super(props);
                 this.state = {
                         item: props.item,
-                        account: null
+                        account: null,
+                        isLoading: true
                 };
         }
 
@@ -58,76 +59,89 @@ export default class Item extends Component {
                 const date = new Date(this.state.item.receptionTime);
                 const convertTime = `${date.getHours()}h ${date.getMinutes()}''`;
                 const convertDate = `${date.getDate()} / ${date.getMonth() + 1} / ${date.getFullYear()}`;
-                return (
-                        <TouchableOpacity
-                                onPress={() => {
-                                        this.props._onClickOrder(this.state.item._id);
-                                }}
-                        >
-                                <View style={styles.container}>
-                                        <View style={styles.containerImage}>
-                                                {
-                                                        this.state.account === null ?
-                                                                <ActivityIndicator
-                                                                        animating={true}
-                                                                        size={30}
-                                                                /> :
-                                                                this.state.account.avatar === null ?
-                                                                        <Image
-                                                                                style={styles.image}
-                                                                                source={require('../../assets/images/avatar_user.png')}
-                                                                        /> :
-                                                                        <Image
-                                                                                style={styles.image}
-                                                                                source={this.state.account.avatar}
-                                                                        />
-                                                }
-
-                                                <Text
-                                                        numberOfLines={1}
-                                                        ellipsizeMode='tail'
-                                                        style={styles.valueStatus}>{
-                                                                this.state.item.status === 'cancel' ?
-                                                                        'hủy' :
-                                                                        this.state.item.status === 'waiting' ?
-                                                                                'chờ' :
-                                                                                this.state.item.status === 'activity' ?
-                                                                                        'thực hiện' :
-                                                                                        this.state.item.status === 'complete' ?
-                                                                                                'hoàn thành' : 'hoàn thành'
-                                                        }</Text>
-                                        </View>
-
-                                        <View style={styles.content}>
-                                                <Text style={styles.name}>{this.state.item.customerName}</Text>
-                                                <View style={styles.containerValue}>
-                                                        <Text style={styles.title}>số người: </Text>
-                                                        <Text
-                                                                numberOfLines={1}
-                                                                ellipsizeMode='tail'
-                                                                style={styles.value}>{this.state.item.amountPerson}</Text>
-                                                </View>
-                                                <View style={styles.containerValue}>
-                                                        <Text style={styles.title}>giờ: </Text>
-                                                        <Text style={styles.value}
-                                                        >{convertTime}</Text>
-                                                </View>
-                                                <View style={styles.containerValue}>
-                                                        <Text style={styles.title}>ngày: </Text>
-                                                        <Text style={styles.value}
-                                                        >{convertDate}</Text>
-                                                </View>
-                                                <View style={styles.containerValue}>
-                                                        <Text style={styles.title}>số tiền: </Text>
-                                                        <Text
-                                                                numberOfLines={1}
-                                                                ellipsizeMode='tail'
-                                                                style={styles.value}>{convertVND(this.state.item.totalMoney)} VND</Text>
-                                                </View>
-                                        </View>
+                if (this.state.isLoading)
+                        return (
+                                <View style={{
+                                        flex: 1,
+                                        alignItems: 'center'
+                                }}>
+                                        <ActivityIndicator
+                                                animating={true}
+                                                size={30}
+                                        />
                                 </View>
-                        </TouchableOpacity>
-                );
+                        );
+                else
+                        return (
+                                <TouchableOpacity
+                                        onPress={() => {
+                                                this.props._onClickOrder(this.state.item._id);
+                                        }}
+                                >
+                                        <View style={styles.container}>
+                                                <View style={styles.containerImage}>
+                                                        {
+                                                                this.state.account === null ?
+                                                                        <ActivityIndicator
+                                                                                animating={true}
+                                                                                size={30}
+                                                                        /> :
+                                                                        this.state.account.avatar === null ?
+                                                                                <Image
+                                                                                        style={styles.image}
+                                                                                        source={require('../../assets/images/avatar_user.png')}
+                                                                                /> :
+                                                                                <Image
+                                                                                        style={styles.image}
+                                                                                        source={{ uri: `${urlServer}${this.state.account.avatar}` }}
+                                                                                />
+                                                        }
+
+                                                        <Text
+                                                                numberOfLines={1}
+                                                                ellipsizeMode='tail'
+                                                                style={styles.valueStatus}>{
+                                                                        this.state.item.status === 'cancel' ?
+                                                                                'hủy' :
+                                                                                this.state.item.status === 'waiting' ?
+                                                                                        'chờ' :
+                                                                                        this.state.item.status === 'activity' ?
+                                                                                                'thực hiện' :
+                                                                                                this.state.item.status === 'complete' ?
+                                                                                                        'hoàn thành' : 'hoàn thành'
+                                                                }</Text>
+                                                </View>
+
+                                                <View style={styles.content}>
+                                                        <Text style={styles.name}>{this.state.item.customerName}</Text>
+                                                        <View style={styles.containerValue}>
+                                                                <Text style={styles.title}>số người: </Text>
+                                                                <Text
+                                                                        numberOfLines={1}
+                                                                        ellipsizeMode='tail'
+                                                                        style={styles.value}>{this.state.item.amountPerson}</Text>
+                                                        </View>
+                                                        <View style={styles.containerValue}>
+                                                                <Text style={styles.title}>giờ: </Text>
+                                                                <Text style={styles.value}
+                                                                >{convertTime}</Text>
+                                                        </View>
+                                                        <View style={styles.containerValue}>
+                                                                <Text style={styles.title}>ngày: </Text>
+                                                                <Text style={styles.value}
+                                                                >{convertDate}</Text>
+                                                        </View>
+                                                        <View style={styles.containerValue}>
+                                                                <Text style={styles.title}>số tiền: </Text>
+                                                                <Text
+                                                                        numberOfLines={1}
+                                                                        ellipsizeMode='tail'
+                                                                        style={styles.value}>{convertVND(this.state.item.totalMoney)} VND</Text>
+                                                        </View>
+                                                </View>
+                                        </View>
+                                </TouchableOpacity>
+                        );
         }
 }
 
@@ -146,6 +160,7 @@ const styles = StyleSheet.create({
         image: {
                 width: 80,
                 height: 80,
+                borderRadius: 40
         },
         content: {
                 flex: 1,

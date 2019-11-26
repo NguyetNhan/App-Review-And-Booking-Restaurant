@@ -41,6 +41,7 @@ export default class Item extends Component {
                 const date = new Date(this.state.item.receptionTime);
                 const convertTime = `${date.getHours()}h ${date.getMinutes()}''`;
                 const convertDate = `${date.getDate()} / ${date.getMonth() + 1} / ${date.getFullYear()}`;
+
                 return (
                         <TouchableOpacity
                                 onPress={() => {

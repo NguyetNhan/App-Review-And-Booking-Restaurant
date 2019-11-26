@@ -81,8 +81,27 @@ export default class ItemListMenu extends Component {
                 });
         }
         onClickOpenSelectImage () {
-                this.props.onClickOpenSelectImage()
+                this.props.onClickOpenSelectImage();
         }
+
+        /* async  onClickButtonDelete () {
+                try {
+                        const response = await fetch(`${urlServer}/menu/delete/idFood/${this.state.item._id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(data => data.json());
+                        if (response.error) {
+                                Alert.alert('Thông Báo Lỗi', response.message);
+                        } else {
+                                Alert.alert('Thông Báo', response.message);
+                        }
+                } catch (error) {
+                        Alert.alert('Thông Báo Lỗi', 'Xóa thất bại ! ' + error.message);
+                }
+        } */
         render () {
                 const score = this.state.score;
                 var listStar = [];
@@ -179,9 +198,14 @@ export default class ItemListMenu extends Component {
                                                         >
                                                                 <Text style={styles.textButtonEdit}>Chỉnh Sửa</Text>
                                                         </TouchableOpacity>
-                                                        <TouchableOpacity>
-                                                                <Text style={styles.textButtonDelete}>Xóa</Text>
-                                                        </TouchableOpacity>
+                                                        {/* <TouchableOpacity
+                                                                onPress={() => {
+                                                                        this.onCloseOptionsEdit();
+                                                                        this.onClickButtonDelete();
+                                                                }}
+                                                        >
+                                                                <Text style={styles.textButtonDelete}>Xóa</Text> 
+                                                        </TouchableOpacity>*/}
                                                         <TouchableOpacity>
                                                                 <Text style={styles.textButtonCancel}>Hủy</Text>
                                                         </TouchableOpacity>

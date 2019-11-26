@@ -22,6 +22,7 @@ export default class InfoAccount extends Component {
                                 }
                         ],
                         valueDiscount: null,
+                        idRestaurant: props.idRestaurant
                 };
 
         }
@@ -77,12 +78,18 @@ export default class InfoAccount extends Component {
                                                                                 { cancelable: false },
                                                                         );
                                                                 } else {
-                                                                        discountList.push({
-                                                                                label: `Mã giảm giá ${result.data.percent}%`,
-                                                                                value: result.data.percent,
-                                                                                type: 'percent',
-                                                                                idDiscount: result.data._id
-                                                                        });
+                                                                        if (this.state.idRestaurant === result.data.idRestaurant) {
+                                                                                const dateNow = new Date();
+                                                                                const endDateDiscount = new Date(result.data.endDate);
+                                                                                if (endDateDiscount > dateNow) {
+                                                                                        discountList.push({
+                                                                                                label: `Mã giảm giá ${result.data.percent}%`,
+                                                                                                value: result.data.percent,
+                                                                                                type: 'percent',
+                                                                                                idDiscount: result.data._id
+                                                                                        });
+                                                                                }
+                                                                        }
                                                                 }
                                                         } catch (error) {
                                                                 Alert.alert(

@@ -208,6 +208,7 @@ export default class Order extends Component {
                                                 <FormChonLich
                                                         _onClickButtonNext={this._onClickButtonNext}
                                                         _setChonLich={this._setChonLich}
+                                                          idRestaurant={this.state.idRestaurant}
                                                 />
                                         </View>
                                         <View key="2">
@@ -223,6 +224,7 @@ export default class Order extends Component {
                                                         _onClickButtonPrevious={this._onClickButtonPrevious}
                                                         _setInfoAccount={this._setInfoAccount}
                                                         _onComplete={this._onComplete}
+                                                        idRestaurant={this.state.idRestaurant}
                                                 />
                                         </View>
                                 </ViewPager>
