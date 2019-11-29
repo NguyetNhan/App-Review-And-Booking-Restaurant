@@ -51,6 +51,7 @@ export default class Menu extends Component {
                 this._onClickCompleteAddMenu = this._onClickCompleteAddMenu.bind(this);
                 this._onClickCloseDetailMenu = this._onClickCloseDetailMenu.bind(this);
                 this._onClickOpenDetailMenu = this._onClickOpenDetailMenu.bind(this);
+                this._onRefreshListMenu = this._onRefreshListMenu.bind(this);
         }
 
         async _onGetInfoAccount () {
@@ -139,30 +140,35 @@ export default class Menu extends Component {
         }
 
         _onRefreshListMenu () {
-                this.setState({
-                        page: 1,
-                        listMenu: [],
-                        isLoading: true,
-                        isRefresh: true
-                });
-                this.props.onFetchMenu({
-                        idRestaurant: this.state.idRestaurant,
-                        page: 1
-                });
+                if (!this.state.isLoading) {
+                        this.props.onResetProps();
+                        this.setState({
+                                page: 1,
+                                listMenu: [],
+                                isLoading: true,
+                                isRefresh: true
+                        });
+                        this.props.onFetchMenu({
+                                idRestaurant: this.state.idRestaurant,
+                                page: 1
+                        });
+                }
         }
 
         _onLoadMoreListMenu () {
-                const page = this.state.page;
-                const total_page = this.state.total_page;
-                if (page < total_page) {
-                        this.props.onFetchMenu({
-                                idRestaurant: this.state.idRestaurant,
-                                page: page + 1
-                        });
-                        this.setState({
-                                isLoading: true,
-                                isLoadMore: true
-                        });
+                if (!this.state.isLoading) {
+                        const page = this.state.page;
+                        const total_page = this.state.total_page;
+                        if (page < total_page) {
+                                this.props.onFetchMenu({
+                                        idRestaurant: this.state.idRestaurant,
+                                        page: page + 1
+                                });
+                                this.setState({
+                                        isLoading: true,
+                                        isLoadMore: true
+                                });
+                        }
                 }
         }
 
@@ -257,6 +263,7 @@ export default class Menu extends Component {
                                                                         item={item.item}
                                                                         _onClickOpenDetailMenu={this._onClickOpenDetailMenu}
                                                                         isShowEditFood={this.state.isShowEditFood}
+                                                                        _onRefreshListMenu={this._onRefreshListMenu}
                                                                 />
                                                         );
                                                 }}

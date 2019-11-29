@@ -7,6 +7,7 @@ import Star from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AccountModel } from '../../models/account';
 import CommentList from './comment_list';
 import DetailPost from './detail_post';
+import EditPost from './edit_post';
 
 export default class ItemPostList extends Component {
         constructor (props) {
@@ -25,7 +26,8 @@ export default class ItemPostList extends Component {
                         visibleDetailPost: false,
                         discount: null,
                         visiblePopupEdit: false,
-                        isLoading: true
+                        isLoading: true,
+                        visibleEditPost: false
                 };
                 this.fetchInfoAccountFromLocal();
                 this.onCloseCommentList = this.onCloseCommentList.bind(this);
@@ -33,6 +35,8 @@ export default class ItemPostList extends Component {
                 this.onCloseDetailPost = this.onCloseDetailPost.bind(this);
                 this.onChangeScreenDetailPlace = this.onChangeScreenDetailPlace.bind(this);
                 this.onOpenCommentList = this.onOpenCommentList.bind(this);
+                this.onCloseEditPost = this.onCloseEditPost.bind(this);
+                this.onRefreshMain = this.onRefreshMain.bind(this);
         }
 
         async fetchInfoRestaurant () {
@@ -277,6 +281,20 @@ export default class ItemPostList extends Component {
                 }
         }
 
+        onRefreshMain () {
+                this.props.onRefreshMain();
+        }
+
+        onOpenEditPost () {
+                this.setState({
+                        visibleEditPost: !this.state.visibleEditPost
+                });
+        }
+        onCloseEditPost () {
+                this.setState({
+                        visibleEditPost: !this.state.visibleEditPost
+                });
+        }
         render () {
                 const item = this.state.item;
                 const date = new Date(this.state.item.createDate);
@@ -604,6 +622,14 @@ export default class ItemPostList extends Component {
                                                         <View style={styles.popup}>
                                                                 <Text style={styles.titlePopup}>Tùy Chọn</Text>
                                                                 <TouchableOpacity
+                                                                        onPress={() => {
+                                                                                this.onClosePopupEdit();
+                                                                                this.onOpenEditPost();
+                                                                        }}
+                                                                >
+                                                                        <Text style={styles.optionsPopup}>Chỉnh Sửa</Text>
+                                                                </TouchableOpacity>
+                                                                <TouchableOpacity
                                                                         onPress={() => this.onClickRemovePost()}
                                                                 >
                                                                         <Text style={styles.optionsPopup}>Xóa Bài Viết</Text>
@@ -615,6 +641,18 @@ export default class ItemPostList extends Component {
                                                                 </TouchableOpacity>
                                                         </View>
                                                 </View>
+                                        </Modal>
+                                        <Modal
+                                                visible={this.state.visibleEditPost}
+                                                animationType='slide'
+                                                onRequestClose={() => this.onCloseEditPost()}
+                                        >
+                                                <EditPost
+                                                        onCloseEditPost={this.onCloseEditPost}
+                                                        post={this.state.item}
+                                                        account={this.state.account}
+                                                        onRefreshMain={this.onRefreshMain}
+                                                />
                                         </Modal>
                                 </View >
                         );

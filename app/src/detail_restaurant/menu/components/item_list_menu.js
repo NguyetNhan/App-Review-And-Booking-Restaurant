@@ -23,6 +23,7 @@ export default class ItemListMenu extends Component {
                         visibleEditMenu: false,
                 };
                 this.onCloseEditMenu = this.onCloseEditMenu.bind(this);
+                this._onRefreshListMenu = this._onRefreshListMenu.bind(this);
         }
 
         async fetchMediumScore () {
@@ -82,6 +83,10 @@ export default class ItemListMenu extends Component {
         }
         onClickOpenSelectImage () {
                 this.props.onClickOpenSelectImage();
+        }
+
+        _onRefreshListMenu () {
+                this.props._onRefreshListMenu();
         }
 
         /* async  onClickButtonDelete () {
@@ -220,6 +225,7 @@ export default class ItemListMenu extends Component {
                                         <EditMenu
                                                 food={this.state.item}
                                                 onCloseEditMenu={this.onCloseEditMenu}
+                                                _onRefreshListMenu={this._onRefreshListMenu}
                                         />
                                 </Modal>
                         </TouchableOpacity>

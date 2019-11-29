@@ -299,8 +299,6 @@ export default class EditRestaurant extends Component {
                                 for (let item of image) {
                                         formData.append('restaurant', item);
                                 }
-                        } else {
-                                formData.append('imageRestaurant', this.state.restaurant.imageRestaurant);
                         }
                         formData.append('name', this.state.name);
                         formData.append('introduce', this.state.introduce);
@@ -338,7 +336,7 @@ export default class EditRestaurant extends Component {
                         this.setState({
                                 isLoading: false
                         });
-                        Alert.alert('Thông Báo Lỗi', 'Cập nhật thất bại !');
+                        Alert.alert('Thông Báo Lỗi', 'Cập nhật thất bại ! ' + error.message);
                 }
         }
 
@@ -697,7 +695,7 @@ export default class EditRestaurant extends Component {
                                                 flex: 1,
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
-                                                backgroundColor: 'rgba(0,0,0,0.9)'
+                                                backgroundColor: 'rgba(0,0,0,0.3)'
                                         }}>
                                                 <ActivityIndicator animating={true} size={100} color={colorMain} />
                                         </View>
