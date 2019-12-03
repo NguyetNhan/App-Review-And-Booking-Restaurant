@@ -95,26 +95,17 @@ export default class Person extends Component {
         }
 
         onRefresh () {
-                if (this.state.idAccountView !== null) {
+                /* if (this.state.idAccountView !== null) {
                         if (this.state.idAccountView === this.state.account._id) {
                                 this.props.onFetchAccountView(this.state.account._id);
-                                this.setState({
-                                        type: 'host',
-                                        account: null
-                                });
                         } else {
                                 this.props.onFetchAccountView(this.state.idAccountView);
-                                this.setState({
-                                        type: 'visit',
-                                        account: null
-                                });
                         }
                 } else {
                         this.props.onFetchAccountView(this.state.account._id);
-                        this.setState({
-                                type: 'host'
-                        });
-                }
+                } */
+
+                this.props.onFetchAccountView(this.state.account._id);
                 this.props.onRefreshPostList();
         }
 

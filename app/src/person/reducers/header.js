@@ -6,7 +6,8 @@ import {
         REMOVE_FRIEND_FAILED,
         REMOVE_FRIEND_SUCCEEDED,
         RESET_PROPS_HEADER_PERSON,
-        RESET_PROPS_MESSAGE_HEADER_PERSON
+        RESET_PROPS_MESSAGE_HEADER_PERSON,
+        CHANGE_STATUS_FRIEND
 } from '../actions/types';
 
 
@@ -61,6 +62,10 @@ const HeaderReducers = (state = null, action) => {
                                 resetPropsMessage: {
                                         message: undefined
                                 }
+                        };
+                case CHANGE_STATUS_FRIEND:
+                        return {
+                                changeStatusFriend: action.status
                         };
                 default:
                         return state;

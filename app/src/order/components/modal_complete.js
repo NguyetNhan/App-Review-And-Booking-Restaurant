@@ -93,7 +93,7 @@ export default class Complete extends Component {
                 if (this.state.discount === null) {
                         totalMoney = totalMoneyFood;
                 } else {
-                        var scoreDiscount = this.state.discount.score;
+                        var scoreDiscount = this.state.discount.value;
                         if (this.state.discount.type === 'score') {
                                 totalMoney = totalMoneyFood - scoreDiscount;
                                 if (totalMoney < 0) {

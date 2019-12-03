@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { urlServer, colorMain } from '../../config';
 
 export default class ItemListModalComplete extends Component {
@@ -27,7 +27,7 @@ export default class ItemListModalComplete extends Component {
                                 isLoading: false
                         });
                 } catch (error) {
-                        console.log('error: ', error);
+                        Alert.alert('Thông Báo Lỗi', 'Không thể lấy thông tin món ăn ! ' + error.message);
                 }
         }
 

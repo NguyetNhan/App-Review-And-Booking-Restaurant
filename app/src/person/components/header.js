@@ -17,7 +17,9 @@ export default class Header extends Component {
                         accountClient: null,
                         isFriended: null,
                         visibleEditAccount: false,
-                        isLoading: false
+                        isLoading: false,
+                        visibleOptions: false,
+                        isLoadingRemoveFriend: false
                 };
                 this.onCloseEditAccount = this.onCloseEditAccount.bind(this);
                 this.onRefresh = this.onRefresh.bind(this);
@@ -124,6 +126,52 @@ export default class Header extends Component {
                         });
                 }
 
+        }
+
+        onOpenOptions () {
+                this.setState({
+                        visibleOptions: !this.state.visibleOptions
+                });
+        }
+
+        onCloseOptions () {
+                this.setState({
+                        visibleOptions: !this.state.visibleOptions
+                });
+        }
+
+        async  onClickRemoveFriend () {
+                this.setState({
+                        isLoadingRemoveFriend: true
+                });
+                try {
+                        const response = await fetch(`${urlServer}/friend/delete/idAccountUser/${this.state.accountClient.id}/idAccountFriend/${this.state.account._id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(data => data.json());
+                        if (response.error) {
+                                this.setState({
+                                        isLoadingRemoveFriend: false
+                                });
+                                Alert.alert('Thông Báo Lỗi', response.message);
+                        } else {
+                                this.setState({
+                                        isLoadingRemoveFriend: false,
+                                });
+                                this.props.onChangeStatusFriend(null);
+                                Alert.alert('Thông Báo', response.message);
+                                this.onCloseOptions();
+
+                        }
+                } catch (error) {
+                        this.setState({
+                                isLoadingRemoveFriend: false
+                        });
+                        Alert.alert('Thông Báo Lỗi', 'Xóa thất bại ! ' + error.message);
+                }
         }
 
         componentWillUnmount () {
@@ -239,7 +287,7 @@ export default class Header extends Component {
                                                                                                                                 <Text style={styles.titleOptions}>đã gửi</Text>
                                                                                                                         </View> :
                                                                                                                         <View style={styles.options}>
-                                                                                                                                <TouchableOpacity>
+                                                                                                                                <TouchableOpacity onPress={() => this.onOpenOptions()}>
                                                                                                                                         <FontAwesome5 name='user-check' size={20} color='#2977e5' />
                                                                                                                                 </TouchableOpacity>
                                                                                                                                 <Text style={styles.titleOptions}>bạn bè</Text>
@@ -271,6 +319,34 @@ export default class Header extends Component {
                                                         onCloseEditAccount={this.onCloseEditAccount}
                                                         onRefresh={this.onRefresh}
                                                 />
+                                        </Modal>
+                                        <Modal
+                                                visible={this.state.visibleOptions}
+                                                animationType='fade'
+                                                onRequestClose={() => this.onCloseOptions()}
+                                                transparent
+                                        >
+
+                                                <View style={styles.containerMenuEdit}>
+                                                        {
+                                                                this.state.isLoadingRemoveFriend ?
+                                                                        <View style={styles.contentMenu}>
+                                                                                <ActivityIndicator
+                                                                                        animating={true}
+                                                                                        size={30}
+                                                                                        color={colorMain}
+                                                                                />
+                                                                        </View> :
+                                                                        <View style={styles.contentMenu}>
+                                                                                <TouchableOpacity onPress={() => this.onClickRemoveFriend()}>
+                                                                                        <Text style={styles.textButtonRemoveFriend}>Hủy kết bạn</Text>
+                                                                                </TouchableOpacity>
+                                                                                <TouchableOpacity onPress={() => this.onCloseOptions()}>
+                                                                                        <Text style={styles.textButtonBack}>quay lại</Text>
+                                                                                </TouchableOpacity>
+                                                                        </View>
+                                                        }
+                                                </View>
                                         </Modal>
                                 </View>
                         );
@@ -341,6 +417,26 @@ const styles = StyleSheet.create({
                 textTransform: 'capitalize',
                 fontSize: 12
         },
-
-
+        containerMenuEdit: {
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0,0,0,0.2)'
+        },
+        contentMenu: {
+                backgroundColor: 'white',
+                height: 100,
+                width: 130,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'space-around'
+        },
+        textButtonRemoveFriend: {
+                color: 'red',
+                fontFamily: 'UVN-Baisau-Bold',
+                fontSize: 16
+        },
+        textButtonBack: {
+                fontFamily: 'UVN-Baisau-Regular',
+        }
 });

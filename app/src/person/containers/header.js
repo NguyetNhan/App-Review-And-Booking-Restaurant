@@ -5,7 +5,8 @@ import {
         onRemoveFriend,
         onResetPropsHeader,
         onResetPropsMessageHeader,
-        onCheckIsFriend
+        onCheckIsFriend,
+        onChangeStatusFriend
 } from '../actions';
 
 const mapStateToProps = (state) => {
@@ -27,6 +28,8 @@ const mapStateToProps = (state) => {
                         return headerReducers.resetProps;
                 } else if (headerReducers.resetPropsMessage !== undefined) {
                         return headerReducers.resetPropsMessage;
+                } else if (headerReducers.changeStatusFriend !== undefined) {
+                        return { isFriended: headerReducers.changeStatusFriend };
                 }
         } else
                 return {
@@ -50,6 +53,9 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onResetPropsMessageHeader: () => {
                         dispatch(onResetPropsMessageHeader());
+                },
+                onChangeStatusFriend: (status) => {
+                        dispatch(onChangeStatusFriend(status));
                 }
         };
 };

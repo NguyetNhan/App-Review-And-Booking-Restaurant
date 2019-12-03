@@ -111,24 +111,28 @@ export default class Order extends Component {
         }
 
         _onComplete (info) {
-                const data = {
-                        idClient: info.idClient,
-                        idRestaurant: this.state.idRestaurant,
-                        customerName: info.name,
-                        customerEmail: info.email,
-                        customerPhone: Number.parseInt(info.phone),
-                        amountPerson: Number.parseInt(this.state.amountPerson),
-                        food: this.state.listFoodSelect,
-                        receptionTime: this.state.receptionTime,
-                        totalMoneyFood: Number.parseFloat(this.state.totalMoneyFood),
-                        note: this.state.note,
-                        discount: info.discount,
-                        guests: this.state.guests,
-                };
-                this.setState({
-                        visibleModalComplete: !this.state.visibleModalComplete,
-                        complete: data
-                });
+                if (this.state.listFoodSelect.length === 0) {
+                        Alert.alert('Thông Báo', 'Bạn chưa chọn món ăn !');
+                } else {
+                        const data = {
+                                idClient: info.idClient,
+                                idRestaurant: this.state.idRestaurant,
+                                customerName: info.name,
+                                customerEmail: info.email,
+                                customerPhone: Number.parseInt(info.phone),
+                                amountPerson: Number.parseInt(this.state.amountPerson),
+                                food: this.state.listFoodSelect,
+                                receptionTime: this.state.receptionTime,
+                                totalMoneyFood: Number.parseFloat(this.state.totalMoneyFood),
+                                note: this.state.note,
+                                discount: info.discount,
+                                guests: this.state.guests,
+                        };
+                        this.setState({
+                                visibleModalComplete: !this.state.visibleModalComplete,
+                                complete: data
+                        });
+                }
         }
 
         _onCloseModalComplete () {
@@ -208,7 +212,7 @@ export default class Order extends Component {
                                                 <FormChonLich
                                                         _onClickButtonNext={this._onClickButtonNext}
                                                         _setChonLich={this._setChonLich}
-                                                          idRestaurant={this.state.idRestaurant}
+                                                        idRestaurant={this.state.idRestaurant}
                                                 />
                                         </View>
                                         <View key="2">

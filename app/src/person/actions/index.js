@@ -28,8 +28,16 @@ import {
         RESET_PROPS_ITEM_POST_LIST,
         RESET_PROPS_MESSAGE_ITEM_POST_LIST,
         ACCESS_PLACE_IN_POST,
-        REFRESH_COMMENT_REPLY
+        REFRESH_COMMENT_REPLY,
+        CHANGE_STATUS_FRIEND
 } from './types';
+
+export const onChangeStatusFriend = (status) => {
+        return {
+                type: CHANGE_STATUS_FRIEND,
+                status
+        };
+};
 
 export const onRefreshCommentReply = () => {
         return {

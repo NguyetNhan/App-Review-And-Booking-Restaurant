@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
                 paddingHorizontal: 10
         },
         textEmail: {
-                fontFamily: 'UVN-Baisau-Bold',
+                fontFamily: 'OpenSans-Regular',
         },
         textInPut: {
                 borderBottomWidth: 1,

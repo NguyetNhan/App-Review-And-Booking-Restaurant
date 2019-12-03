@@ -187,6 +187,58 @@ export default class InfoAccount extends Component {
                 };
                 this.props._onActionOrder(info);
         }
+
+        onClickButtonOrder () {
+                if (this.state.name.length === 0) {
+                        Alert.alert('Thông Báo', 'Tên không được bỏ trống !');
+                } else if (this.state.phone.length === 0) {
+                        Alert.alert('Thông Báo', 'Số điện thoại không được bỏ trống !');
+                } else {
+                        if (this.state.valueDiscount !== null) {
+                                this.props._setInfoAccount({
+                                        name: this.state.name,
+                                        email: this.state.email,
+                                        phone: this.state.phone,
+                                        idClient: this.state.account.id,
+                                        discount: {
+                                                name: this.state.discount[this.state.valueDiscount].label,
+                                                value: this.state.discount[this.state.valueDiscount].value,
+                                                type: this.state.discount[this.state.valueDiscount].type,
+                                                idDiscount: this.state.discount[this.state.valueDiscount].idDiscount,
+                                        },
+                                });
+                                this.props._onComplete({
+                                        name: this.state.name,
+                                        email: this.state.email,
+                                        phone: this.state.phone,
+                                        idClient: this.state.account.id,
+                                        discount: {
+                                                name: this.state.discount[this.state.valueDiscount].label,
+                                                value: this.state.discount[this.state.valueDiscount].value,
+                                                type: this.state.discount[this.state.valueDiscount].type,
+                                                idDiscount: this.state.discount[this.state.valueDiscount].idDiscount,
+                                        },
+                                });
+                        }
+                        else {
+                                this.props._setInfoAccount({
+                                        name: this.state.name,
+                                        email: this.state.email,
+                                        phone: this.state.phone,
+                                        idClient: this.state.account.id,
+                                        discount: null,
+                                });
+                                this.props._onComplete({
+                                        name: this.state.name,
+                                        email: this.state.email,
+                                        phone: this.state.phone,
+                                        idClient: this.state.account.id,
+                                        discount: null,
+                                });
+                        }
+                }
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsFormInfoAccount();
         }
@@ -205,16 +257,9 @@ export default class InfoAccount extends Component {
                                                 value={this.state.name}
                                         />
                                         <Text style={styles.textTitle}>email</Text>
-                                        <TextInput
-                                                style={styles.textInput}
-                                                onChangeText={(text) => {
-                                                        this.setState({
-                                                                email: text
-                                                        });
-                                                }}
-                                                value={this.state.email}
-                                                keyboardType='email-address'
-                                        />
+                                        <View style={styles.containerEmail}>
+                                                <Text style={styles.textEmail}>{this.state.email}</Text>
+                                        </View>
                                         <Text style={styles.textTitle}>số điện thoại</Text>
                                         <TextInput
                                                 style={styles.textInput}
@@ -302,48 +347,7 @@ export default class InfoAccount extends Component {
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                                 onPress={() => {
-                                                        if (this.state.valueDiscount !== null) {
-                                                                this.props._setInfoAccount({
-                                                                        name: this.state.name,
-                                                                        email: this.state.email,
-                                                                        phone: this.state.phone,
-                                                                        idClient: this.state.account.id,
-                                                                        discount: {
-                                                                                name: this.state.discount[this.state.valueDiscount].label,
-                                                                                value: this.state.discount[this.state.valueDiscount].value,
-                                                                                type: this.state.discount[this.state.valueDiscount].type,
-                                                                                idDiscount: this.state.discount[this.state.valueDiscount].idDiscount,
-                                                                        },
-                                                                });
-                                                                this.props._onComplete({
-                                                                        name: this.state.name,
-                                                                        email: this.state.email,
-                                                                        phone: this.state.phone,
-                                                                        idClient: this.state.account.id,
-                                                                        discount: {
-                                                                                name: this.state.discount[this.state.valueDiscount].label,
-                                                                                value: this.state.discount[this.state.valueDiscount].value,
-                                                                                type: this.state.discount[this.state.valueDiscount].type,
-                                                                                idDiscount: this.state.discount[this.state.valueDiscount].idDiscount,
-                                                                        },
-                                                                });
-                                                        }
-                                                        else {
-                                                                this.props._setInfoAccount({
-                                                                        name: this.state.name,
-                                                                        email: this.state.email,
-                                                                        phone: this.state.phone,
-                                                                        idClient: this.state.account.id,
-                                                                        discount: null,
-                                                                });
-                                                                this.props._onComplete({
-                                                                        name: this.state.name,
-                                                                        email: this.state.email,
-                                                                        phone: this.state.phone,
-                                                                        idClient: this.state.account.id,
-                                                                        discount: null,
-                                                                });
-                                                        }
+                                                        this.onClickButtonOrder();
                                                 }}
                                                 style={styles.buttonDat}>
                                                 <Text style={styles.textButton}>đặt</Text>
@@ -368,6 +372,16 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
                 marginTop: 10
+        },
+        containerEmail: {
+                paddingHorizontal: 10,
+                height: 50,
+                justifyContent: 'center',
+                backgroundColor: background,
+                borderRadius: 15,
+        },
+        textEmail: {
+                fontFamily: 'OpenSans-Regular',
         },
         textInput: {
                 fontFamily: 'OpenSans-Regular',
