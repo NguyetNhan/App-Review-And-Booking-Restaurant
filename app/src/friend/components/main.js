@@ -103,8 +103,8 @@ export default class Friend extends Component {
                                         for (item of contacts) {
                                                 if (item.phoneNumbers[0] !== undefined) {
                                                         let convert = convertPhoneNumber(item.phoneNumbers[0].number);
-                                                        if (Number.isInteger(convert))
-                                                                phoneList.push(convert);
+                                                        //     if (Number.isInteger(convert))
+                                                        phoneList.push(convert);
                                                 }
                                         }
                                         this.props.onUpdateFriendList(this.state.account.id, phoneList);

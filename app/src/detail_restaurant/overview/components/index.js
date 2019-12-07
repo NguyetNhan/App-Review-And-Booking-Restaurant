@@ -114,7 +114,7 @@ export default class OverView extends Component {
                         prevState.introduce = nextProps.restaurant.introduce;
                         const date = new Date;
                         const hours = date.getHours();
-                        if (hours >= nextProps.restaurant.timeOpen && hours <= nextProps.restaurant.timeClose) {
+                        if (hours >= nextProps.restaurant.timeOpen && hours < nextProps.restaurant.timeClose) {
                                 prevState.statusActivity = true;
                         } else {
                                 prevState.statusActivity = false;
@@ -295,6 +295,12 @@ export default class OverView extends Component {
                                                 />
                                         </View>
                                         <View style={styles.content}>
+                                                {
+                                                        this.state.restaurant === null ? null :
+                                                                this.state.restaurant.status === 'close' ?
+                                                                        <Text style={styles.textCloseRestaurant}>đã ngừng kinh doanh</Text>
+                                                                        : null
+                                                }
                                                 <View>
                                                         <Text style={styles.textTitleRestaurant}
                                                         >{this.state.name}</Text>
@@ -383,57 +389,61 @@ export default class OverView extends Component {
 
                                         </View>
                                         {
-                                                this.state.authorities === null ? null :
-                                                        this.state.authorities === 'admin-restaurant' ? null :
-                                                                this.state.authorities === 'admin' ? null :
-                                                                        this.state.authorities === 'client' ?
-                                                                                <View style={styles.containerButton}>
-                                                                                        <TouchableOpacity style={styles.button}
-                                                                                                onPress={() => {
-                                                                                                        this._onClickOpenModalMap();
-                                                                                                }}
-                                                                                        >
-                                                                                                <IconFontisto name='navigate' size={20} color={colorMain} />
-                                                                                                <Text style={styles.textNavigation}>chỉ đường</Text>
-                                                                                        </TouchableOpacity>
-                                                                                        <TouchableOpacity
-                                                                                                onPress={() => {
-                                                                                                        this.onClickButtonChat();
-                                                                                                }}
-                                                                                                style={styles.button}>
-                                                                                                <Icon name='customerservice' size={20} color={colorMain} />
-                                                                                                <Text style={styles.textNavigation}>Tư Vấn</Text>
-                                                                                        </TouchableOpacity>
-                                                                                        <TouchableOpacity style={styles.button}
-                                                                                                onPress={() => {
-                                                                                                        this._onClickButtonOrder();
-                                                                                                }}
-                                                                                        >
-                                                                                                <IconFontAwesome name='edit' size={20} color={colorMain} />
-                                                                                                <Text style={styles.textNavigation}>Đặt Chỗ</Text>
-                                                                                        </TouchableOpacity>
-                                                                                        {
-                                                                                                this.state.isCheckedFollow ?
-                                                                                                        <TouchableOpacity
+                                                this.state.restaurant === null ? null :
+                                                        this.state.restaurant.status === 'close' ?
+                                                                null
+                                                                :
+                                                                this.state.authorities === null ? null :
+                                                                        this.state.authorities === 'admin-restaurant' ? null :
+                                                                                this.state.authorities === 'admin' ? null :
+                                                                                        this.state.authorities === 'client' ?
+                                                                                                <View style={styles.containerButton}>
+                                                                                                        <TouchableOpacity style={styles.button}
                                                                                                                 onPress={() => {
-                                                                                                                        this.onClickButtonFollow();
+                                                                                                                        this._onClickOpenModalMap();
                                                                                                                 }}
-                                                                                                                style={styles.button}>
-                                                                                                                <IconFontisto name='heart' size={20} color={colorMain} />
-                                                                                                                <Text style={styles.textNavigation}>Bỏ Theo Dõi</Text>
-                                                                                                        </TouchableOpacity> :
-                                                                                                        <TouchableOpacity
-                                                                                                                onPress={() => {
-                                                                                                                        this.onClickButtonFollow();
-                                                                                                                }}
-                                                                                                                style={styles.button}>
-                                                                                                                <IconFontisto name='heart-alt' size={20} color={colorMain} />
-                                                                                                                <Text style={styles.textNavigation}>Theo Dõi</Text>
+                                                                                                        >
+                                                                                                                <IconFontisto name='navigate' size={20} color={colorMain} />
+                                                                                                                <Text style={styles.textNavigation}>chỉ đường</Text>
                                                                                                         </TouchableOpacity>
-                                                                                        }
+                                                                                                        <TouchableOpacity
+                                                                                                                onPress={() => {
+                                                                                                                        this.onClickButtonChat();
+                                                                                                                }}
+                                                                                                                style={styles.button}>
+                                                                                                                <Icon name='customerservice' size={20} color={colorMain} />
+                                                                                                                <Text style={styles.textNavigation}>Tư Vấn</Text>
+                                                                                                        </TouchableOpacity>
+                                                                                                        <TouchableOpacity style={styles.button}
+                                                                                                                onPress={() => {
+                                                                                                                        this._onClickButtonOrder();
+                                                                                                                }}
+                                                                                                        >
+                                                                                                                <IconFontAwesome name='edit' size={20} color={colorMain} />
+                                                                                                                <Text style={styles.textNavigation}>Đặt Chỗ</Text>
+                                                                                                        </TouchableOpacity>
+                                                                                                        {
+                                                                                                                this.state.isCheckedFollow ?
+                                                                                                                        <TouchableOpacity
+                                                                                                                                onPress={() => {
+                                                                                                                                        this.onClickButtonFollow();
+                                                                                                                                }}
+                                                                                                                                style={styles.button}>
+                                                                                                                                <IconFontisto name='heart' size={20} color={colorMain} />
+                                                                                                                                <Text style={styles.textNavigation}>Bỏ Theo Dõi</Text>
+                                                                                                                        </TouchableOpacity> :
+                                                                                                                        <TouchableOpacity
+                                                                                                                                onPress={() => {
+                                                                                                                                        this.onClickButtonFollow();
+                                                                                                                                }}
+                                                                                                                                style={styles.button}>
+                                                                                                                                <IconFontisto name='heart-alt' size={20} color={colorMain} />
+                                                                                                                                <Text style={styles.textNavigation}>Theo Dõi</Text>
+                                                                                                                        </TouchableOpacity>
+                                                                                                        }
 
-                                                                                </View>
-                                                                                : null
+                                                                                                </View>
+                                                                                                : null
                                         }
                                 </ScrollView>
                                 <Modal
@@ -460,6 +470,8 @@ export default class OverView extends Component {
                                         <MenuPopupAdminRestaurant
                                                 onClickCloseMenuPopup={this.onClickCloseMenuPopup}
                                                 onOpenEditRestaurant={this.onOpenEditRestaurant}
+                                                onRefresh={this.onRefresh}
+                                                restaurant={this.state.restaurant}
                                         />
                                 </Modal>
                                 <Modal
@@ -484,7 +496,7 @@ const styles = StyleSheet.create({
                 backgroundColor: background
         },
         containerSliderImage: {
-                marginVertical: 20
+                marginVertical: 5
         },
         containerButton: {
                 flexDirection: 'row',
@@ -568,6 +580,14 @@ const styles = StyleSheet.create({
                 marginTop: 5,
                 fontSize: 12,
                 textTransform: 'capitalize',
+                textAlign: 'center'
+        },
+        textCloseRestaurant: {
+                fontFamily: 'UVN-Baisau-Regular',
+                color: 'red',
+                fontSize: 18,
+                textTransform: 'capitalize',
+                width: '100%',
                 textAlign: 'center'
         }
 });

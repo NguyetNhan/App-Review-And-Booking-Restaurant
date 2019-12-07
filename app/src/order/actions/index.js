@@ -10,8 +10,24 @@ import {
         RESET_PROPS_FORM_INFO_ORDER,
         RESET_PROPS_FORM_TIME_ORDER,
         RESET_PROPS_FORM_MENU_ORDER,
-        RESET_PROPS_MAIN_ORDER
+        RESET_PROPS_MAIN_ORDER,
+        SET_DATE_FOR_FORM_LICH,
+        SET_TIME_FOR_FORM_LICH
 } from './action_types';
+
+export const onSetDateFromLich = (date) => {
+        return {
+                type: SET_DATE_FOR_FORM_LICH,
+                date
+        };
+};
+
+export const onSetTimeFromLich = (time) => {
+        return {
+                type: SET_TIME_FOR_FORM_LICH,
+                time
+        };
+};
 
 export const onFetchListMenu = (data) => {
         return {

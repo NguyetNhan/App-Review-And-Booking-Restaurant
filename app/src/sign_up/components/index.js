@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, StyleSheet, TextInput, Modal, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StatusBar, StyleSheet, TextInput, Modal, ActivityIndicator, Alert, SafeAreaView, ScrollView } from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Validate from 'validate.js';
@@ -62,30 +62,6 @@ export default class SignUp extends Component {
                                         validateError: true
                                 });
                         }
-                } else if (type === 'name') {
-                        const constraints = {
-                                name: {
-                                        length: {
-                                                minimum: 2,
-                                                tooShort: '^*tên phải có %{count} từ trở lên',
-                                                tokenizer: function (value) {
-                                                        return value.split(/\s+/g);
-                                                }
-                                        }
-                                }
-                        };
-                        let result = Validate({ name: (this.state.name).trim() }, constraints);
-                        if (result === undefined) {
-                                this.setState({
-                                        validateName: null,
-                                        validateError: false
-                                });
-                        } else {
-                                this.setState({
-                                        validateName: result.name[0],
-                                        validateError: true
-                                });
-                        }
                 } else if (type === 'pass') {
                         const constraints = {
                                 pass: {
@@ -143,12 +119,15 @@ export default class SignUp extends Component {
         }
 
         onClickButtonSignup () {
-                this.setState({
-                        isLoading: !this.state.isLoading
-                });
-                if (this.state.validateError) {
+
+                if (this.state.phone.length < 10 || this.state.phone.length > 10 || this.state.phone.charAt(0) !== 0) {
+                        Alert.alert('Thông báo', 'Bạn đã nhập sai số điện thoại !');
+                } else if (this.state.validateError) {
                         Alert.alert('Thông báo', 'Bạn đã nhập sai !');
                 } else {
+                        this.setState({
+                                isLoading: !this.state.isLoading
+                        });
                         const data = {
                                 email: this.state.email,
                                 name: this.state.name,
@@ -183,96 +162,101 @@ export default class SignUp extends Component {
                                         <View style={styles.containerTitle}>
                                                 <Text style={styles.textTitle}>Đăng Kí</Text>
                                         </View>
-                                        <View style={styles.containerForm}>
-                                                <View style={styles.containerErrorValidate}>
-                                                        <Text style={styles.textHint}>Họ và tên </Text>
-                                                        <Text style={styles.textError}>{this.state.validateName}</Text>
+                                        <ScrollView>
+                                                <View style={styles.containerForm}>
+
+                                                        <View style={styles.containerErrorValidate}>
+                                                                <Text style={styles.textHint}>Họ và tên </Text>
+                                                                <Text style={styles.textError}>{this.state.validateName}</Text>
+                                                        </View>
+                                                        <TextInput
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                name: text
+                                                                        });
+                                                                }}
+                                                                placeholder='Mộc Nhiên'
+                                                                value={this.state.name}
+                                                                style={styles.textInput} />
+                                                        <View style={styles.containerErrorValidate}>
+                                                                <Text style={styles.textHint}>Email </Text>
+                                                                <Text style={styles.textError}>{this.state.validateEmail}</Text>
+                                                        </View>
+                                                        <TextInput
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                email: text
+                                                                        });
+                                                                        let type = 'email';
+                                                                        this.validate(type);
+                                                                }}
+                                                                placeholder='mocnhien@gmail.com'
+                                                                value={this.state.email}
+                                                                keyboardType='email-address'
+                                                                style={styles.textInput} />
+                                                        <View style={styles.containerErrorValidate}>
+                                                                <Text style={styles.textHint}>Số điện thoại </Text>
+                                                                <Text style={styles.textError}>{this.state.validatePhone}</Text>
+                                                        </View>
+                                                        <TextInput
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                phone: text
+                                                                        });
+                                                                }}
+                                                                placeholder='0123456789'
+                                                                value={this.state.phone}
+                                                                keyboardType='phone-pad'
+                                                                style={styles.textInput} />
+                                                        <View style={styles.containerErrorValidate}>
+                                                                <Text style={styles.textHint}>Mật khẩu </Text>
+                                                                <Text style={styles.textError}>{this.state.validatePass}</Text>
+                                                        </View>
+                                                        <TextInput
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                password: text
+                                                                        });
+                                                                }}
+                                                                placeholder='123456'
+                                                                value={this.state.password}
+                                                                secureTextEntry={true}
+                                                                onEndEditing={() => {
+                                                                        let type = 'pass';
+                                                                        this.validate(type);
+                                                                }}
+                                                                style={styles.textInput} />
+                                                        <View style={styles.containerErrorValidate}>
+                                                                <Text style={styles.textHint}>Xác nhận mật khẩu </Text>
+                                                                <Text style={styles.textError}>{this.state.validateConfirmPass}</Text>
+                                                        </View>
+                                                        <TextInput
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                confirmPass: text
+                                                                        });
+
+                                                                }}
+                                                                placeholder='123456'
+                                                                value={this.state.confirmPass}
+                                                                secureTextEntry={true}
+                                                                onEndEditing={() => {
+                                                                        let type = 'confirm';
+                                                                        this.validate(type);
+                                                                }}
+                                                                style={styles.textInput} />
+
                                                 </View>
-                                                <TextInput
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        name: text
-                                                                });
-                                                                let type = 'name';
-                                                                this.validate(type);
-                                                        }}
-                                                        placeholder='Mộc Nhiên'
-                                                        value={this.state.name}
-                                                        style={styles.textInput} />
-                                                <View style={styles.containerErrorValidate}>
-                                                        <Text style={styles.textHint}>Email </Text>
-                                                        <Text style={styles.textError}>{this.state.validateEmail}</Text>
+                                                <View style={styles.containerButtonSignup}>
+                                                        <TouchableOpacity
+                                                                onPress={() => {
+                                                                        this.onClickButtonSignup();
+                                                                }}
+                                                                style={styles.buttonSignup}>
+                                                                <SimpleLineIcons name="arrow-right" size={25} color="white" />
+                                                        </TouchableOpacity>
                                                 </View>
-                                                <TextInput
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        email: text
-                                                                });
-                                                                let type = 'email';
-                                                                this.validate(type);
-                                                        }}
-                                                        placeholder='mocnhien@gmail.com'
-                                                        value={this.state.email}
-                                                        keyboardType='email-address'
-                                                        style={styles.textInput} />
-                                                <View style={styles.containerErrorValidate}>
-                                                        <Text style={styles.textHint}>Số điện thoại </Text>
-                                                        <Text style={styles.textError}>{this.state.validatePhone}</Text>
-                                                </View>
-                                                <TextInput
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        phone: text
-                                                                });
-                                                                let type = 'phone';
-                                                                this.validate(type);
-                                                        }}
-                                                        placeholder='0123456789'
-                                                        value={this.state.phone}
-                                                        keyboardType='phone-pad'
-                                                        style={styles.textInput} />
-                                                <View style={styles.containerErrorValidate}>
-                                                        <Text style={styles.textHint}>Mật khẩu </Text>
-                                                        <Text style={styles.textError}>{this.state.validatePass}</Text>
-                                                </View>
-                                                <TextInput
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        password: text
-                                                                });
-                                                                let type = 'pass';
-                                                                this.validate(type);
-                                                        }}
-                                                        placeholder='123456'
-                                                        value={this.state.password}
-                                                        secureTextEntry={true}
-                                                        style={styles.textInput} />
-                                                <View style={styles.containerErrorValidate}>
-                                                        <Text style={styles.textHint}>Xác nhận mật khẩu </Text>
-                                                        <Text style={styles.textError}>{this.state.validateConfirmPass}</Text>
-                                                </View>
-                                                <TextInput
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        confirmPass: text
-                                                                });
-                                                                let type = 'confirm';
-                                                                this.validate(type);
-                                                        }}
-                                                        placeholder='123456'
-                                                        value={this.state.confirmPass}
-                                                        secureTextEntry={true}
-                                                        style={styles.textInput} />
-                                        </View>
-                                        <View style={styles.containerButtonSignup}>
-                                                <TouchableOpacity
-                                                        onPress={() => {
-                                                                this.onClickButtonSignup();
-                                                        }}
-                                                        style={styles.buttonSignup}>
-                                                        <SimpleLineIcons name="arrow-right" size={25} color="white" />
-                                                </TouchableOpacity>
-                                        </View>
+                                        </ScrollView>
                                         <Modal
                                                 animationType="slide"
                                                 transparent={true}
@@ -336,6 +320,7 @@ const styles = StyleSheet.create({
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#22D499',
+                marginTop: 30
         },
         buttonBack: {
 

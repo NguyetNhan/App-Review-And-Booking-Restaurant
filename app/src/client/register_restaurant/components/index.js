@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Picker, View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, PermissionsAndroid, Image, Modal, FlatList, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
+import { Alert, View, Picker, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, PermissionsAndroid, Image, Modal, FlatList, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import Geolocation from '@react-native-community/geolocation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
@@ -20,10 +20,8 @@ export default class RegisterRestaurant extends Component {
                         selectImage: null,
                         name: 'Ngọc Linh',
                         phone: '0123456789',
-                        textTinh: 'Thành Phố Hồ Chí Minh',
-                        textQuan: 'Quận Thủ Đức',
-                        address: '147/15 Lý Tế Xuyên',
-                        introduce: 'Có nhiều gái đẹp',
+                        address: '147/15 Lý Tế Xuyên, Quận Thủ Đức, Thành Phố Hồ Chí Minh',
+                        introduce: 'Nhiều món ngon nhất thế giới',
                         type: 'restaurant',
                         isLoading: false,
                         timeOpen: 8,
@@ -245,7 +243,7 @@ export default class RegisterRestaurant extends Component {
                 const data = {
                         name: this.state.name,
                         introduce: this.state.introduce,
-                        address: `${this.state.address}, ${this.state.textQuan}, ${this.state.textTinh}`,
+                        address: this.state.address,
                         image: image,
                         phone: this.state.phone,
                         type: this.state.type,
@@ -275,24 +273,6 @@ export default class RegisterRestaurant extends Component {
                                 ],
                                 { cancelable: false },
                         );
-                } else if (this.state.textTinh.length === 0) {
-                        Alert.alert(
-                                'Thông Báo',
-                                'Tỉnh không được để trống',
-                                [
-                                        { text: 'OK' },
-                                ],
-                                { cancelable: false },
-                        );
-                } else if (this.state.textQuan.length === 0) {
-                        Alert.alert(
-                                'Thông Báo',
-                                'Quận  không được để trống',
-                                [
-                                        { text: 'OK' },
-                                ],
-                                { cancelable: false },
-                        );
                 } else if (this.state.address.length === 0) {
                         Alert.alert(
                                 'Thông Báo',
@@ -311,15 +291,8 @@ export default class RegisterRestaurant extends Component {
                                 ],
                                 { cancelable: false },
                         );
-                } else if (data.phone.length === 0) {
-                        Alert.alert(
-                                'Thông Báo',
-                                'Số điện thoại không được để trống',
-                                [
-                                        { text: 'OK' },
-                                ],
-                                { cancelable: false },
-                        );
+                } else if (data.phone.length < 10 || data.phone.length > 10 || data.phone.charAt(0) !== 0) {
+                        Alert.alert('Thông báo', 'Bạn đã nhập số điện thoại !');
                 } else {
                         this.setState({
                                 isLoading: true
@@ -341,7 +314,7 @@ export default class RegisterRestaurant extends Component {
         }
 
         _onClickComplete (position) {
-              this.setState({
+                this.setState({
                         region: {
                                 latitude: position.latitude,
                                 longitude: position.longitude,
@@ -354,7 +327,7 @@ export default class RegisterRestaurant extends Component {
 
         async  _onEndCompleteEditAddress () {
                 try {
-                        const res = await Geocoder.geocodeAddress(`${this.state.address}, ${this.state.textQuan}, ${this.state.textTinh},Việt Nam`);
+                        const res = await Geocoder.geocodeAddress(this.state.address + ', Việt Nam');
                         this.setState({
                                 marker: {
                                         latitude: res[0].position.lat,
@@ -448,7 +421,7 @@ export default class RegisterRestaurant extends Component {
                                                         value={this.state.phone}
                                                 />
                                                 <Text style={styles.textHint}>Địa chỉ</Text>
-                                                <TextInput style={styles.textInput}
+                                                {/*      <TextInput style={styles.textInput}
                                                         placeholder='Tỉnh, Thành Phố'
                                                         onChangeText={(text) => {
                                                                 this.setState({
@@ -465,13 +438,14 @@ export default class RegisterRestaurant extends Component {
                                                                 });
                                                         }}
                                                         value={this.state.textQuan}
-                                                />
-                                                <TextInput style={styles.textInput} placeholder='Số nhà, Tên đường'
+                                                /> */}
+                                                <TextInput style={styles.textInput} placeholder='Địa chỉ'
                                                         onChangeText={(text) => {
                                                                 this.setState({
                                                                         address: text
                                                                 });
                                                         }}
+                                                        multiline
                                                         value={this.state.address}
                                                         onEndEditing={() => {
                                                                 this._onEndCompleteEditAddress();
@@ -527,7 +501,7 @@ export default class RegisterRestaurant extends Component {
                                                                 <Picker.Item label="15h" value={15} />
                                                                 <Picker.Item label="16h" value={16} />
                                                                 <Picker.Item label="17h" value={17} />
-                                                                <Picker.Item label="18" value={18} />
+                                                                <Picker.Item label="18h" value={18} />
                                                                 <Picker.Item label="19h" value={19} />
                                                                 <Picker.Item label="20h" value={20} />
                                                                 <Picker.Item label="21h" value={21} />
@@ -564,7 +538,7 @@ export default class RegisterRestaurant extends Component {
                                                                 <Picker.Item label="15h" value={15} />
                                                                 <Picker.Item label="16h" value={16} />
                                                                 <Picker.Item label="17h" value={17} />
-                                                                <Picker.Item label="18" value={18} />
+                                                                <Picker.Item label="18h" value={18} />
                                                                 <Picker.Item label="19h" value={19} />
                                                                 <Picker.Item label="20h" value={20} />
                                                                 <Picker.Item label="21h" value={21} />

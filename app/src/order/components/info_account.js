@@ -58,6 +58,14 @@ export default class InfoAccount extends Component {
                                                 { cancelable: false },
                                         );
                                 } else {
+                                        if (resultAccount.data.score > 0) {
+                                                discountList.push({
+                                                        label: `Sử dụng ${resultAccount.data.score} điểm tích lũy`,
+                                                        value: resultAccount.data.score,
+                                                        type: 'score',
+                                                        idDiscount: null
+                                                });
+                                        }
                                         if (resultAccount.data.discount.length > 0) {
                                                 for (item of resultAccount.data.discount) {
                                                         try {
@@ -103,31 +111,16 @@ export default class InfoAccount extends Component {
                                                         }
                                                 }
                                         }
-                                }
-
-                                if (account.data.score <= 0) {
                                         this.setState({
-                                                account: account.data,
-                                                name: account.data.name,
-                                                email: account.data.email,
-                                                phone: (account.data.phone).toString(),
-                                                discount: discountList,
-                                        });
-                                } else {
-                                        discountList.push({
-                                                label: `Sử dụng ${account.data.score} điểm tích lũy`,
-                                                value: account.data.score,
-                                                type: 'score',
-                                                idDiscount: null
-                                        });
-                                        this.setState({
-                                                account: account.data,
-                                                name: account.data.name,
-                                                email: account.data.email,
-                                                phone: (account.data.phone).toString(),
-                                                discount: discountList,
+                                                name: resultAccount.data.name,
+                                                email: resultAccount.data.email,
+                                                phone: resultAccount.data.phone,
                                         });
                                 }
+                                this.setState({
+                                        account: account.data,
+                                        discount: discountList,
+                                });
                         }
                 } catch (error) {
                         Alert.alert(

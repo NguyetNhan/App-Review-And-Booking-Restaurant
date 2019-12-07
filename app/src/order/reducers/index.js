@@ -8,12 +8,23 @@ import {
         RESET_PROPS_MESSAGE_ORDER,
         RESET_PROPS_FORM_INFO_ORDER,
         RESET_PROPS_FORM_MENU_ORDER,
-        RESET_PROPS_FORM_TIME_ORDER
+        RESET_PROPS_FORM_TIME_ORDER,
+        SET_DATE_FOR_FORM_LICH,
+        SET_TIME_FOR_FORM_LICH
 } from '../actions/action_types';
 
 
 const OrderReducers = (state = null, action) => {
         switch (action.type) {
+
+                case SET_DATE_FOR_FORM_LICH:
+                        return {
+                                setDate: action.date
+                        };
+                case SET_TIME_FOR_FORM_LICH:
+                        return {
+                                setTime: action.time
+                        };
                 case FETCH_LIST_MENU_ORDER_SUCCEEDED:
                         return {
                                 fetchMenuSucceeded: {

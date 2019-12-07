@@ -8,7 +8,8 @@ export default class FormChonLich extends Component {
         constructor (props) {
                 super(props);
                 this.state = {
-                        date: new Date(),
+                        day: new Date(),
+                        time: new Date(),
                         modeDate: 'date',
                         modeTime: 'time',
                         showTime: false,
@@ -77,12 +78,18 @@ export default class FormChonLich extends Component {
                 if (nextProps.changePage !== undefined) {
                         if (nextProps.changePage === 'settling') {
                                 nextProps._setChonLich({
-                                        receptionTime: prevState.date,
+                                        receptionTime: new Date(prevState.day.getFullYear(), prevState.day.getMonth() + 1, prevState.day.getDate(), prevState.time.getHours(), prevState.time.getMinutes(), 0, 0),
                                         note: prevState.note,
                                         amountPerson: prevState.amount,
                                         guests: prevState.guests,
                                 });
                         }
+                }
+                if (nextProps.day !== undefined && nextProps.day !== prevState.day) {
+                        prevState.day = nextProps.day;
+                }
+                if (nextProps.time !== undefined && nextProps.time !== prevState.time) {
+                        prevState.time = nextProps.time;
                 }
                 return null;
         }
@@ -102,12 +109,14 @@ export default class FormChonLich extends Component {
 
         _setDate (event, date) {
                 if (event.type === 'set') {
-                        const datenow = Date.now();
-                        if (date > datenow) {
+                        const day = new Date(date);
+                        const dateNow = new Date();
+                        if (date > dateNow) {
                                 this.setState({
                                         showDate: !this.state.showDate,
-                                        date: date
+                                        day: day
                                 });
+                                this.props.onSetDateFromLich(day);
                         }
                         else {
                                 this.setState({
@@ -125,29 +134,25 @@ export default class FormChonLich extends Component {
                 } else if (event.type === 'dismissed') {
                         this.setState({
                                 showDate: !this.state.showDate,
-                                date: this.state.date
                         });
                 }
         }
 
         _setTime (event, time) {
-                const dateNow = new Date();
                 const date = new Date(time);
                 if (event.type === 'set') {
-                        if (date.getHours() > this.state.restaurant.timeClose || date.getHours() < this.state.restaurant.timeOpen) {
+                        if (date.getHours() >= this.state.restaurant.timeClose || date.getHours() < this.state.restaurant.timeOpen) {
                                 Alert.alert('Thông Báo', 'Nhà hàng không hoạt động trong thời gian này, mời bạn chọn lại !');
-                        } else if (date < dateNow) {
-                                Alert.alert('Thông Báo', 'Không được chọn thời gian đã qua !');
                         } else {
                                 this.setState({
                                         showTime: !this.state.showTime,
-                                        date: time
+                                        //    time: date
                                 });
+                                this.props.onSetTimeFromLich(date);
                         }
                 } else if (event.type === 'dismissed') {
                         this.setState({
                                 showTime: !this.state.showTime,
-                                date: this.state.date
                         });
                 }
         }
@@ -174,9 +179,8 @@ export default class FormChonLich extends Component {
                 this.props.onResetPropsFormChonLich();
         }
         render () {
-                const date = this.state.date;
-                const convertTime = `${date.getHours()}h ${date.getMinutes()}''`;
-                const convertDate = `${date.getDate()} / ${date.getMonth() + 1} / ${date.getFullYear()}`;
+                const convertTime = `${this.state.time.getHours()}h ${this.state.time.getMinutes()}''`;
+                const convertDate = `${this.state.day.getDate()} / ${this.state.day.getMonth() + 1} / ${this.state.day.getFullYear()}`;
                 if (this.state.isLoading) {
                         return (
                                 <View style={{
@@ -277,7 +281,7 @@ export default class FormChonLich extends Component {
                                         {
                                                 this.state.showTime ?
                                                         <DateTimePicker
-                                                                value={this.state.date}
+                                                                value={this.state.day}
                                                                 mode={this.state.modeTime}
                                                                 is24Hour={true}
                                                                 display="clock"
@@ -289,7 +293,7 @@ export default class FormChonLich extends Component {
                                         {
                                                 this.state.showDate ?
                                                         <DateTimePicker
-                                                                value={this.state.date}
+                                                                value={this.state.time}
                                                                 mode={this.state.modeDate}
                                                                 display="spinner"
                                                                 onChange={(event, text) => {

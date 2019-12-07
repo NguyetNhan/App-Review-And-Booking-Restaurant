@@ -74,12 +74,13 @@ const styles = StyleSheet.create({
                 width: 80,
                 height: 80,
                 borderColor: colorMain,
-                borderWidth: 1
+                borderWidth: 1,
+                borderRadius: 5
         },
         name: {
                 fontFamily: 'UVN-Baisau-Bold',
                 textTransform: 'capitalize',
-                fontSize: 12,
+                fontSize: 14,
         },
         amount: {
                 fontFamily: 'UVN-Baisau-Regular',

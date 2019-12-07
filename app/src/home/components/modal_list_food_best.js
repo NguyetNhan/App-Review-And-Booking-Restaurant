@@ -9,7 +9,7 @@ export default class ModalListFood extends Component {
                 super(props);
                 this.state = {
                         listFood: [],
-                        isLoading: false,
+                        isLoading: true,
                         page: 1,
                         total_page: null,
                         isRefresh: false,
@@ -24,10 +24,8 @@ export default class ModalListFood extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
-                        prevState.isLoading = nextProps.isLoading;
-                }
-                if (nextProps.listFood !== prevState.listFood && nextProps.listFood !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+
+                if (nextProps.listFood !== prevState.listFood && nextProps.listFood !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
                         prevState.listFood = nextProps.listFood;
                 } else if (nextProps.listFood !== prevState.listFood && nextProps.listFood !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listFood = nextProps.listFood;
@@ -52,27 +50,34 @@ export default class ModalListFood extends Component {
                 if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page;
                 }
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
+                        prevState.isLoading = nextProps.isLoading;
+                }
                 return null;
         }
         onRefresh () {
-                this.setState({
-                        page: 1,
-                        listFood: [],
-                        isLoading: true,
-                        isRefresh: true
-                });
-                this.props.onFetchFoodTheBestForModal(1);
+                if (!this.state.isLoading) {
+                        this.setState({
+                                page: 1,
+                                listFood: [],
+                                isLoading: true,
+                                isRefresh: true
+                        });
+                        this.props.onFetchFoodTheBestForModal(1);
+                }
         }
 
         onLoadMore () {
-                const page = this.state.page;
-                const total_page = this.state.total_page;
-                if (page < total_page) {
-                        this.setState({
-                                isLoading: true,
-                                isLoadMore: true
-                        });
-                        this.props.onFetchFoodTheBestForModal(page + 1);
+                if (!this.state.isLoading) {
+                        const page = this.state.page;
+                        const total_page = this.state.total_page;
+                        if (page < total_page) {
+                                this.setState({
+                                        isLoading: true,
+                                        isLoadMore: true
+                                });
+                                this.props.onFetchFoodTheBestForModal(page + 1);
+                        }
                 }
         }
 

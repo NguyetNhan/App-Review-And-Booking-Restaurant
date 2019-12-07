@@ -257,9 +257,6 @@ export default class Suggestions extends Component {
                                                                 style={styles.textXemThem}>xem thêm</Text>
                                                 </View>
                                         </View>
-
-                                        <Text style={styles.title}>Nhà hàng không gian đẹp</Text>
-                                        <Text style={styles.title}>Quán Coffee không gian yên tĩnh</Text>
                                 </ScrollView>
                                 <Modal
                                         visible={this.state.visibleModalListPlaceBest}

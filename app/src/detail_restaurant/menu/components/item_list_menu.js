@@ -89,10 +89,10 @@ export default class ItemListMenu extends Component {
                 this.props._onRefreshListMenu();
         }
 
-        /* async  onClickButtonDelete () {
+        async  onClickButtonDelete () {
                 try {
                         const response = await fetch(`${urlServer}/menu/delete/idFood/${this.state.item._id}`, {
-                                method: 'DELETE',
+                                method: 'PUT',
                                 headers: {
                                         Accept: 'application/json',
                                         'Content-Type': 'application/json',
@@ -102,11 +102,12 @@ export default class ItemListMenu extends Component {
                                 Alert.alert('Thông Báo Lỗi', response.message);
                         } else {
                                 Alert.alert('Thông Báo', response.message);
+                                this.props._onRefreshListMenu();
                         }
                 } catch (error) {
                         Alert.alert('Thông Báo Lỗi', 'Xóa thất bại ! ' + error.message);
                 }
-        } */
+        }
         render () {
                 const score = this.state.score;
                 var listStar = [];
@@ -203,14 +204,14 @@ export default class ItemListMenu extends Component {
                                                         >
                                                                 <Text style={styles.textButtonEdit}>Chỉnh Sửa</Text>
                                                         </TouchableOpacity>
-                                                        {/* <TouchableOpacity
+                                                        <TouchableOpacity
                                                                 onPress={() => {
                                                                         this.onCloseOptionsEdit();
                                                                         this.onClickButtonDelete();
                                                                 }}
                                                         >
-                                                                <Text style={styles.textButtonDelete}>Xóa</Text> 
-                                                        </TouchableOpacity>*/}
+                                                                <Text style={styles.textButtonDelete}>Xóa</Text>
+                                                        </TouchableOpacity>
                                                         <TouchableOpacity>
                                                                 <Text style={styles.textButtonCancel}>Hủy</Text>
                                                         </TouchableOpacity>

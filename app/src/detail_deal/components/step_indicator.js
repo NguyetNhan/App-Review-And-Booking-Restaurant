@@ -158,7 +158,6 @@ export default class Index extends Component {
                                                                                                                                         onClickChat={this.onClickChat}
                                                                                                                                 />
                                                                                                         }
-
                                                                                                 </View>
                                                                                         </View>
                                                                                         :

@@ -72,7 +72,7 @@ export default class Complete extends Component {
                         if (scoreDiscount !== undefined) {
                                 let complete = this.state.complete;
                                 complete.totalMoney = totalMoney;
-                                complete.discount.score = scoreDiscount;
+                                complete.discount.value = scoreDiscount;
                                 this.props._onActionOrder(complete);
                                 this.props._onCloseModalComplete();
                         } else {

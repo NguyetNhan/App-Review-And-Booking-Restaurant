@@ -303,7 +303,7 @@ export default class EditRestaurant extends Component {
                         formData.append('name', this.state.name);
                         formData.append('introduce', this.state.introduce);
                         formData.append('address', this.state.address);
-                        formData.append('phone', Number.parseInt(this.state.phone));
+                        formData.append('phone', this.state.phone);
                         formData.append('idAdmin', this.state.restaurant.idAdmin);
                         formData.append('type', this.state.type);
                         formData.append('timeOpen', this.state.timeOpen);
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
                 alignItems: 'center',
         },
         textHeader: {
-                fontFamily: 'UVN-Baisau-Bold',
+                fontFamily: 'UVN-Baisau-Regular',
                 fontSize: 16,
                 textTransform: 'capitalize'
         },

@@ -141,7 +141,7 @@ export default class FriendList extends Component {
                                                         this.onClickButtonOk();
                                                 }}
                                                 style={styles.buttonOk}>
-                                                <Text style={styles.textButtonOk}>OK</Text>
+                                                <Text style={styles.textButtonOk}>Mời</Text>
                                         </TouchableOpacity>
                                 </View>
                                 <FlatList
@@ -189,20 +189,15 @@ const styles = StyleSheet.create({
                 alignItems: 'center',
         },
         textHeader: {
-                fontFamily: 'UVN-Baisau-Bold',
+                fontFamily: 'UVN-Baisau-Regular',
                 textTransform: 'capitalize',
                 fontSize: 16
         },
         textButtonOk: {
                 fontFamily: 'UVN-Baisau-Bold',
-                color: 'white'
+                color: colorMain,
+                fontSize: 16
         },
         buttonOk: {
-                backgroundColor: colorMain,
-                borderRadius: 10,
-                width: 45,
-                height: 30,
-                alignItems: 'center',
-                justifyContent: 'center'
         }
 });

@@ -119,7 +119,7 @@ export default class Order extends Component {
                                 idRestaurant: this.state.idRestaurant,
                                 customerName: info.name,
                                 customerEmail: info.email,
-                                customerPhone: Number.parseInt(info.phone),
+                                customerPhone: info.phone,
                                 amountPerson: Number.parseInt(this.state.amountPerson),
                                 food: this.state.listFoodSelect,
                                 receptionTime: this.state.receptionTime,

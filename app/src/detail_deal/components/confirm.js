@@ -5,6 +5,7 @@ import { convertVND } from '../../functions/convert';
 import ItemListMenu from '../../order/components/item_list_modal_complete';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalQrClient from './modal_qr_client';
+import EditDeal from './edit_deal';
 
 export default class Confirm extends Component {
         constructor (props) {
@@ -27,8 +28,10 @@ export default class Confirm extends Component {
                         guests: props.item.guests,
                         isLoading: false,
                         visibleModalQrClient: false,
+                        visibleEditDeal: false
                 };
                 this._onCloseModalQrClient = this._onCloseModalQrClient.bind(this);
+                this.onCloseEditDeal = this.onCloseEditDeal.bind(this);
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -101,6 +104,18 @@ export default class Confirm extends Component {
                 this.props._onChangeScreenRestaurant(this.state.item);
         }
 
+        onOpenEditDeal = () => {
+                this.setState({
+                        visibleEditDeal: !this.state.visibleEditDeal
+                })
+        }
+
+        onCloseEditDeal = () => {
+                this.setState({
+                        visibleEditDeal: !this.state.visibleEditDeal
+                })
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsConfirm();
         }
@@ -142,10 +157,15 @@ export default class Confirm extends Component {
                                                                         this.state.account.authorities === 'client' ?
                                                                                 <View style={styles.containerButton}>
                                                                                         <TouchableOpacity
+                                                                                                onPress={this.onOpenEditDeal}
+                                                                                                style={styles.buttonAgree}>
+                                                                                                <Text style={styles.textButtonAgree}>Chỉnh sửa</Text>
+                                                                                        </TouchableOpacity>
+                                                                                        <TouchableOpacity
                                                                                                 onPress={() => {
                                                                                                         this._onConfirmCancel();
                                                                                                 }}
-                                                                                                style={styles.buttonCancelClient}>
+                                                                                                style={styles.buttonCancel}>
                                                                                                 <Text style={styles.textButtonCancel}>hủy đặt chỗ</Text>
                                                                                         </TouchableOpacity>
                                                                                 </View>
@@ -328,7 +348,16 @@ export default class Confirm extends Component {
                                                         _onCloseModalQrClient={this._onCloseModalQrClient}
                                                 />
                                         </Modal>
-
+                                        <Modal
+                                                visible={this.state.visibleEditDeal}
+                                                animationType='slide'
+                                                onRequestClose={this.onCloseEditDeal}
+                                        >
+                                                <EditDeal
+                                                        onCloseEditDeal={this.onCloseEditDeal}
+                                                        deal={this.state.item}
+                                                />
+                                        </Modal>
                                 </View>
                         );
                 }

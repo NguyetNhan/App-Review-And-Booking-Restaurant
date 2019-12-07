@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
                         return {
                                 listFood: modalListFoodBestReducers.fetchListFoodTheBestForModalSucceeded.data.data,
                                 page: modalListFoodBestReducers.fetchListFoodTheBestForModalSucceeded.data.page,
-                                total_page: modalListFoodBestReducers.fetchListFoodTheBestForModalSucceeded.total_page,
+                                total_page: modalListFoodBestReducers.fetchListFoodTheBestForModalSucceeded.data.total_page,
                                 isLoading: false
                         };
                 } else if (modalListFoodBestReducers.fetchListFoodTheBestForModalFailed !== undefined) {

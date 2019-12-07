@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, PermissionsAndroid, Alert, Modal, Dimensions, FlatList } from 'react-native';
+import { View, Text, Picker, Image, StyleSheet, TouchableOpacity, TextInput, PermissionsAndroid, Alert, Modal, Dimensions, FlatList } from 'react-native';
 import { urlServer, colorMain, background } from '../../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { AccountModel } from '../../models/account';
 import CameraRoll from '@react-native-community/cameraroll';
 import FormData from 'FormData';
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
 const { height, width } = Dimensions.get('window');
 export default class EditAccount extends Component {
@@ -22,7 +23,18 @@ export default class EditAccount extends Component {
                         has_next_page: false,
                         visibleModalSelectImage: false,
                         isLoading: false,
-                        imageSelect: null
+                        imageSelect: null,
+                        valueGioiTinh: 0,
+                        gioiTinh: [
+                                {
+                                        label: 'Nam',
+                                        value: 1,
+                                },
+                                {
+                                        label: 'Nữ',
+                                        value: 2,
+                                }
+                        ],
                 };
         }
         async  requestCameraPermission () {
@@ -190,6 +202,60 @@ export default class EditAccount extends Component {
                                                         });
                                                 }}
                                         />
+                                        <Text style={styles.textTitle}>Giới tính</Text>
+                                        {
+                                                this.state.gioiTinh.map((item, index) => {
+                                                        if (item.value === 0)
+                                                                return null;
+                                                        else
+                                                                return (<RadioButton
+                                                                        labelHorizontal={true}
+                                                                        key={index}
+                                                                >
+                                                                        <RadioButtonInput
+                                                                                obj={item}
+                                                                                index={index}
+                                                                                isSelected={this.state.valueGioiTinh === index}
+                                                                                onPress={() => {
+                                                                                        if (this.state.valueGioiTinh === index)
+                                                                                                this.setState({
+                                                                                                        valueGioiTinh: null
+                                                                                                });
+                                                                                        else
+                                                                                                this.setState({
+                                                                                                        valueGioiTinh: index
+                                                                                                });
+                                                                                }}
+                                                                                borderWidth={2}
+                                                                                buttonInnerColor={colorMain}
+                                                                                buttonOuterColor={this.state.valueGioiTinh === index ? colorMain : '#000'}
+                                                                                buttonSize={15}
+                                                                                buttonOuterSize={25}
+                                                                                buttonStyle={{}}
+                                                                                buttonWrapStyle={{ marginLeft: 10 }}
+                                                                        />
+                                                                        <RadioButtonLabel
+                                                                                obj={item}
+                                                                                index={index}
+                                                                                labelHorizontal={true}
+                                                                                onPress={() => {
+                                                                                        if (this.state.valueGioiTinh === index)
+                                                                                                this.setState({
+                                                                                                        valueGioiTinh: null
+                                                                                                });
+                                                                                        else
+                                                                                                this.setState({
+                                                                                                        valueGioiTinh: index
+                                                                                                });
+                                                                                }}
+                                                                                labelStyle={styles.textLabelButtonRadio}
+                                                                                labelWrapStyle={{
+                                                                                }}
+                                                                        />
+                                                                </RadioButton>);
+                                                })
+                                        }
+
                                         <Text style={styles.textTitle}>Email</Text>
                                         <View style={styles.containerEmail}>
                                                 <Text style={styles.textEmail}>{this.state.account.email}</Text>
@@ -383,5 +449,12 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Regular',
                 color: 'black',
                 fontSize: 18,
+        },
+        containerDiscount: {
+                marginTop: 5
+        },
+        textLabelButtonRadio: {
+                fontFamily: 'UVN-Baisau-Regular',
+                textTransform: 'capitalize'
         },
 });

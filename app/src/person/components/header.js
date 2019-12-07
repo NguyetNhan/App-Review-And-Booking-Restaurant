@@ -19,7 +19,8 @@ export default class Header extends Component {
                         visibleEditAccount: false,
                         isLoading: false,
                         visibleOptions: false,
-                        isLoadingRemoveFriend: false
+                        isLoadingRemoveFriend: false,
+                        totalFriend: 0
                 };
                 this.onCloseEditAccount = this.onCloseEditAccount.bind(this);
                 this.onRefresh = this.onRefresh.bind(this);
@@ -46,6 +47,7 @@ export default class Header extends Component {
                         const idAccountClient = await this.fetchAccountClientFromLocal();
                         this.props.onCheckIsFriend(idAccountClient, this.state.account._id);
                 }
+                this.fetchTotalFriend();
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -85,7 +87,7 @@ export default class Header extends Component {
                 this.setState({
                         isLoading: true
                 });
-
+                this.fetchTotalFriend();
                 try {
                         const result = await fetch(`${urlServer}/auth/id/${this.state.account._id}`, {
                                 method: 'GET',
@@ -174,6 +176,27 @@ export default class Header extends Component {
                 }
         }
 
+        async fetchTotalFriend () {
+                try {
+                        const response = await fetch(`${urlServer}/friend/get-total-friend/idAccount/${this.state.account._id}`, {
+                                method: 'GET',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(data => data.json());
+                        if (response.error) {
+                                Alert.alert('Thông Báo Lỗi', response.message);
+                        } else {
+                                this.setState({
+                                        totalFriend: response.totalFriend
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert('Thông Báo Lỗi', error.message);
+                }
+        }
+
         componentWillUnmount () {
                 this.props.onResetPropsHeader();
         }
@@ -252,7 +275,7 @@ export default class Header extends Component {
                                                                                                         <Text style={styles.titleOptions}>điểm</Text>
                                                                                                 </View>
                                                                                                 <View style={styles.options}>
-                                                                                                        <Text style={styles.numberFriend}>10</Text>
+                                                                                                        <Text style={styles.numberFriend}>{this.state.totalFriend}</Text>
                                                                                                         <Text style={styles.titleOptions}>bạn bè</Text>
                                                                                                 </View>
                                                                                         </View>

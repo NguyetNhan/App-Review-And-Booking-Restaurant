@@ -34,7 +34,7 @@ export function convertPhoneNumber (data) {
                         convert = string;
                 }
         }
-        return Number.parseInt(convert);
+        return convert;
 }
 
 export function convertDate (date) {
