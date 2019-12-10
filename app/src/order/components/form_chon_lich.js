@@ -312,6 +312,7 @@ export default class FormChonLich extends Component {
                                                 <FriendList
                                                         onCloseModalFriendList={this.onCloseModalFriendList}
                                                         onCompleteInvite={this.onCompleteInvite}
+                                                        oldFriendListInvited={[]}
                                                 />
                                         </Modal>
                                 </View>

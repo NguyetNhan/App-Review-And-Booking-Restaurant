@@ -47,7 +47,7 @@ export default class MapDirections extends Component {
                                                 }
                                         });
                                 }, (error) => {
-                                        console.log('error: ', error);
+                                        alert('Chức năng này không được bạn cho phép sử dụng ! ' + error.message);
                                 }, {
                                         enableHighAccuracy: true,
                                         timeout: 20000,
@@ -57,7 +57,7 @@ export default class MapDirections extends Component {
                                 alert('Chức năng này không được bạn cho phép sử dụng !');
                         }
                 } catch (err) {
-                        console.warn(err);
+                        alert('Chức năng này không được bạn cho phép sử dụng ! ' + err.message);
                 }
         }
 
@@ -113,7 +113,7 @@ export default class MapDirections extends Component {
                                                                 });
                                                         }}
                                                         onError={(errorMessage) => {
-                                                                Alert.alert('Thông Báo Lỗi', errorMessage.message)  
+                                                                Alert.alert('Thông Báo Lỗi', errorMessage.message)
                                                         }}
                                                 /> : null
                                         }

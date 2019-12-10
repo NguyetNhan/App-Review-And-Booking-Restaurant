@@ -7,7 +7,7 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
 import Carousel from 'react-native-snap-carousel';
 import { AccountModel } from '../../../models/account';
-import MapDirections from '../../../client/register_restaurant/components/map';
+import MapDirections from './map';
 import Star from 'react-native-vector-icons/MaterialCommunityIcons';
 import MenuPopupAdminRestaurant from './menu_popup_admin_restaurant';
 import EditRestaurant from './edit_restaurant';

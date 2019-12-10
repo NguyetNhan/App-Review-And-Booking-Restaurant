@@ -14,7 +14,7 @@ export default class SelectPlaceOnMap extends Component {
                         region: props._region,
                         marker: props._marker
                 };
-                // this.requestLocationPermission();
+                //    this.requestLocationPermission();
         }
 
 

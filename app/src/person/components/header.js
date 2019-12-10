@@ -220,7 +220,7 @@ export default class Header extends Component {
                                 <View style={styles.container}>
                                         <View style={styles.containerHeader}>
                                                 {
-                                                        this.state.account.avatar === null ?
+                                                        this.state.account.avatar == null ?
                                                                 <View
                                                                         style={{
                                                                                 backgroundColor: colorMain,
@@ -291,30 +291,32 @@ export default class Header extends Component {
                                                                                         </View>
                                                                                         <View style={styles.containerOptions}>
                                                                                                 {
-                                                                                                        this.state.isFriended === null ?
-                                                                                                                <View style={styles.options}>
-                                                                                                                        <TouchableOpacity
-                                                                                                                                onPress={() => {
-                                                                                                                                        this.props.onAddFriend(this.state.accountClient.id, this.state.account._id);
-                                                                                                                                }}
-                                                                                                                        >
-                                                                                                                                <FontAwesome5 name='user-plus' size={20} color='gray' />
-                                                                                                                        </TouchableOpacity>
-                                                                                                                        <Text style={styles.titleOptions}>kết bạn</Text>
-                                                                                                                </View> :
-                                                                                                                this.state.isFriended === 'waiting' ?
-                                                                                                                        <View style={styles.options}>
-                                                                                                                                <TouchableOpacity>
-                                                                                                                                        <FontAwesome5 name='user-clock' size={20} color='#2977e5' />
-                                                                                                                                </TouchableOpacity>
-                                                                                                                                <Text style={styles.titleOptions}>đã gửi</Text>
-                                                                                                                        </View> :
-                                                                                                                        <View style={styles.options}>
-                                                                                                                                <TouchableOpacity onPress={() => this.onOpenOptions()}>
-                                                                                                                                        <FontAwesome5 name='user-check' size={20} color='#2977e5' />
-                                                                                                                                </TouchableOpacity>
-                                                                                                                                <Text style={styles.titleOptions}>bạn bè</Text>
-                                                                                                                        </View>
+                                                                                                        this.state.accountClient === null ? null :
+                                                                                                                this.state.accountClient.authorities === 'client' ?
+                                                                                                                        this.state.isFriended === null ?
+                                                                                                                                <View style={styles.options}>
+                                                                                                                                        <TouchableOpacity
+                                                                                                                                                onPress={() => {
+                                                                                                                                                        this.props.onAddFriend(this.state.accountClient.id, this.state.account._id);
+                                                                                                                                                }}
+                                                                                                                                        >
+                                                                                                                                                <FontAwesome5 name='user-plus' size={20} color='gray' />
+                                                                                                                                        </TouchableOpacity>
+                                                                                                                                        <Text style={styles.titleOptions}>kết bạn</Text>
+                                                                                                                                </View> :
+                                                                                                                                this.state.isFriended === 'waiting' ?
+                                                                                                                                        <View style={styles.options}>
+                                                                                                                                                <TouchableOpacity>
+                                                                                                                                                        <FontAwesome5 name='user-clock' size={20} color='#2977e5' />
+                                                                                                                                                </TouchableOpacity>
+                                                                                                                                                <Text style={styles.titleOptions}>đã gửi</Text>
+                                                                                                                                        </View> :
+                                                                                                                                        <View style={styles.options}>
+                                                                                                                                                <TouchableOpacity onPress={() => this.onOpenOptions()}>
+                                                                                                                                                        <FontAwesome5 name='user-check' size={20} color='#2977e5' />
+                                                                                                                                                </TouchableOpacity>
+                                                                                                                                                <Text style={styles.titleOptions}>bạn bè</Text>
+                                                                                                                                        </View> : null
                                                                                                 }
                                                                                                 <View style={styles.options}>
                                                                                                         <TouchableOpacity

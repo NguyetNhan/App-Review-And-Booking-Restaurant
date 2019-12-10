@@ -129,6 +129,9 @@ export default class ConfirmRestaurant extends Component {
                                         visible={this.state.visibleFormConfirm}
                                         animationType="slide"
                                         transparent={false}
+                                        onRequestClose={() => this.setState({
+                                                visibleFormConfirm: !this.state.visibleFormConfirm
+                                        })}
                                 >
                                         <ScrollView>
                                                 <View style={styles.containerFormConfirm}>
@@ -195,7 +198,7 @@ export default class ConfirmRestaurant extends Component {
                                                 </View>
                                         </ScrollView>
                                 </Modal>
-                        </View>
+                        </View >
                 );
         }
 }
@@ -261,6 +264,7 @@ const styles = StyleSheet.create({
                 fontFamily: 'UVN-Baisau-Bold',
                 color: 'black',
                 fontSize: 30,
+                textTransform: 'capitalize'
         },
         containerFormTextConfirm: {
                 alignItems: 'center',

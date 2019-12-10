@@ -10,7 +10,7 @@ export default class Deal extends Component {
                 super(props);
                 this.state = {
                         account: null,
-                        isLoading: false,
+                        isLoading: true,
                         listOrder: [],
                         page: 1,
                         total_page: null,
@@ -82,7 +82,7 @@ export default class Deal extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
+                if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
                         prevState.listOrder = nextProps.listOrder;
                 } else if (nextProps.listOrder !== prevState.listOrder && nextProps.listOrder !== undefined && prevState.isRefresh && !prevState.isLoadMore && !prevState.isLoading) {
                         prevState.listOrder = nextProps.listOrder;

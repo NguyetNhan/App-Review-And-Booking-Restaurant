@@ -291,8 +291,8 @@ export default class RegisterRestaurant extends Component {
                                 ],
                                 { cancelable: false },
                         );
-                } else if (data.phone.length < 10 || data.phone.length > 10 || data.phone.charAt(0) !== 0) {
-                        Alert.alert('Thông báo', 'Bạn đã nhập số điện thoại !');
+                } else if (data.phone.length < 10 || data.phone.length > 10 || data.phone.charAt(0) != '0') {
+                        Alert.alert('Thông báo', 'Bạn đã nhập sai số điện thoại !');
                 } else {
                         this.setState({
                                 isLoading: true
@@ -351,77 +351,90 @@ export default class RegisterRestaurant extends Component {
         }
 
         render () {
-                return (
-                        <View style={styles.container}>
-                                <StatusBar
-                                        backgroundColor='white'
-                                        barStyle='dark-content'
-                                />
-                                <View style={styles.containerHeader}>
-                                        <TouchableOpacity onPress={() => {
-                                                this.props.navigation.goBack();
-                                        }}>
-                                                <Icon name='arrowleft' size={25} color='black' />
-                                        </TouchableOpacity>
-                                        <Text style={styles.textHeader}>Đăng kí địa điểm kinh doanh</Text>
+                if (this.state.isLoading)
+                        return (
+                                <View style={{
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: 'rgba(0,0,0,0.9)'
+                                }}>
+                                        <ActivityIndicator animating={true} size={100} color={colorMain} />
                                 </View>
-                                <ScrollView>
-                                        <View style={styles.containerForm}>
-                                                <Text style={styles.textHint}>Tên địa điểm</Text>
-                                                <TextInput style={styles.textInput}
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        name: text
-                                                                });
-                                                        }}
-                                                        value={this.state.name}
-                                                />
-                                                <Text style={styles.textHint}>Giới thiệu</Text>
-                                                <TextInput style={{
-                                                        borderBottomWidth: 1,
-                                                        fontFamily: 'OpenSans-Regular',
-                                                        height: 100
-                                                }}
-                                                        editable={true}
-                                                        placeholder='Tối đa 10 dòng'
-                                                        multiline={true}
-                                                        numberOfLines={10}
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        introduce: text
-                                                                });
-                                                        }}
-                                                        value={this.state.introduce}
-                                                />
-                                                <Text style={styles.textHint}>Loại địa điểm</Text>
-                                                <Picker
-                                                        selectedValue={this.state.type}
-                                                        style={{
-                                                                height: 50,
+                        );
+                else
+                        return (
+                                <View style={styles.container}>
+                                        <StatusBar
+                                                backgroundColor='white'
+                                                barStyle='dark-content'
+                                        />
+                                        <View style={styles.containerHeader}>
+                                                <TouchableOpacity onPress={() => {
+                                                        this.props.navigation.goBack();
+                                                }}>
+                                                        <Icon name='arrowleft' size={25} color='black' />
+                                                </TouchableOpacity>
+                                                <Text style={styles.textHeader}>Đăng kí địa điểm kinh doanh</Text>
+                                        </View>
+                                        <ScrollView>
+                                                <View style={styles.containerForm}>
+                                                        <Text style={styles.textHint}>Tên địa điểm</Text>
+                                                        <TextInput style={styles.textInput}
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                name: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.name}
+                                                                autoCapitalize
+                                                        />
+                                                        <Text style={styles.textHint}>Giới thiệu</Text>
+                                                        <TextInput style={{
+                                                                borderBottomWidth: 1,
                                                                 fontFamily: 'OpenSans-Regular',
+                                                                height: 100
                                                         }}
-                                                        onValueChange={(itemValue, itemIndex) =>
-                                                                this.setState({ type: itemValue })
-                                                        }>
-                                                        <Picker.Item label="Nhà hàng" value="restaurant" />
-                                                        <Picker.Item label="Coffee" value="coffee" />
-                                                </Picker>
-                                                <View style={{
-                                                        height: 1,
-                                                        backgroundColor: 'gray'
-                                                }} />
-                                                <Text style={styles.textHint}>Số điện thoại</Text>
-                                                <TextInput style={styles.textInput}
-                                                        keyboardType='number-pad'
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        phone: text
-                                                                });
-                                                        }}
-                                                        value={this.state.phone}
-                                                />
-                                                <Text style={styles.textHint}>Địa chỉ</Text>
-                                                {/*      <TextInput style={styles.textInput}
+                                                                editable={true}
+                                                                placeholder='Tối đa 10 dòng'
+                                                                multiline={true}
+                                                                numberOfLines={10}
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                introduce: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.introduce}
+                                                        />
+                                                        <Text style={styles.textHint}>Loại địa điểm</Text>
+                                                        <Picker
+                                                                selectedValue={this.state.type}
+                                                                style={{
+                                                                        height: 50,
+                                                                        fontFamily: 'OpenSans-Regular',
+                                                                }}
+                                                                onValueChange={(itemValue, itemIndex) =>
+                                                                        this.setState({ type: itemValue })
+                                                                }>
+                                                                <Picker.Item label="Nhà hàng" value="restaurant" />
+                                                                <Picker.Item label="Coffee" value="coffee" />
+                                                        </Picker>
+                                                        <View style={{
+                                                                height: 1,
+                                                                backgroundColor: 'gray'
+                                                        }} />
+                                                        <Text style={styles.textHint}>Số điện thoại</Text>
+                                                        <TextInput style={styles.textInput}
+                                                                keyboardType='number-pad'
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                phone: text
+                                                                        });
+                                                                }}
+                                                                value={this.state.phone}
+                                                        />
+                                                        <Text style={styles.textHint}>Địa chỉ</Text>
+                                                        {/*      <TextInput style={styles.textInput}
                                                         placeholder='Tỉnh, Thành Phố'
                                                         onChangeText={(text) => {
                                                                 this.setState({
@@ -439,278 +452,267 @@ export default class RegisterRestaurant extends Component {
                                                         }}
                                                         value={this.state.textQuan}
                                                 /> */}
-                                                <TextInput style={styles.textInput} placeholder='Địa chỉ'
-                                                        onChangeText={(text) => {
-                                                                this.setState({
-                                                                        address: text
-                                                                });
-                                                        }}
-                                                        multiline
-                                                        value={this.state.address}
-                                                        onEndEditing={() => {
-                                                                this._onEndCompleteEditAddress();
-                                                        }}
-                                                />
-                                                <Text style={styles.textHint}>Bản đồ</Text>
-                                                <TouchableOpacity onPress={() => {
-                                                        this._onClickOpenModalMap();
-                                                }} >
-                                                        <MapView
-                                                                style={styles.map}
-                                                                region={this.state.region}
-                                                                provider={PROVIDER_GOOGLE}
-                                                                zoomEnabled={false}
-                                                        >
-                                                                {
-                                                                        this.state.marker === null ? null : <Marker coordinate={this.state.marker} />
-                                                                }
-                                                        </MapView>
-                                                </TouchableOpacity>
-                                                <Text style={styles.textHint}>Thời gian mở cửa</Text>
-                                                <View style={{
-                                                        flexDirection: 'row',
-                                                        justifyContent: 'space-between',
-                                                        alignItems: 'center',
-                                                }}>
-                                                        <Text style={{
-                                                                fontFamily: 'OpenSans-Regular',
-                                                        }}>Từ</Text>
-                                                        <Picker
-                                                                selectedValue={this.state.timeOpen}
-                                                                style={{
-                                                                        height: 50,
-                                                                        width: 100,
+                                                        <TextInput style={styles.textInput} placeholder='Địa chỉ'
+                                                                onChangeText={(text) => {
+                                                                        this.setState({
+                                                                                address: text
+                                                                        });
                                                                 }}
-                                                                onValueChange={(itemValue, itemIndex) =>
-                                                                        this.setState({ timeOpen: itemValue })
-                                                                }>
-                                                                <Picker.Item label="1h" value={1} />
-                                                                <Picker.Item label="2h" value={2} />
-                                                                <Picker.Item label="3h" value={3} />
-                                                                <Picker.Item label="4h" value={4} />
-                                                                <Picker.Item label="5h" value={5} />
-                                                                <Picker.Item label="6h" value={6} />
-                                                                <Picker.Item label="7h" value={7} />
-                                                                <Picker.Item label="8h" value={8} />
-                                                                <Picker.Item label="9h" value={9} />
-                                                                <Picker.Item label="10h" value={10} />
-                                                                <Picker.Item label="11h" value={11} />
-                                                                <Picker.Item label="12h" value={12} />
-                                                                <Picker.Item label="13h" value={13} />
-                                                                <Picker.Item label="14h" value={14} />
-                                                                <Picker.Item label="15h" value={15} />
-                                                                <Picker.Item label="16h" value={16} />
-                                                                <Picker.Item label="17h" value={17} />
-                                                                <Picker.Item label="18h" value={18} />
-                                                                <Picker.Item label="19h" value={19} />
-                                                                <Picker.Item label="20h" value={20} />
-                                                                <Picker.Item label="21h" value={21} />
-                                                                <Picker.Item label="22h" value={22} />
-                                                                <Picker.Item label="23h" value={23} />
-                                                                <Picker.Item label="24h" value={24} />
-                                                        </Picker>
-                                                        <Text style={{
-                                                                fontFamily: 'OpenSans-Regular',
-                                                        }}>Đến</Text>
-                                                        <Picker
-                                                                selectedValue={this.state.timeClose}
-                                                                style={{
-                                                                        height: 30,
-                                                                        width: 100,
+                                                                multiline
+                                                                value={this.state.address}
+                                                                onEndEditing={() => {
+                                                                        this._onEndCompleteEditAddress();
                                                                 }}
-                                                                onValueChange={(itemValue, itemIndex) =>
-                                                                        this.setState({ timeClose: itemValue })
-                                                                }>
-                                                                <Picker.Item label="1h" value={1} />
-                                                                <Picker.Item label="2h" value={2} />
-                                                                <Picker.Item label="3h" value={3} />
-                                                                <Picker.Item label="4h" value={4} />
-                                                                <Picker.Item label="5h" value={5} />
-                                                                <Picker.Item label="6h" value={6} />
-                                                                <Picker.Item label="7h" value={7} />
-                                                                <Picker.Item label="8h" value={8} />
-                                                                <Picker.Item label="9h" value={9} />
-                                                                <Picker.Item label="10h" value={10} />
-                                                                <Picker.Item label="11h" value={11} />
-                                                                <Picker.Item label="12h" value={12} />
-                                                                <Picker.Item label="13h" value={13} />
-                                                                <Picker.Item label="14h" value={14} />
-                                                                <Picker.Item label="15h" value={15} />
-                                                                <Picker.Item label="16h" value={16} />
-                                                                <Picker.Item label="17h" value={17} />
-                                                                <Picker.Item label="18h" value={18} />
-                                                                <Picker.Item label="19h" value={19} />
-                                                                <Picker.Item label="20h" value={20} />
-                                                                <Picker.Item label="21h" value={21} />
-                                                                <Picker.Item label="22h" value={22} />
-                                                                <Picker.Item label="23h" value={23} />
-                                                                <Picker.Item label="24h" value={24} />
-                                                        </Picker>
-                                                </View>
-                                                <View style={{
-                                                        height: 50,
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between'
-                                                }}>
-                                                        <Text style={{
-                                                                color: 'black',
-                                                                fontFamily: 'UVN-Baisau-Regular',
-                                                        }}>Ảnh giới thiệu</Text>
+                                                                autoCapitalize
+
+                                                        />
+                                                        <Text style={styles.textHint}>Bản đồ</Text>
                                                         <TouchableOpacity onPress={() => {
-                                                                this.setState({
-                                                                        visibleModalSelectImage: !this.state.visibleModalSelectImage
-                                                                });
-                                                                this.requestCameraPermission();
+                                                                this._onClickOpenModalMap();
                                                         }} >
-                                                                <Icon name='pluscircle' size={30} color={colorMain} />
+                                                                <MapView
+                                                                        style={styles.map}
+                                                                        region={this.state.region}
+                                                                        provider={PROVIDER_GOOGLE}
+                                                                        zoomEnabled={false}
+                                                                >
+                                                                        {
+                                                                                this.state.marker === null ? null : <Marker coordinate={this.state.marker} />
+                                                                        }
+                                                                </MapView>
                                                         </TouchableOpacity>
-                                                </View>
-                                        </View>
-                                        {
-                                                this.state.selectImage === null ? null : <FlatList
-                                                        horizontal={true}
-                                                        data={this.state.selectImage}
-                                                        keyExtractor={(item, index) => index.toString()}
-                                                        extraData={this.state}
-                                                        renderItem={(item) => {
-                                                                return (
-                                                                        <Image
-                                                                                source={{ uri: item.item.node.image.uri }}
-                                                                                style={{
-                                                                                        height: 150,
-                                                                                        width: 150,
-                                                                                        margin: 2
-                                                                                }}
-                                                                        />
-                                                                );
-                                                        }}
-                                                />
-                                        }
-                                        <View>
-                                        </View>
-                                        <View style={styles.containerButtonRegister}>
-                                                <TouchableOpacity style={styles.buttonRegister}
-                                                        onPress={() => {
-                                                                this.onClickButtonRegister();
-                                                        }}
-                                                >
-                                                        <Text style={styles.textRegister}>Đăng kí</Text>
-                                                </TouchableOpacity>
-                                        </View>
-                                </ScrollView>
-                                <Modal
-                                        animationType="slide"
-                                        transparent={false}
-                                        visible={this.state.visibleModalSelectImage}
-                                        onRequestClose={() => {
-                                                this.setState({
-                                                        visibleModalSelectImage: !this.state.visibleModalSelectImage
-                                                });
-                                        }}
-                                >
-                                        <View style={styles.containerModal}>
-                                                <View style={styles.headerModal}>
-                                                        <TouchableOpacity onPress={() => {
-                                                                this.setState({
-                                                                        visibleModalSelectImage: !this.state.visibleModalSelectImage
-                                                                });
-                                                        }} >
-                                                                <Icon name='down' size={25} color='black' />
-                                                        </TouchableOpacity>
-                                                        <Text style={styles.titleHeader}>Ảnh</Text>
-                                                        <TouchableOpacity
-                                                                onPress={() => {
+                                                        <Text style={styles.textHint}>Thời gian mở cửa</Text>
+                                                        <View style={{
+                                                                flexDirection: 'row',
+                                                                justifyContent: 'space-between',
+                                                                alignItems: 'center',
+                                                        }}>
+                                                                <Text style={{
+                                                                        fontFamily: 'OpenSans-Regular',
+                                                                }}>Từ</Text>
+                                                                <Picker
+                                                                        selectedValue={this.state.timeOpen}
+                                                                        style={{
+                                                                                height: 50,
+                                                                                width: 100,
+                                                                        }}
+                                                                        onValueChange={(itemValue, itemIndex) =>
+                                                                                this.setState({ timeOpen: itemValue })
+                                                                        }>
+                                                                        <Picker.Item label="1h" value={1} />
+                                                                        <Picker.Item label="2h" value={2} />
+                                                                        <Picker.Item label="3h" value={3} />
+                                                                        <Picker.Item label="4h" value={4} />
+                                                                        <Picker.Item label="5h" value={5} />
+                                                                        <Picker.Item label="6h" value={6} />
+                                                                        <Picker.Item label="7h" value={7} />
+                                                                        <Picker.Item label="8h" value={8} />
+                                                                        <Picker.Item label="9h" value={9} />
+                                                                        <Picker.Item label="10h" value={10} />
+                                                                        <Picker.Item label="11h" value={11} />
+                                                                        <Picker.Item label="12h" value={12} />
+                                                                        <Picker.Item label="13h" value={13} />
+                                                                        <Picker.Item label="14h" value={14} />
+                                                                        <Picker.Item label="15h" value={15} />
+                                                                        <Picker.Item label="16h" value={16} />
+                                                                        <Picker.Item label="17h" value={17} />
+                                                                        <Picker.Item label="18h" value={18} />
+                                                                        <Picker.Item label="19h" value={19} />
+                                                                        <Picker.Item label="20h" value={20} />
+                                                                        <Picker.Item label="21h" value={21} />
+                                                                        <Picker.Item label="22h" value={22} />
+                                                                        <Picker.Item label="23h" value={23} />
+                                                                        <Picker.Item label="24h" value={24} />
+                                                                </Picker>
+                                                                <Text style={{
+                                                                        fontFamily: 'OpenSans-Regular',
+                                                                }}>Đến</Text>
+                                                                <Picker
+                                                                        selectedValue={this.state.timeClose}
+                                                                        style={{
+                                                                                height: 30,
+                                                                                width: 100,
+                                                                        }}
+                                                                        onValueChange={(itemValue, itemIndex) =>
+                                                                                this.setState({ timeClose: itemValue })
+                                                                        }>
+                                                                        <Picker.Item label="1h" value={1} />
+                                                                        <Picker.Item label="2h" value={2} />
+                                                                        <Picker.Item label="3h" value={3} />
+                                                                        <Picker.Item label="4h" value={4} />
+                                                                        <Picker.Item label="5h" value={5} />
+                                                                        <Picker.Item label="6h" value={6} />
+                                                                        <Picker.Item label="7h" value={7} />
+                                                                        <Picker.Item label="8h" value={8} />
+                                                                        <Picker.Item label="9h" value={9} />
+                                                                        <Picker.Item label="10h" value={10} />
+                                                                        <Picker.Item label="11h" value={11} />
+                                                                        <Picker.Item label="12h" value={12} />
+                                                                        <Picker.Item label="13h" value={13} />
+                                                                        <Picker.Item label="14h" value={14} />
+                                                                        <Picker.Item label="15h" value={15} />
+                                                                        <Picker.Item label="16h" value={16} />
+                                                                        <Picker.Item label="17h" value={17} />
+                                                                        <Picker.Item label="18h" value={18} />
+                                                                        <Picker.Item label="19h" value={19} />
+                                                                        <Picker.Item label="20h" value={20} />
+                                                                        <Picker.Item label="21h" value={21} />
+                                                                        <Picker.Item label="22h" value={22} />
+                                                                        <Picker.Item label="23h" value={23} />
+                                                                        <Picker.Item label="24h" value={24} />
+                                                                </Picker>
+                                                        </View>
+                                                        <View style={{
+                                                                height: 50,
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'space-between'
+                                                        }}>
+                                                                <Text style={{
+                                                                        color: 'black',
+                                                                        fontFamily: 'UVN-Baisau-Regular',
+                                                                }}>Ảnh giới thiệu</Text>
+                                                                <TouchableOpacity onPress={() => {
                                                                         this.setState({
                                                                                 visibleModalSelectImage: !this.state.visibleModalSelectImage
                                                                         });
-                                                                        this.onClickCompleteSelectImage();
+                                                                        this.requestCameraPermission();
                                                                 }} >
-                                                                <Icon name='check' size={25} color='black' />
+                                                                        <Icon name='pluscircle' size={30} color={colorMain} />
+                                                                </TouchableOpacity>
+                                                        </View>
+                                                </View>
+                                                {
+                                                        this.state.selectImage === null ? null : <FlatList
+                                                                horizontal={true}
+                                                                data={this.state.selectImage}
+                                                                keyExtractor={(item, index) => index.toString()}
+                                                                extraData={this.state}
+                                                                renderItem={(item) => {
+                                                                        return (
+                                                                                <Image
+                                                                                        source={{ uri: item.item.node.image.uri }}
+                                                                                        style={{
+                                                                                                height: 150,
+                                                                                                width: 150,
+                                                                                                margin: 2
+                                                                                        }}
+                                                                                />
+                                                                        );
+                                                                }}
+                                                        />
+                                                }
+                                                <View>
+                                                </View>
+                                                <View style={styles.containerButtonRegister}>
+                                                        <TouchableOpacity style={styles.buttonRegister}
+                                                                onPress={() => {
+                                                                        this.onClickButtonRegister();
+                                                                }}
+                                                        >
+                                                                <Text style={styles.textRegister}>Đăng kí</Text>
                                                         </TouchableOpacity>
                                                 </View>
-                                                <FlatList
-                                                        data={this.state.photos}
-                                                        extraData={this.state}
-                                                        keyExtractor={(item, index) => index.toString()}
-                                                        numColumns={3}
-                                                        horizontal={false}
-                                                        onEndReached={() => {
-                                                                this.onLoadMoreImage();
-                                                        }}
-                                                        refreshing={this.state.isLoading}
-                                                        onRefresh={() => {
-                                                                this._handleButtonPress();
-                                                        }}
-                                                        renderItem={(item) => {
-                                                                return (
-                                                                        <TouchableOpacity onPress={() => {
-                                                                                this.onSelectImage(item.index);
+                                        </ScrollView>
+                                        <Modal
+                                                animationType="slide"
+                                                transparent={false}
+                                                visible={this.state.visibleModalSelectImage}
+                                                onRequestClose={() => {
+                                                        this.setState({
+                                                                visibleModalSelectImage: !this.state.visibleModalSelectImage
+                                                        });
+                                                }}
+                                        >
+                                                <View style={styles.containerModal}>
+                                                        <View style={styles.headerModal}>
+                                                                <TouchableOpacity onPress={() => {
+                                                                        this.setState({
+                                                                                visibleModalSelectImage: !this.state.visibleModalSelectImage
+                                                                        });
+                                                                }} >
+                                                                        <Icon name='down' size={25} color='black' />
+                                                                </TouchableOpacity>
+                                                                <Text style={styles.titleHeader}>Ảnh</Text>
+                                                                <TouchableOpacity
+                                                                        onPress={() => {
+                                                                                this.setState({
+                                                                                        visibleModalSelectImage: !this.state.visibleModalSelectImage
+                                                                                });
+                                                                                this.onClickCompleteSelectImage();
                                                                         }} >
-                                                                                {
-                                                                                        item.item.node.image.selected ? <View>
-                                                                                                <Image source={{ uri: item.item.node.image.uri }}
+                                                                        <Icon name='check' size={25} color='black' />
+                                                                </TouchableOpacity>
+                                                        </View>
+                                                        <FlatList
+                                                                data={this.state.photos}
+                                                                extraData={this.state}
+                                                                keyExtractor={(item, index) => index.toString()}
+                                                                numColumns={3}
+                                                                horizontal={false}
+                                                                onEndReached={() => {
+                                                                        this.onLoadMoreImage();
+                                                                }}
+                                                                refreshing={this.state.isLoading}
+                                                                onRefresh={() => {
+                                                                        this._handleButtonPress();
+                                                                }}
+                                                                renderItem={(item) => {
+                                                                        return (
+                                                                                <TouchableOpacity onPress={() => {
+                                                                                        this.onSelectImage(item.index);
+                                                                                }} >
+                                                                                        {
+                                                                                                item.item.node.image.selected ? <View>
+                                                                                                        <Image source={{ uri: item.item.node.image.uri }}
+                                                                                                                style={{
+                                                                                                                        height: width / 3,
+                                                                                                                        width: width / 3,
+                                                                                                                        borderWidth: 2,
+                                                                                                                        borderColor: colorMain
+                                                                                                                }} />
+                                                                                                        <View style={{
+                                                                                                                position: 'absolute',
+                                                                                                                height: width / 3,
+                                                                                                                width: width / 3,
+                                                                                                                alignItems: 'center',
+                                                                                                                justifyContent: 'center'
+                                                                                                        }} >
+                                                                                                                <Icon name='checkcircle' size={30} color='#22D499' />
+                                                                                                        </View>
+
+                                                                                                </View> : <Image source={{ uri: item.item.node.image.uri }}
                                                                                                         style={{
                                                                                                                 height: width / 3,
                                                                                                                 width: width / 3,
-                                                                                                                borderWidth: 2,
-                                                                                                                borderColor: colorMain
+                                                                                                                borderWidth: 1,
+                                                                                                                borderColor: 'white'
                                                                                                         }} />
-                                                                                                <View style={{
-                                                                                                        position: 'absolute',
-                                                                                                        height: width / 3,
-                                                                                                        width: width / 3,
-                                                                                                        alignItems: 'center',
-                                                                                                        justifyContent: 'center'
-                                                                                                }} >
-                                                                                                        <Icon name='checkcircle' size={30} color='#22D499' />
-                                                                                                </View>
+                                                                                        }
+                                                                                </TouchableOpacity>
+                                                                        );
+                                                                }}
+                                                        />
+                                                </View>
+                                        </Modal>
 
-                                                                                        </View> : <Image source={{ uri: item.item.node.image.uri }}
-                                                                                                style={{
-                                                                                                        height: width / 3,
-                                                                                                        width: width / 3,
-                                                                                                        borderWidth: 1,
-                                                                                                        borderColor: 'white'
-                                                                                                }} />
-                                                                                }
-                                                                        </TouchableOpacity>
-                                                                );
-                                                        }}
+                                        <Modal
+                                                transparent={false}
+                                                animationType='slide'
+                                                visible={this.state.visibleModalSelectPlaceOnMap}
+                                                onRequestClose={() => {
+                                                        this._onClickCloseModalMap();
+                                                }}
+                                        >
+                                                <SelectPlaceOnMap
+                                                        _onClickComplete={this._onClickComplete}
+                                                        _onClickCloseModalMap={this._onClickCloseModalMap}
+                                                        _marker={this.state.marker}
+                                                        _region={this.state.region}
                                                 />
-                                        </View>
-                                </Modal>
-
-                                <Modal
-                                        transparent={false}
-                                        animationType='slide'
-                                        visible={this.state.visibleModalSelectPlaceOnMap}
-                                        onRequestClose={() => {
-                                                this._onClickCloseModalMap();
-                                        }}
-                                >
-                                        <SelectPlaceOnMap
-                                                _onClickComplete={this._onClickComplete}
-                                                _onClickCloseModalMap={this._onClickCloseModalMap}
-                                                _marker={this.state.marker}
-                                                _region={this.state.region}
-                                        />
-                                </Modal>
-                                <Modal
-                                        animationType='slide'
-                                        visible={this.state.isLoading}
-                                >
-                                        <View style={{
-                                                flex: 1,
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                backgroundColor: 'rgba(0,0,0,0.9)'
-                                        }}>
-                                                <ActivityIndicator animating={true} size={100} color={colorMain} />
-                                        </View>
-                                </Modal>
-                        </View>
-                );
+                                        </Modal>
+                                </View>
+                        );
         }
 }
 

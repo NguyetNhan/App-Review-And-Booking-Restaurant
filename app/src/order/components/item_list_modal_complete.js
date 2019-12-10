@@ -27,6 +27,9 @@ export default class ItemListModalComplete extends Component {
                                 isLoading: false
                         });
                 } catch (error) {
+                        this.setState({
+                                isLoading: false
+                        });
                         Alert.alert('Thông Báo Lỗi', 'Không thể lấy thông tin món ăn ! ' + error.message);
                 }
         }

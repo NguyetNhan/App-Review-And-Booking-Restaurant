@@ -11,7 +11,8 @@ export default class FriendList extends Component {
                 this.state = {
                         friendList: [],
                         account: null,
-                        isLoading: true
+                        isLoading: true,
+                        oldFriendListInvited: props.oldFriendListInvited
                 };
                 this.onChangeList = this.onChangeList.bind(this);
         }
@@ -46,11 +47,36 @@ export default class FriendList extends Component {
                                                         isLoading: false
                                                 });
                                         } else {
-                                                this.setState({
-                                                        account: resultAccount.data,
-                                                        friendList: response.data,
-                                                        isLoading: false
-                                                });
+                                                if (this.state.oldFriendListInvited.length === 0) {
+                                                        this.setState({
+                                                                account: resultAccount.data,
+                                                                friendList: response.data,
+                                                                isLoading: false
+                                                        });
+                                                } else {
+                                                        for (friend of response.data) {
+                                                                let checkExist = false;
+                                                                let name = '';
+                                                                for (oldFriend of this.state.oldFriendListInvited) {
+                                                                        if (oldFriend.idAccount === friend.idAccountFriend) {
+                                                                                checkExist = true;
+                                                                                name = oldFriend.name;
+                                                                        }
+                                                                }
+                                                                if (checkExist) {
+                                                                        friend.isChecked = true;
+                                                                        friend.name = name;
+                                                                } else {
+                                                                        friend.isChecked = false;
+                                                                }
+                                                        }
+                                                        this.setState({
+                                                                account: resultAccount.data,
+                                                                friendList: response.data,
+                                                                isLoading: false
+                                                        });
+                                                }
+
                                         }
 
                                 }
@@ -88,13 +114,33 @@ export default class FriendList extends Component {
                                                 isLoading: false
                                         });
                                 } else {
-                                        for (item of response.data) {
-                                                item.isChecked = false;
+                                        if (this.state.oldFriendListInvited.length === 0) {
+                                                this.setState({
+                                                        friendList: response.data,
+                                                        isLoading: false
+                                                });
+                                        } else {
+                                                for (friend of response.data) {
+                                                        let checkExist = false;
+                                                        let name = '';
+                                                        for (oldFriend of this.state.oldFriendListInvited) {
+                                                                if (oldFriend.idAccount === friend.idAccountFriend) {
+                                                                        checkExist = true;
+                                                                        name = oldFriend.name;
+                                                                }
+                                                        }
+                                                        if (checkExist) {
+                                                                friend.isChecked = true;
+                                                                friend.name = name;
+                                                        } else {
+                                                                friend.isChecked = false;
+                                                        }
+                                                }
+                                                this.setState({
+                                                        friendList: response.data,
+                                                        isLoading: false
+                                                });
                                         }
-                                        this.setState({
-                                                friendList: response.data,
-                                                isLoading: false
-                                        });
                                 }
                         }
                 } catch (error) {
