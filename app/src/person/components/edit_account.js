@@ -202,7 +202,7 @@ export default class EditAccount extends Component {
                                                         });
                                                 }}
                                         />
-                                        <Text style={styles.textTitle}>Giới tính</Text>
+                                        {/*       <Text style={styles.textTitle}>Giới tính</Text>
                                         {
                                                 this.state.gioiTinh.map((item, index) => {
                                                         if (item.value === 0)
@@ -255,7 +255,7 @@ export default class EditAccount extends Component {
                                                                 </RadioButton>);
                                                 })
                                         }
-
+ */}
                                         <Text style={styles.textTitle}>Email</Text>
                                         <View style={styles.containerEmail}>
                                                 <Text style={styles.textEmail}>{this.state.account.email}</Text>

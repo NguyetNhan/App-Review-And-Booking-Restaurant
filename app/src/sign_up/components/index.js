@@ -120,7 +120,7 @@ export default class SignUp extends Component {
 
         onClickButtonSignup () {
 
-                if (this.state.phone.length < 10 || this.state.phone.length > 10 || this.state.phone.charAt(0) !== 0) {
+                if (this.state.phone.length < 10 || this.state.phone.length > 10 || this.state.phone.charAt(0) != 0) {
                         Alert.alert('Thông báo', 'Bạn đã nhập sai số điện thoại !');
                 } else if (this.state.validateError) {
                         Alert.alert('Thông báo', 'Bạn đã nhập sai !');

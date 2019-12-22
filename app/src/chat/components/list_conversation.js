@@ -46,9 +46,7 @@ export default class ListConversation extends Component {
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
-                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
-                        prevState.isLoading = nextProps.isLoading;
-                }
+
                 if (nextProps.listConversation !== prevState.listConversation && nextProps.listConversation !== undefined && !prevState.isRefresh && !prevState.isLoadMore) {
                         if (nextProps.listConversation.length === 0) {
                                 let list = ['1', ...nextProps.listConversation];
@@ -74,6 +72,9 @@ export default class ListConversation extends Component {
                 }
                 if (nextProps.total_page !== prevState.total_page && nextProps.total_page !== undefined && !prevState.isLoading) {
                         prevState.total_page = nextProps.total_page;
+                }
+                if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
+                        prevState.isLoading = nextProps.isLoading;
                 }
                 if (nextProps.messageSucceeded !== undefined && !prevState.isLoading) {
                         Alert.alert(

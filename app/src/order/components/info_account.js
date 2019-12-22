@@ -22,7 +22,8 @@ export default class InfoAccount extends Component {
                                 }
                         ],
                         valueDiscount: null,
-                        idRestaurant: props.idRestaurant
+                        idRestaurant: props.idRestaurant,
+                        restaurant: null
                 };
 
         }
@@ -136,8 +137,11 @@ export default class InfoAccount extends Component {
         }
 
 
+
+
         componentDidMount () {
                 this._fetchInfoAccount();
+
         }
 
         static getDerivedStateFromProps (nextProps, prevState) {
@@ -172,7 +176,7 @@ export default class InfoAccount extends Component {
         }
 
         _onClickAgree () {
-                var info = {
+                let info = {
                         id: this.state.account.id,
                         name: this.state.name,
                         email: this.state.email,

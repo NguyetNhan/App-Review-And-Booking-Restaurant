@@ -111,9 +111,9 @@ export default class ModalInfo extends Component {
                                                         {
                                                                 this.state.discount === null ? null :
                                                                         this.state.discount.type === 'score' ?
-                                                                                <Text style={styles.textTitleValueMoney}>Sử dụng điểm tích lũy: <Text style={styles.textValuePriceMoney}>{convertVND(this.state.discount.score)} VND</Text></Text>
+                                                                                <Text style={styles.textTitleValueMoney}>Sử dụng điểm tích lũy: <Text style={styles.textValuePriceMoney}>{this.state.discount.value}</Text></Text>
                                                                                 :
-                                                                                null
+                                                                                <Text style={styles.textTitleValueMoney}>Sử dụng mã khuyến mãi  <Text style={styles.textValuePriceMoney}>{this.state.discount.value}</Text>%</Text>
                                                         }
                                                         <Text style={styles.textTitleValueMoney}>Tổng tiền thực đơn: <Text style={styles.textValuePriceMoney}>
                                                                 {convertVND(this.state.totalMoneyFood)} VND

@@ -78,7 +78,7 @@ export default class FormChonLich extends Component {
                 if (nextProps.changePage !== undefined) {
                         if (nextProps.changePage === 'settling') {
                                 nextProps._setChonLich({
-                                        receptionTime: new Date(prevState.day.getFullYear(), prevState.day.getMonth() + 1, prevState.day.getDate(), prevState.time.getHours(), prevState.time.getMinutes(), 0, 0),
+                                        receptionTime: new Date(prevState.day.getFullYear(), prevState.day.getMonth(), prevState.day.getDate(), prevState.time.getHours(), prevState.time.getMinutes(), 0, 0),
                                         note: prevState.note,
                                         amountPerson: prevState.amount,
                                         guests: prevState.guests,
@@ -114,7 +114,6 @@ export default class FormChonLich extends Component {
                         if (date > dateNow) {
                                 this.setState({
                                         showDate: !this.state.showDate,
-                                        day: day
                                 });
                                 this.props.onSetDateFromLich(day);
                         }
@@ -140,9 +139,27 @@ export default class FormChonLich extends Component {
 
         _setTime (event, time) {
                 const date = new Date(time);
+                const dateNow = new Date();
+                const day = new Date(this.state.day);
                 if (event.type === 'set') {
                         if (date.getHours() >= this.state.restaurant.timeClose || date.getHours() < this.state.restaurant.timeOpen) {
+                                this.setState({
+                                        showTime: !this.state.showTime,
+                                        //    time: date
+                                });
                                 Alert.alert('Thông Báo', 'Nhà hàng không hoạt động trong thời gian này, mời bạn chọn lại !');
+                        } else if (date.getHours() < dateNow.getHours()) {
+                                this.setState({
+                                        showTime: !this.state.showTime,
+                                        //    time: date
+                                });
+                                Alert.alert('Thông Báo', 'Thời Gian Đã Trôi Qua !');
+                        } else if (date.getMinutes() < dateNow.getMinutes()) {
+                                this.setState({
+                                        showTime: !this.state.showTime,
+                                        //    time: date
+                                });
+                                Alert.alert('Thông Báo', 'Thời Gian Đã Trôi Qua !');
                         } else {
                                 this.setState({
                                         showTime: !this.state.showTime,

@@ -11,7 +11,10 @@ FetchListOrderForAdminRestaurant = async (data) => {
                 }).then(value => value.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error);
+                return {
+                        error: true,
+                        message: error.message
+                };
         }
 };
 
@@ -26,7 +29,10 @@ FetchListOrderForClient = async (data) => {
                 }).then(value => value.json());
                 return response;
         } catch (error) {
-                console.log('error: ', error);
+                return {
+                        error: true,
+                        message: error.message
+                };
         }
 };
 

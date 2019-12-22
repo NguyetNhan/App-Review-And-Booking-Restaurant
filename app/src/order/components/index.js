@@ -31,6 +31,7 @@ export default class Order extends Component {
                         visibleModalComplete: false,
                         complete: null,
                         guests: [],
+                        restaurant: null
                 };
                 this._onActionOrder = this._onActionOrder.bind(this);
                 this._onClickButtonNext = this._onClickButtonNext.bind(this);
@@ -42,6 +43,44 @@ export default class Order extends Component {
                 this._onCloseModalComplete = this._onCloseModalComplete.bind(this);
         }
 
+        fetchInfoRestaurant = async () => {
+                try {
+                        const response = await fetch(`${urlServer}/restaurant/id/${this.state.idRestaurant}`, {
+                                method: 'GET',
+                                headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                }
+                        }).then(value => value.json());
+                        if (response.error) {
+                                Alert.alert(
+                                        'Thông Báo Lỗi',
+                                        response.message,
+                                        [
+                                                { text: 'OK' },
+                                        ],
+                                        { cancelable: false },
+                                );
+                        } else {
+                                this.setState({
+                                        restaurant: response.data,
+                                });
+                        }
+                } catch (error) {
+                        Alert.alert(
+                                'Thông Báo Lỗi',
+                                error.message,
+                                [
+                                        { text: 'OK' },
+                                ],
+                                { cancelable: false },
+                        );
+                }
+        }
+
+        componentDidMount () {
+                this.fetchInfoRestaurant();
+        }
 
         static getDerivedStateFromProps (nextProps, prevState) {
                 if (nextProps.isLoading !== prevState.isLoading && nextProps.isLoading !== undefined) {
@@ -111,8 +150,14 @@ export default class Order extends Component {
         }
 
         _onComplete (info) {
+                const date = new Date(this.state.receptionTime);
+                const dateNow = new Date();
                 if (this.state.listFoodSelect.length === 0) {
                         Alert.alert('Thông Báo', 'Bạn chưa chọn món ăn !');
+                } else if (date.getHours() >= this.state.restaurant.timeClose || date.getHours() < this.state.restaurant.timeOpen) {
+                        Alert.alert('Thông Báo', 'Nhà hàng không hoạt động trong thời gian này, mời bạn chọn lại thời gian !');
+                } else if (date < dateNow) {
+                        Alert.alert('Thông Báo', 'Thời gian đã trôi qua, mời bạn chọn lại!');
                 } else {
                         const data = {
                                 idClient: info.idClient,
@@ -173,7 +218,6 @@ export default class Order extends Component {
         }
 
         render () {
-
                 return (
                         <View style={styles.container}>
                                 <StatusBar
