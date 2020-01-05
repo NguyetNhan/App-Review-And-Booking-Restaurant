@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Component from '../components';
-import { onLogin, onAddAccountIntoLocal, onResetProps, onResetPropsMessage } from '../actions';
+import { onLogin, onAddAccountIntoLocal, onResetProps, onResetPropsMessage, } from '../actions';
 
 const mapStateToProps = (state) => {
         const resultsLogin = state.LoginReducers;
@@ -48,7 +48,7 @@ const mapDispatchToProps = (dispatch) => {
                 },
                 onResetPropsMessage: () => {
                         dispatch(onResetPropsMessage());
-                }
+                },
         };
 };
 

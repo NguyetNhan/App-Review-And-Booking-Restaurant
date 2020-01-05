@@ -109,30 +109,34 @@ export default class FormChonLich extends Component {
 
         _setDate (event, date) {
                 if (event.type === 'set') {
-                        const day = new Date(date);
-                        const dateNow = new Date();
-                        if (date > dateNow) {
-                                this.setState({
-                                        showDate: !this.state.showDate,
-                                });
-                                this.props.onSetDateFromLich(day);
-                        }
-                        else {
-                                this.setState({
-                                        showDate: !this.state.showDate,
-                                });
-                                Alert.alert(
-                                        'Thông Báo Lỗi',
-                                        'Không được chọn ngày trước ngày hiện tại !',
-                                        [
-                                                { text: 'OK' },
-                                        ],
-                                        { cancelable: false },
-                                );
-                        }
+                        this.setState({
+                                showDate: false,
+                        });
+                        this.props.onSetDateFromLich(date);
+                        /*    const day = new Date(date);
+                           const dateNow = new Date();
+                           if (date > dateNow) {
+                                   this.setState({
+                                           showDate: !this.state.showDate,
+                                   });
+                                   this.props.onSetDateFromLich(day);
+                           }
+                           else {
+                                   this.setState({
+                                           showDate: !this.state.showDate,
+                                   });
+                                   Alert.alert(
+                                           'Thông Báo Lỗi',
+                                           'Không được chọn ngày trước ngày hiện tại !',
+                                           [
+                                                   { text: 'OK' },
+                                           ],
+                                           { cancelable: false },
+                                   );
+                           } */
                 } else if (event.type === 'dismissed') {
                         this.setState({
-                                showDate: !this.state.showDate,
+                                showDate: false,
                         });
                 }
         }
@@ -142,34 +146,39 @@ export default class FormChonLich extends Component {
                 const dateNow = new Date();
                 const day = new Date(this.state.day);
                 if (event.type === 'set') {
-                        if (date.getHours() >= this.state.restaurant.timeClose || date.getHours() < this.state.restaurant.timeOpen) {
-                                this.setState({
-                                        showTime: !this.state.showTime,
-                                        //    time: date
-                                });
-                                Alert.alert('Thông Báo', 'Nhà hàng không hoạt động trong thời gian này, mời bạn chọn lại !');
-                        } else if (date.getHours() < dateNow.getHours()) {
-                                this.setState({
-                                        showTime: !this.state.showTime,
-                                        //    time: date
-                                });
-                                Alert.alert('Thông Báo', 'Thời Gian Đã Trôi Qua !');
-                        } else if (date.getMinutes() < dateNow.getMinutes()) {
-                                this.setState({
-                                        showTime: !this.state.showTime,
-                                        //    time: date
-                                });
-                                Alert.alert('Thông Báo', 'Thời Gian Đã Trôi Qua !');
-                        } else {
-                                this.setState({
-                                        showTime: !this.state.showTime,
-                                        //    time: date
-                                });
-                                this.props.onSetTimeFromLich(date);
-                        }
+                        this.setState({
+                                showTime: false,
+                                //    time: date
+                        });
+                        this.props.onSetTimeFromLich(date);
+                        /*  if (date.getHours() >= this.state.restaurant.timeClose || date.getHours() < this.state.restaurant.timeOpen) {
+                                 this.setState({
+                                         showTime: !this.state.showTime,
+                                         //    time: date
+                                 });
+                                 Alert.alert('Thông Báo', 'Nhà hàng không hoạt động trong thời gian này, mời bạn chọn lại !');
+                         } else if (date.getHours() < dateNow.getHours()) {
+                                 this.setState({
+                                         showTime: !this.state.showTime,
+                                         //    time: date
+                                 });
+                                 Alert.alert('Thông Báo', 'Thời Gian Đã Trôi Qua !');
+                         } else if (date.getMinutes() < dateNow.getMinutes()) {
+                                 this.setState({
+                                         showTime: !this.state.showTime,
+                                         //    time: date
+                                 });
+                                 Alert.alert('Thông Báo', 'Thời Gian Đã Trôi Qua !');
+                         } else {
+                                 this.setState({
+                                         showTime: !this.state.showTime,
+                                         //    time: date
+                                 });
+                                 this.props.onSetTimeFromLich(date);
+                         } */
                 } else if (event.type === 'dismissed') {
                         this.setState({
-                                showTime: !this.state.showTime,
+                                showTime: false,
                         });
                 }
         }

@@ -60,6 +60,7 @@ export default class Login extends Component {
         }
 
         onClickButtonLogin () {
+
                 this.setState({
                         isLoading: true
                 });

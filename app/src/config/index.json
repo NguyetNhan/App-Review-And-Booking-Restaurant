@@ -1,6 +1,7 @@
 {
-  "urlServer": "http://192.168.1.80:3000",
+  "urlServer": "http://192.168.43.212:8888",
   "colorMain": "#22D499",
-  "background": "#f6f6f6",
-  "KEY_API_GOOGLE_MAP": "csfnkg394gjdfgdf"
+  "background": "#ebebeb",
+  "backgroundStatusBar": "#24b283",
+  "KEY_API_GOOGLE_MAP": "key-api-google"
 }
