@@ -26,7 +26,7 @@ import {
 } from '../actions';
 import { API as mapAPI } from '../../map/sagas/API';
 import { API as overviewAPI } from '../../detail_restaurant/overview/sagas/API';
-import { API } from './api';
+import { API } from './API';
 
 function* fetchPostListForHome (action) {
         try {
