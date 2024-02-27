@@ -15,4 +15,4 @@ Người dùng có thể đặt chỗ, trò chuyện trực tuyến với mọi 
  
  
 
-Đây là một số hình ảnh về ứng dụng: https://photos.app.goo.gl/q6X1vsFgkzQhXQaj8
+Đây là một số hình ảnh về ứng dụng: https://drive.google.com/drive/folders/11piWd5kngB94EG23sr4WC5J1wfpGQ0NT?usp=sharing
